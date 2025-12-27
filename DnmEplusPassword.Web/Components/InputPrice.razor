@@ -1,11 +1,15 @@
 @using DnmEplusPassword.Web.Models
 
-<div class="row">
-    <label for="priceInput" class="col col-form-label">Price</label>
-    <div class="col">
-        <InputNumber @bind-Value="Price.Value" id="priceInput" class="form-control" min="1" max="999999" step="1" />
+<EditForm Model="@Price">
+    <DataAnnotationsValidator />
+    <div class="row">
+        <label for="priceInput" class="col col-form-label">Price</label>
+        <div class="col">
+            <InputNumber @bind-Value="Price.Value" id="priceInput" class="form-control" min="1" max="999999" step="1" />
+            <ValidationMessage For="@(() => Price.Value)" />
+        </div>
     </div>
-</div>
+</EditForm>
 
 @code {
     [Parameter]
