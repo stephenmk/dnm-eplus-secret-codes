@@ -1,0 +1,29 @@
+@using DnmEplusPassword.Web.Models
+
+<div class="row">
+    <label for="rowAcreInput" class="col col-form-label">Acre Row (ちょうめ)</label>
+    <div class="col">
+        <InputSelect @bind-Value="PlacementAcre.Row" id="rowAcreInput" class="form-select">
+            @foreach (var row in PlacementAcre.ValidRows)
+            {
+                <option value="@row">@row</option>
+            }
+        </InputSelect>
+    </div>
+</div>
+<div class="row">
+    <label for="colAcreInput" class="col col-form-label">Acre Column (ばんち)</label>
+    <div class="col">
+        <InputSelect @bind-Value="PlacementAcre.Col" id="colAcreInput" class="form-select">
+            @foreach (var col in PlacementAcre.ValidCols)
+            {
+                <option value="@col">@col</option>
+            }
+        </InputSelect>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public required PlacementAcre PlacementAcre { get; set; }
+}

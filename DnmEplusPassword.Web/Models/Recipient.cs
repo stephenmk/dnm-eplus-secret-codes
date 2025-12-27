@@ -1,3 +1,5 @@
+namespace DnmEplusPassword.Web.Models;
+
 public sealed record Recipient
 {
     public string Name { get; set; } = string.Empty;

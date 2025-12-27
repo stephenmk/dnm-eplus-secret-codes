@@ -2,6 +2,7 @@
 @using System.Collections.Immutable
 @using DnmEplusPassword.Library
 @using DnmEplusPassword.Web.Components
+@using DnmEplusPassword.Web.Models
 
 <PageTitle>Monument</PageTitle>
 
@@ -29,28 +30,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <label for="rowAcreInput" class="col col-form-label">Acre Row (ちょうめ)</label>
-        <div class="col">
-            <InputSelect @bind-Value="SelectedAcreRow" id="rowAcreInput" class="form-select">
-                @foreach (var row in AcreRows)
-                {
-                    <option value="@row">@row</option>
-                }
-            </InputSelect>
-        </div>
-    </div>
-    <div class="row">
-        <label for="colAcreInput" class="col col-form-label">Acre Column (ばんち)</label>
-        <div class="col">
-            <InputSelect @bind-Value="SelectedAcreCol" id="colAcreInput" class="form-select">
-                @foreach (var col in AcreCols)
-                {
-                    <option value="@col">@col</option>
-                }
-            </InputSelect>
-        </div>
-    </div>
+    <InputPlacementAcre PlacementAcre="@PlacementAcre" />
 
     <div class="row">
         <label for="englishInput" class="col col-form-label">English Code</label>
@@ -87,10 +67,7 @@
         "Fountain",
     ];
     private string SelectedDecoration = Decorations.First();
-    private static readonly ImmutableArray<int> AcreRows = [1, 2, 3, 4, 5, 6];
-    private static readonly ImmutableArray<int> AcreCols = [1, 2, 3, 4, 5];
-    private int SelectedAcreRow = AcreRows.First();
-    private int SelectedAcreCol = AcreCols.First();
+    private PlacementAcre PlacementAcre = new();
     private Recipient Recipient = new();
     private int Price = 1;
     private bool IsEnglishPassword = false;
@@ -110,7 +87,7 @@
                 recipient: Recipient.Name.PadRight(6, ' '),
                 sender: Price.ToString().PadRight(6, ' '),
                 itemId: (ushort)(monumentType % 15),
-                extraData: ((SelectedAcreRow & 7) << 3) | (SelectedAcreCol & 7),
+                extraData: ((PlacementAcre.Row & 7) << 3) | (PlacementAcre.Col & 7),
                 englishPasswords: IsEnglishPassword
             );
             SecretCode = new()
