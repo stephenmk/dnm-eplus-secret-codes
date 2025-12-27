@@ -21,12 +21,14 @@
             </InputSelect>
         </div>
     </div>
+
     <div class="row">
         <label for="priceInput" class="col col-form-label">Price</label>
         <div class="col">
             <InputNumber @bind-Value="Price" id="priceInput" class="form-control" min="1" max="999999" step="1" />
         </div>
     </div>
+
     <div class="row">
         <label for="rowAcreInput" class="col col-form-label">Acre Row (ちょうめ)</label>
         <div class="col">
@@ -49,21 +51,20 @@
             </InputSelect>
         </div>
     </div>
+
     <div class="row">
         <label for="englishInput" class="col col-form-label">English Code</label>
         <div class="col">
             <InputCheckbox id="englishInput" class="form-check-input" @bind-Value="IsEnglishPassword" />
         </div>
     </div>
+
     <button class="btn btn-primary" @onclick="GeneratePassword">Generate Secret Code</button>
 </div>
 
-@if (Password.Item1 != string.Empty)
+@if (SecretCode is not null)
 {
-    <div class="password">
-    <div class="password-line">@Password.Item1</div>
-    <div class="password-line">@Password.Item2</div>
-</div>
+    <OutputSecretCode SecretCode="@SecretCode" />
 }
 
 @code {
@@ -86,28 +87,22 @@
         "Fountain",
     ];
     private string SelectedDecoration = Decorations.First();
-
-    private static readonly ImmutableArray<char> AcreRows = ['1', '2', '3', '4', '5', '6'];
-    private static readonly ImmutableArray<char> AcreCols = ['1', '2', '3', '4', '5'];
-    private char SelectedAcreRow = AcreRows.First();
-    private char SelectedAcreCol = AcreCols.First();
-
+    private static readonly ImmutableArray<int> AcreRows = [1, 2, 3, 4, 5, 6];
+    private static readonly ImmutableArray<int> AcreCols = [1, 2, 3, 4, 5];
+    private int SelectedAcreRow = AcreRows.First();
+    private int SelectedAcreCol = AcreCols.First();
     private Recipient Recipient = new();
-
     private int Price = 1;
     private bool IsEnglishPassword = false;
-
-    private (string, string) Password = (string.Empty, string.Empty);
+    private SecretCode? SecretCode = null;
 
     private void GeneratePassword()
     {
         int monumentType = Decorations.IndexOf(SelectedDecoration);
-        int acreX = AcreRows.IndexOf(SelectedAcreRow) + 1;
-        int acreY = AcreCols.IndexOf(SelectedAcreCol) + 1;
 
         try
         {
-            Password = Encoder.Encode
+            var password = Encoder.Encode
             (
                 codeType: CodeType.Monument,
                 hitRateIndex: 0,
@@ -115,13 +110,18 @@
                 recipient: Recipient.Name.PadRight(6, ' '),
                 sender: Price.ToString().PadRight(6, ' '),
                 itemId: (ushort)(monumentType % 15),
-                extraData: ((acreX & 7) << 3) | (acreY & 7),
+                extraData: ((SelectedAcreRow & 7) << 3) | (SelectedAcreCol & 7),
                 englishPasswords: IsEnglishPassword
             );
+            SecretCode = new()
+            {
+                Line1 = password.Item1,
+                Line2 = password.Item2,
+            };
         }
         catch
         {
-            Password = (string.Empty, string.Empty);
+            SecretCode = null;
         }
     }
 }
