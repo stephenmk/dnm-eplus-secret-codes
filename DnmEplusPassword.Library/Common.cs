@@ -362,7 +362,8 @@
             calculatedChecksum += GetStringByteValue(Sender);
             calculatedChecksum += ItemId;
 
-            if ((calculatedChecksum & 0xF) == checksum && mMpswd_check_default_hit_rate(CodeType, NpcCode) &&
+            if ((calculatedChecksum & 0xF) == checksum &&
+                mMpswd_check_default_hit_rate(CodeType, NpcCode) &&
                 mMpswd_check_default_npc_code(CodeType, NpcCode, Unknown))
             {
                 invalid = false;
@@ -382,7 +383,6 @@
             {
                 HitRate = true;
             }
-
             return HitRate;
         }
 
@@ -442,7 +442,7 @@
             int CalculatedChecksum = GetPasswordChecksum(PasswordData);
             int StoredChecksum = ((PasswordData[0] & 3) << 2) | ((PasswordData[1] & 0xC0) >> 6);
 
-            Console.WriteLine(string.Format("Calculated Checksum: 0x{0}\r\nStored Checksum: 0x{1}", CalculatedChecksum.ToString("X"), StoredChecksum.ToString("X")));
+            Console.WriteLine($"Calculated Checksum: 0x{CalculatedChecksum:X}\nStored Checksum: 0x{StoredChecksum:X}");
 
             return CalculatedChecksum == StoredChecksum;
         }
