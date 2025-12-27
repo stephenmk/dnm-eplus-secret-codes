@@ -3,21 +3,20 @@
 
     public enum CodeType
     {
-        Famicom = 0, // NES
-        NPC = 1, // Original NPC Code
-        Card_E = 2, // NOTE: This can only be sent to villagers in a letter.
-        Magazine = 3, // Contest?
-        User = 4, // Player-to-Player
+        Famicom = 0,     // NES
+        NPC = 1,         // Original NPC Code
+        Card_E = 2,      // NOTE: This can only be sent to villagers in a letter.
+        Magazine = 3,    // Contest?
+        User = 4,        // Player-to-Player
         Card_E_Mini = 5, // Only one data strip? Hit rate index must be set to 4.
-        New_NPC = 6, // Using the new password system?
-        Monument = 7 // Town Decorations (from Object Delivery Service, see: https://www.nintendo.co.jp/ngc/gaej/obje/)
+        New_NPC = 6,     // Using the new password system?
+        Monument = 7,    // Town Decorations (from Object Delivery Service, see: https://www.nintendo.co.jp/ngc/gaej/obje/)
     }
 
     public static class Common
     {
-        // Character List
-        public static readonly string[] AFe_CharList = new string[256]
-        {
+        public static readonly string[] AFe_CharList =
+        [
             "あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ", "た",
             "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "ま", "み",
             " ", "!", "\"", "む", "め", "%", "&", "'", "(", ")", "~", "♥", ", ", "-", ".", "♪",
@@ -33,11 +32,11 @@
             "ろ", "わ", "を", "ん", "ぁ", "ぃ", "ぅ", "ぇ", "ぉ", "ゃ", "ゅ", "ょ", "っ", "\n", "ガ", "ギ",
             "グ", "ゲ", "ゴ", "ザ", "ジ", "ズ", "ゼ", "ゾ", "ダ", "ヂ", "ヅ", "デ", "ド", "バ", "ビ", "ブ",
             "ベ", "ボ", "パ", "ピ", "プ", "ペ", "ポ", "が", "ぎ", "ぐ", "げ", "ご", "ざ", "じ", "ず", "ぜ",
-            "ぞ", "だ", "ぢ", "づ", "で", "ど", "ば", "び", "ぶ", "べ", "ぼ", "ぱ", "ぴ", "ぷ", "ぺ", "ぽ"
-        };
+            "ぞ", "だ", "ぢ", "づ", "で", "ど", "ば", "び", "ぶ", "べ", "ぼ", "ぱ", "ぴ", "ぷ", "ぺ", "ぽ",
+        ];
 
-        public static readonly int[] mMpswd_prime_number = new int[256]
-        {
+        public static readonly int[] mMpswd_prime_number =
+        [
             0x0011, 0x0013, 0x0017, 0x001D, 0x001F, 0x0025, 0x0029, 0x002B, 0x002F, 0x0035, 0x003B, 0x003D, 0x0043, 0x0047, 0x0049, 0x004F,
             0x0053, 0x0059, 0x0061, 0x0065, 0x0067, 0x006B, 0x006D, 0x0071, 0x007F, 0x0083, 0x0089, 0x008B, 0x0095, 0x0097, 0x009D, 0x00A3,
             0x00A7, 0x00AD, 0x00B3, 0x00B5, 0x00BF, 0x00C1, 0x00C5, 0x00C7, 0x00D3, 0x00DF, 0x00E3, 0x00E5, 0x00E9, 0x00EF, 0x00F1, 0x00FB,
@@ -54,71 +53,65 @@
             0x0527, 0x0529, 0x052F, 0x0551, 0x0557, 0x055D, 0x0565, 0x0577, 0x0581, 0x058F, 0x0593, 0x0595, 0x0599, 0x059F, 0x05A7, 0x05AB,
             0x05AD, 0x05B3, 0x05BF, 0x05C9, 0x05CB, 0x05CF, 0x05D1, 0x05D5, 0x05DB, 0x05E7, 0x05F3, 0x05FB, 0x0607, 0x060D, 0x0611, 0x0617,
             0x061F, 0x0623, 0x062B, 0x062F, 0x063D, 0x0641, 0x0647, 0x0649, 0x064D, 0x0653, 0x0655, 0x065B, 0x0665, 0x0679, 0x067F, 0x0683,
-        };
+        ];
 
-        public static readonly byte[] usable_to_fontnum_new_translation = new byte[64]
-        {
+        public static readonly byte[] usable_to_fontnum_new_translation =
+        [
             0x62, 0x4B, 0x7A, 0x35, 0x63, 0x71, 0x59, 0x5A, 0x4F, 0x64, 0x74, 0x36, 0x6E, 0x6C, 0x42, 0x79,
             0x6F, 0x38, 0x34, 0x4C, 0x6B, 0x25, 0x41, 0x51, 0x6D, 0x44, 0x50, 0x49, 0x37, 0x26, 0x52, 0x73,
             0x77, 0x55, 0x21, 0x72, 0x33, 0x45, 0x78, 0x4D, 0x43, 0x40, 0x65, 0x39, 0x67, 0x76, 0x56, 0x47,
-            0x75, 0x4E, 0x69, 0x58, 0x57, 0x66, 0x54, 0x4A, 0x46, 0x53, 0x48, 0x70, 0x32, 0x61, 0x6A, 0x68
-        };
+            0x75, 0x4E, 0x69, 0x58, 0x57, 0x66, 0x54, 0x4A, 0x46, 0x53, 0x48, 0x70, 0x32, 0x61, 0x6A, 0x68,
+        ];
 
-        public static readonly byte[] usable_to_fontnum_new = new byte[64]
-        {
+        public static readonly byte[] usable_to_fontnum_new =
+        [
             0x0A, 0x1F, 0x1D, 0xF0, 0xF1, 0xF5, 0x0D, 0x05, 0xF2, 0x1E, 0xE7, 0x60, 0xEB, 0x11, 0x17, 0x04,
             0xED, 0x15, 0x23, 0xE9, 0xE8, 0xEF, 0x16, 0x10, 0x09, 0xF4, 0xC2, 0x12, 0xF8, 0xC0, 0x0F, 0xC3,
             0xF7, 0x5B, 0x7B, 0x5E, 0x08, 0x00, 0x19, 0x02, 0xF9, 0x24, 0x1A, 0x0C, 0xEC, 0x7C, 0x0E, 0xEA,
-            0x01, 0x13, 0x07, 0x7E, 0x18, 0xF3, 0x14, 0x1C, 0x5D, 0x03, 0xEE, 0x1B, 0x0B, 0x7D, 0xC1, 0x06
-        };
+            0x01, 0x13, 0x07, 0x7E, 0x18, 0xF3, 0x14, 0x1C, 0x5D, 0x03, 0xEE, 0x1B, 0x0B, 0x7D, 0xC1, 0x06,
+        ];
 
-        public static readonly int[] key_idx = new int[2] { 0x16, 0x6 };
-
-        static readonly string[] mMpswd_transposition_cipher_char0_table = new string[16]
-        {
-            "NiiMasaru", // Animal Crossing programmer (worked on the original N64 title)
-            "KomatsuKunihiro", // Animal Crossing programmer (AF, AF+, AC, AFe+)
-            "TakakiGentarou", // Animal Crossing programmer
-            "MiyakeHiromichi", // Animal Crossing programmer
-            "HayakawaKenzo", // Animal Crossing programmer
-            "KasamatsuShigehiro", // Animal Crossing programmer
-            "SumiyoshiNobuhiro", // Animal Crossing programmer
-            "NomaTakafumi", // Animal Crossing programmer
-            "EguchiKatsuya", // Animal Crossing director
-            "NogamiHisashi", // Animal Crossing director
-            "IidaToki", // Animal Crossing screen designer
-            "IkegawaNoriko", // Animal Crossing character design
-            "KawaseTomohiro", // Animal Crossing NES/Famicom emulator programmer
-            "BandoTaro", // Animal Crossing Sound Effects programmer
-            "TotakaKazuo", // Animal Crossing Sound Director (Kazumi Totaka)
-            "WatanabeKunio" // Animal Crossing Script member (made text?)
-        };
-
-        static readonly string[] mMpswd_transposition_cipher_char1_table = new string[16]
-        {
-            "RichAmtower", // Localization Manager @ Nintendo of America https://www.linkedin.com/in/rich-amtower-83222a1, https://nintendo.fandom.com/wiki/Rich_Amtower
-            "KyleHudson", // Former Product Testing Manager @ Nintendo of America https://metroid.fandom.com/wiki/Kyle_Hudson
-            "MichaelKelbaugh", // Debugger & Beta Tester @ Nintendo of America https://nintendo.fandom.com/wiki/Michael_Kelbaugh
-            "RaycholeLAneff", // Raychole L'Anett - Director of Engineering Services @ Nintendo of America https://metroid.fandom.com/wiki/Raychole_L%27Anett
-            "LeslieSwan", // Senior Editor @ Nintendo Power, VA, Nintendo of America localization manager @ Treehouse. https://www.mariowiki.com/Leslie_Swan
-            "YoshinobuMantani", // Nintendo of America employee (QA, Debugger) https://www.imdb.com/name/nm1412191/
-            "KirkBuchanan", // Senior Product Testing Manager @ Nintendo of America https://leadferret.com/directory/person/kirk-buchanan/16977208
-            "TimOLeary", // Localization Manager & Translator @ Nintendo of America https://nintendo.fandom.com/wiki/Tim_O%27Leary
-            "BillTrinen", // Senior Product Marketing Manager, Translator, & Interpreter @ Nintendo of America https://en.wikipedia.org/wiki/Bill_Trinen
-            "nAkAyOsInoNyuuSankin", // Translates to "good bacteria" (善玉菌)
-            "zendamaKINAKUDAMAkin", // Translates to "bad bacteria" (悪玉菌)
-            "OishikutetUYOKUNARU", // Translates to "It's becoming really delicious." "It's becoming strongly delicious."
-            "AsetoAminofen", // Translates to Acetaminophen. Like the drug.
-            "fcSFCn64GCgbCGBagbVB", // fc = Famicom | SFC = Super Famicom | n64 = Nintendo 64 | GC = GameCube | gb = GameBoy | CGB = GameBoy Color | agb = GameBoy Advance | VB = Virtual Boy
-            "YossyIsland", // Yoshi's Island. The game.
-            "KedamonoNoMori" // Translates to "Animal Forest" or "Beast Forest"
-        };
+        public static readonly int[] key_idx = [0x16, 0x6];
 
         public static readonly string[][] mMpswd_transposition_cipher_char_table =
-            new string[2][] { mMpswd_transposition_cipher_char0_table, mMpswd_transposition_cipher_char1_table };
+        [[
+            "NiiMasaru",            // Animal Crossing programmer (worked on the original N64 title)
+            "KomatsuKunihiro",      // Animal Crossing programmer (AF, AF+, AC, AFe+)
+            "TakakiGentarou",       // Animal Crossing programmer
+            "MiyakeHiromichi",      // Animal Crossing programmer
+            "HayakawaKenzo",        // Animal Crossing programmer
+            "KasamatsuShigehiro",   // Animal Crossing programmer
+            "SumiyoshiNobuhiro",    // Animal Crossing programmer
+            "NomaTakafumi",         // Animal Crossing programmer
+            "EguchiKatsuya",        // Animal Crossing director
+            "NogamiHisashi",        // Animal Crossing director
+            "IidaToki",             // Animal Crossing screen designer
+            "IkegawaNoriko",        // Animal Crossing character design
+            "KawaseTomohiro",       // Animal Crossing NES/Famicom emulator programmer
+            "BandoTaro",            // Animal Crossing Sound Effects programmer
+            "TotakaKazuo",          // Animal Crossing Sound Director (Kazumi Totaka)
+            "WatanabeKunio",        // Animal Crossing Script member (made text?)
+        ], [
+            "RichAmtower",          // Localization Manager @ Nintendo of America https://www.linkedin.com/in/rich-amtower-83222a1, https://nintendo.fandom.com/wiki/Rich_Amtower
+            "KyleHudson",           // Former Product Testing Manager @ Nintendo of America https://metroid.fandom.com/wiki/Kyle_Hudson
+            "MichaelKelbaugh",      // Debugger & Beta Tester @ Nintendo of America https://nintendo.fandom.com/wiki/Michael_Kelbaugh
+            "RaycholeLAneff",       // Raychole L'Anett - Director of Engineering Services @ Nintendo of America https://metroid.fandom.com/wiki/Raychole_L%27Anett
+            "LeslieSwan",           // Senior Editor @ Nintendo Power, VA, Nintendo of America localization manager @ Treehouse. https://www.mariowiki.com/Leslie_Swan
+            "YoshinobuMantani",     // Nintendo of America employee (QA, Debugger) https://www.imdb.com/name/nm1412191/
+            "KirkBuchanan",         // Senior Product Testing Manager @ Nintendo of America https://leadferret.com/directory/person/kirk-buchanan/16977208
+            "TimOLeary",            // Localization Manager & Translator @ Nintendo of America https://nintendo.fandom.com/wiki/Tim_O%27Leary
+            "BillTrinen",           // Senior Product Marketing Manager, Translator, & Interpreter @ Nintendo of America https://en.wikipedia.org/wiki/Bill_Trinen
+            "nAkAyOsInoNyuuSankin", // Translates to "good bacteria" (善玉菌)
+            "zendamaKINAKUDAMAkin", // Translates to "bad bacteria" (悪玉菌)
+            "OishikutetUYOKUNARU",  // Translates to "It's becoming really delicious." "It's becoming strongly delicious."
+            "AsetoAminofen",        // Translates to Acetaminophen. Like the drug.
+            "fcSFCn64GCgbCGBagbVB", // fc = Famicom | SFC = Super Famicom | n64 = Nintendo 64 | GC = GameCube | gb = GameBoy | CGB = GameBoy Color | agb = GameBoy Advance | VB = Virtual Boy
+            "YossyIsland",          // Yoshi's Island. The game.
+            "KedamonoNoMori",       // Translates to "Animal Forest" or "Beast Forest"
+        ]];
 
-        public static readonly byte[] mMpswd_chg_code_table = new byte[256]
-        {
+        public static readonly byte[] mMpswd_chg_code_table =
+        [
             0xF0, 0x83, 0xFD, 0x62, 0x93, 0x49, 0x0D, 0x3E, 0xE1, 0xA4, 0x2B, 0xAF, 0x3A, 0x25, 0xD0, 0x82,
             0x7F, 0x97, 0xD2, 0x03, 0xB2, 0x32, 0xB4, 0xE6, 0x09, 0x42, 0x57, 0x27, 0x60, 0xEA, 0x76, 0xAB,
             0x2D, 0x65, 0xA8, 0x4D, 0x8B, 0x95, 0x01, 0x37, 0x59, 0x79, 0x33, 0xAC, 0x2F, 0xAE, 0x9F, 0xFE,
@@ -135,35 +128,29 @@
             0xFA, 0x88, 0x6E, 0xFB, 0x84, 0x23, 0x5D, 0xCD, 0xEE, 0x92, 0x58, 0x4C, 0x0B, 0xF7, 0x0A, 0xB1,
             0xDA, 0x35, 0x5F, 0x9B, 0xC9, 0xA9, 0xE7, 0x07, 0x1D, 0x18, 0xF3, 0xE3, 0xF1, 0xF4, 0xCA, 0xB0,
             0x6B, 0x30, 0xEC, 0x4B, 0x48, 0x1C, 0xAD, 0xE2, 0x21, 0x1E, 0xA2, 0xBD, 0x5A, 0xD8, 0x43, 0x7A,
-        };
+        ];
 
-        static readonly int[] mMpswd_select_idx0 = new int[8] { 0x11, 0x0B, 0x00, 0x14, 0x0E, 0x06, 0x08, 0x04 };
-        static readonly int[] mMpswd_select_idx1 = new int[8] { 0x05, 0x08, 0x0B, 0x10, 0x04, 0x06, 0x09, 0x13 };
-        static readonly int[] mMpswd_select_idx2 = new int[8] { 0x09, 0x0E, 0x11, 0x15, 0x0B, 0x0A, 0x13, 0x02 };
-        static readonly int[] mMpswd_select_idx3 = new int[8] { 0x00, 0x02, 0x01, 0x04, 0x12, 0x0A, 0x0B, 0x08 };
-        static readonly int[] mMpswd_select_idx4 = new int[8] { 0x11, 0x13, 0x10, 0x14, 0x0E, 0x08, 0x02, 0x09 };
-        static readonly int[] mMpswd_select_idx5 = new int[8] { 0x10, 0x02, 0x01, 0x08, 0x12, 0x04, 0x07, 0x06 };
-        static readonly int[] mMpswd_select_idx6 = new int[8] { 0x13, 0x06, 0x0A, 0x11, 0x01, 0x10, 0x08, 0x09 };
-        static readonly int[] mMpswd_select_idx7 = new int[8] { 0x11, 0x07, 0x12, 0x10, 0x0F, 0x02, 0x0B, 0x00 };
-        static readonly int[] mMpswd_select_idx8 = new int[8] { 0x06, 0x02, 0x0B, 0x01, 0x08, 0x0E, 0x00, 0x10 };
-        static readonly int[] mMpswd_select_idx9 = new int[8] { 0x13, 0x10, 0x0B, 0x08, 0x11, 0x02, 0x06, 0x0E };
-        static readonly int[] mMpswd_select_idx10 = new int[8] { 0x12, 0x0F, 0x02, 0x07, 0x0A, 0x0B, 0x01, 0x0E };
-        static readonly int[] mMpswd_select_idx11 = new int[8] { 0x08, 0x00, 0x0E, 0x02, 0x14, 0x0B, 0x0F, 0x11 };
-        static readonly int[] mMpswd_select_idx12 = new int[8] { 0x09, 0x01, 0x02, 0x00, 0x13, 0x08, 0x0E, 0x0A };
-        static readonly int[] mMpswd_select_idx13 = new int[8] { 0x0A, 0x0B, 0x0E, 0x10, 0x13, 0x07, 0x11, 0x08 };
-        static readonly int[] mMpswd_select_idx14 = new int[8] { 0x13, 0x08, 0x06, 0x01, 0x11, 0x09, 0x0E, 0x0A };
-        static readonly int[] mMpswd_select_idx15 = new int[8] { 0x09, 0x07, 0x11, 0x0E, 0x13, 0x0A, 0x01, 0x0B };
-
-        public static readonly int[][] mMpswd_select_idx_table = new int[16][]
-        {
-            mMpswd_select_idx0, mMpswd_select_idx1, mMpswd_select_idx2, mMpswd_select_idx3,
-            mMpswd_select_idx4, mMpswd_select_idx5, mMpswd_select_idx6, mMpswd_select_idx7,
-            mMpswd_select_idx8, mMpswd_select_idx9, mMpswd_select_idx10, mMpswd_select_idx11,
-            mMpswd_select_idx12, mMpswd_select_idx13, mMpswd_select_idx14, mMpswd_select_idx15
-        };
+        public static readonly int[][] mMpswd_select_idx_table =
+        [
+            [0x11, 0x0B, 0x00, 0x14, 0x0E, 0x06, 0x08, 0x04],
+            [0x05, 0x08, 0x0B, 0x10, 0x04, 0x06, 0x09, 0x13],
+            [0x09, 0x0E, 0x11, 0x15, 0x0B, 0x0A, 0x13, 0x02],
+            [0x00, 0x02, 0x01, 0x04, 0x12, 0x0A, 0x0B, 0x08],
+            [0x11, 0x13, 0x10, 0x14, 0x0E, 0x08, 0x02, 0x09],
+            [0x10, 0x02, 0x01, 0x08, 0x12, 0x04, 0x07, 0x06],
+            [0x13, 0x06, 0x0A, 0x11, 0x01, 0x10, 0x08, 0x09],
+            [0x11, 0x07, 0x12, 0x10, 0x0F, 0x02, 0x0B, 0x00],
+            [0x06, 0x02, 0x0B, 0x01, 0x08, 0x0E, 0x00, 0x10],
+            [0x13, 0x10, 0x0B, 0x08, 0x11, 0x02, 0x06, 0x0E],
+            [0x12, 0x0F, 0x02, 0x07, 0x0A, 0x0B, 0x01, 0x0E],
+            [0x08, 0x00, 0x0E, 0x02, 0x14, 0x0B, 0x0F, 0x11],
+            [0x09, 0x01, 0x02, 0x00, 0x13, 0x08, 0x0E, 0x0A],
+            [0x0A, 0x0B, 0x0E, 0x10, 0x13, 0x07, 0x11, 0x08],
+            [0x13, 0x08, 0x06, 0x01, 0x11, 0x09, 0x0E, 0x0A],
+            [0x09, 0x07, 0x11, 0x0E, 0x13, 0x0A, 0x01, 0x0B],
+        ];
 
         // Methods
-
         public static byte mMpswd_chg_password_font_code_sub(byte Character, in byte[] fontnum_tbl)
         {
             for (byte i = 0; i < 0x40; i++)
@@ -173,7 +160,6 @@
                     return i;
                 }
             }
-
             return 0xFF;
         }
 
@@ -184,8 +170,6 @@
                 Password[i] = mMpswd_chg_password_font_code_sub(Password[i], fontnum_tbl);
             }
         }
-
-
 
         public static void mMpswd_transposition_cipher(ref byte[] Data, bool Negate, int KeyIndex)
         {
@@ -321,14 +305,10 @@
             }
         }
 
-        public static Tuple<int, int, int, int[]> mMpswd_get_RSA_key_code(byte[] Data)
+        public static (int, int, int, int[]) mMpswd_get_RSA_key_code(byte[] Data)
         {
-            int Bit10 = 0;
-            int Bit32 = 0;
-            int ByteTable = 0;
-
-            Bit10 = Data[3] & 3;
-            Bit32 = (Data[3] >> 2) & 3;
+            int Bit10 = Data[3] & 3;
+            int Bit32 = (Data[3] >> 2) & 3;
 
             if (Bit10 == 3)
             {
@@ -357,15 +337,22 @@
                 }
             }
 
-            ByteTable = ((Data[3] >> 2) & 0x3C) >> 2;
+            int ByteTable = ((Data[3] >> 2) & 0x3C) >> 2;
 
-            return new Tuple<int, int, int, int[]>(mMpswd_prime_number[Bit10], mMpswd_prime_number[Bit32],
-                mMpswd_prime_number[Data[0xC]], mMpswd_select_idx_table[ByteTable]);
+            return (
+                mMpswd_prime_number[Bit10],
+                mMpswd_prime_number[Bit32],
+                mMpswd_prime_number[Data[0xC]],
+                mMpswd_select_idx_table[ByteTable]
+            );
         }
 
         public static bool mMpswd_new_password_zuru_check(int checksum, int CodeType, string Reciepiant, string TownName, string Sender, ushort ItemId, int NpcCode, int Unknown)
         {
-            if (CodeType == 2 || CodeType >= 8) return true;
+            if (CodeType == 2 || CodeType >= 8)
+            {
+                return true;
+            }
 
             var invalid = true;
 
@@ -463,6 +450,7 @@
         public static byte[] StringToAFByteArray(string Input)
         {
             byte[] Output = new byte[Input.Length];
+
             for (int i = 0; i < Input.Length; i++)
             {
                 int Idx = Array.IndexOf(AFe_CharList, Input.Substring(i, 1));
@@ -470,14 +458,18 @@
                 {
                     throw new Exception("The string had an invalid character in it!");
                 }
-
                 Output[i] = (byte)Idx;
             }
 
             return Output;
         }
 
-        private static int GetStringByteValue(string input) =>
-            StringToAFByteArray(input).Aggregate(0, (current, t) => current + t);
+        private static int GetStringByteValue(string input)
+            => StringToAFByteArray(input)
+                .Aggregate
+                (
+                    seed: 0,
+                    func: static (current, t) => current + t
+                );
     }
 }

@@ -80,7 +80,7 @@ namespace DnmEplusPassword.Library
         public static void mMpswd_decode_RSA_cipher(ref byte[] Data)
         {
             int ModCount = 0;
-            byte[] OutputBuffer = Data.Clone() as byte[];
+            byte[] OutputBuffer = [.. Data];
 
             Tuple<int, int, int, int[]> PrimeData = Common.mMpswd_get_RSA_key_code(Data);
 
@@ -91,8 +91,8 @@ namespace DnmEplusPassword.Library
 
             int PrimeProduct = Prime1 * Prime2;
             int LessProduct = (Prime1 - 1) * (Prime2 - 1);
-            int LoopEndValue = 0;
-            int ModValue = 0;
+            int LoopEndValue;
+            int ModValue;
 
             do
             {
@@ -101,17 +101,15 @@ namespace DnmEplusPassword.Library
                 ModValue = (ModCount * LessProduct + 1) / Prime3;
             } while (LoopEndValue != 0);
 
-            int CurrentValue = 0;
-
             for (int i = 0; i < 8; i++)
             {
                 int Value = Data[IndexTable[i]];
                 Value |= ((Data[23] >> i) << 8) & 0x100;
-                CurrentValue = Value;
+                int CurrentValue = Value;
 
                 for (int x = 0; x < ModValue - 1; x++)
                 {
-                    Value = (Value * CurrentValue) % PrimeProduct;
+                    Value = Value * CurrentValue % PrimeProduct;
                 }
 
                 OutputBuffer[IndexTable[i]] = (byte)Value;
@@ -196,7 +194,7 @@ namespace DnmEplusPassword.Library
             return PasswordData;
         }
 
-        public static byte[] Decode(string Password, bool englishPasswords = false)
+        public static byte[]? Decode(string Password, bool englishPasswords = false)
         {
             if (Password.Length == 32)
             {

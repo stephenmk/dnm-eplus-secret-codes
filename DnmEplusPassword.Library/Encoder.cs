@@ -152,8 +152,12 @@ namespace DnmEplusPassword.Library
             int CharOffset = Key == 0 ? 0xD : 9;
             int CharCount = Key == 0 ? 0x16 : 0x17;
 
-            byte[] Buffer = Data.Take(CharOffset).Concat(Data.Skip(CharOffset + 1).Take(23 - CharOffset)).ToArray();
-            byte[] Output = new byte[CharCount];
+            var Buffer = Data.Take(CharOffset)
+                .Concat(Data.Skip(CharOffset + 1)
+                .Take(23 - CharOffset))
+                .ToArray();
+
+            var Output = new byte[CharCount];
 
             int[] IndexTable = Common.mMpswd_select_idx_table[Data[CharOffset] & 3];
 
@@ -185,7 +189,7 @@ namespace DnmEplusPassword.Library
 
         public static void mMpswd_chg_RSA_cipher(ref byte[] Data)
         {
-            byte[] Buffer = Data.Clone() as byte[];
+            byte[] Buffer = [.. Data];
             Tuple<int, int, int, int[]> Parameters = Common.mMpswd_get_RSA_key_code(Data);
             int Prime1 = Parameters.Item1;
             int Prime2 = Parameters.Item2;
@@ -285,11 +289,19 @@ namespace DnmEplusPassword.Library
         public static void mMpswd_chg_common_font_code(ref byte[] Password, bool englishPasswords)
         {
             if (englishPasswords)
+            {
                 for (int i = 0; i < 32; i++)
+                {
                     Password[i] = Common.usable_to_fontnum_new_translation[Password[i]];
+                }
+            }
             else
+            {
                 for (int i = 0; i < 32; i++)
+                {
                     Password[i] = Common.usable_to_fontnum_new[Password[i]];
+                }
+            }
         }
 
 #if DEBUG
