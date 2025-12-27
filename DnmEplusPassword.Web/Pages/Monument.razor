@@ -10,24 +10,13 @@
 <div style="max-width: 400px;">
     <InputRecipient Recipient="@Recipient" />
     <InputDecoration Decoration="@Decoration" />
-
-    <div class="row">
-        <label for="priceInput" class="col col-form-label">Price</label>
-        <div class="col">
-            <InputNumber @bind-Value="Price" id="priceInput" class="form-control" min="1" max="999999" step="1" />
-        </div>
-    </div>
-
+    <InputPrice Price="@Price" />
     <InputPlacementAcre PlacementAcre="@PlacementAcre" />
+    <InputLanguage Language="@Language" />
 
-    <div class="row">
-        <label for="englishInput" class="col col-form-label">English Code</label>
-        <div class="col">
-            <InputCheckbox id="englishInput" class="form-check-input" @bind-Value="IsEnglishPassword" />
-        </div>
-    </div>
-
-    <button class="btn btn-primary" @onclick="GeneratePassword">Generate Secret Code</button>
+    <button class="btn btn-primary" @onclick="GeneratePassword">
+        Generate Secret Code
+    </button>
 </div>
 
 @if (SecretCode is not null)
@@ -38,9 +27,9 @@
 @code {
     private Recipient Recipient = new();
     private Decoration Decoration = new();
-    private int Price = 1;
+    private Price Price = new();
     private PlacementAcre PlacementAcre = new();
-    private bool IsEnglishPassword = false;
+    private Language Language = new();
     private SecretCode? SecretCode = null;
 
     private void GeneratePassword()
@@ -53,10 +42,10 @@
                 hitRateIndex: 0,
                 recipientTown: Recipient.TownName.PadRight(6, ' '),
                 recipient: Recipient.Name.PadRight(6, ' '),
-                sender: Price.ToString().PadRight(6, ' '),
+                sender: Price.Value.ToString().PadRight(6, ' '),
                 itemId: (ushort)(Decoration.Id % 15),
                 extraData: ((PlacementAcre.Row & 7) << 3) | (PlacementAcre.Col & 7),
-                englishPasswords: IsEnglishPassword
+                englishPasswords: Language.IsEnglish
             );
             SecretCode = new()
             {
