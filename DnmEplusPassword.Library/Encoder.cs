@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-
-// ReSharper disable once CheckNamespace
-namespace PasswordLibrary.Encoder
+namespace DnmEplusPassword.Library
 {
     public static class Encoder
     {

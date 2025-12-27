@@ -1,10 +1,4 @@
-﻿#define ANIMAL_FOREST_E_PLUS
-
-using System;
-using System.Linq;
-
-// ReSharper disable once CheckNamespace
-namespace PasswordLibrary
+﻿namespace DnmEplusPassword.Library
 {
 
     public enum CodeType
