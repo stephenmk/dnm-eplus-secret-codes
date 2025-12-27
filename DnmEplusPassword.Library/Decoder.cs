@@ -177,7 +177,11 @@ public class Decoder
 
         byte[] passwordData = new byte[24];
 
-        Common.mMpswd_chg_password_font_code(ref input, englishPasswords ? Common.usable_to_fontnum_new_translation : Common.usable_to_fontnum_new);
+        var passwordAlphabet = englishPasswords
+            ? Common.usable_to_fontnum_new_translation
+            : Common.usable_to_fontnum_new;
+
+        Common.mMpswd_chg_password_font_code(ref input, passwordAlphabet);
         mMpswd_chg_8bits_code(ref passwordData, input);
         Common.mMpswd_transposition_cipher(ref passwordData, true, 1);
         mMpswd_decode_bit_shuffle(ref passwordData, true);

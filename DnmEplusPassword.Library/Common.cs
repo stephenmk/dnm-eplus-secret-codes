@@ -140,7 +140,7 @@ public static class Common
     ];
 
     // Methods
-    public static byte mMpswd_chg_password_font_code_sub(byte character, in IList<byte> fontnum_tbl)
+    public static byte mMpswd_chg_password_font_code_sub(byte character, in ImmutableArray<byte> fontnum_tbl)
     {
         for (byte i = 0; i < 0x40; i++)
         {
@@ -152,7 +152,7 @@ public static class Common
         return 0xFF;
     }
 
-    public static void mMpswd_chg_password_font_code(ref byte[] password, in IList<byte> fontnum_tbl)
+    public static void mMpswd_chg_password_font_code(ref byte[] password, in ImmutableArray<byte> fontnum_tbl)
     {
         for (int i = 0; i < 32; i++)
         {
