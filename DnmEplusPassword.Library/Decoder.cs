@@ -19,8 +19,8 @@ namespace DnmEplusPassword.Library
                 shuffledData[i] = data[idx++];
             }
 
-            byte[] zeroedData = new byte[23];
-            int[] shuffleTable = Common.mMpswd_select_idx_table[data[bitIdx] & 3];
+            var zeroedData = new byte[23];
+            var shuffleTable = Common.mMpswd_select_idx_table[data[bitIdx] & 3];
             int offsetIdx = 0;
             int zeroedDataIdx = 0;
 
@@ -84,13 +84,14 @@ namespace DnmEplusPassword.Library
 
             var primeData = Common.mMpswd_get_RSA_key_code(data);
 
-            int prime1 = primeData.Item1;
-            int prime2 = primeData.Item2;
-            int prime3 = primeData.Item3;
-            int[] indexTable = primeData.Item4;
+            var prime1 = primeData.Item1;
+            var prime2 = primeData.Item2;
+            var prime3 = primeData.Item3;
+            var indexTable = primeData.Item4;
 
             int primeProduct = prime1 * prime2;
             int lessProduct = (prime1 - 1) * (prime2 - 1);
+
             int loopEndValue;
             int modValue;
 
@@ -201,12 +202,13 @@ namespace DnmEplusPassword.Library
                 byte[] data = new byte[32];
                 for (int i = 0; i < 32; i++)
                 {
-                    int Idx = Array.IndexOf(Common.AFe_CharList, password.Substring(i, 1));
-                    if (Idx < 0)
+                    var character = password.Substring(i, 1);
+                    int idx = Common.AFe_CharList.IndexOf(character);
+                    if (idx < 0)
                     {
-                        throw new Exception("The password contains an invalid character!");
+                        throw new Exception($"The password contains an invalid character: '{character}'");
                     }
-                    data[i] = (byte)Idx;
+                    data[i] = (byte)idx;
                 }
                 return Decode(data, englishPasswords);
             }

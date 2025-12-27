@@ -63,7 +63,8 @@ namespace DnmEplusPassword.Library
                 }
                 else
                 {
-                    int characterIndex = Array.IndexOf(Common.AFe_CharList, recipientTown.Substring(i, 1));
+                    var character = recipientTown.Substring(i, 1);
+                    int characterIndex = Common.AFe_CharList.IndexOf(character);
                     if (characterIndex < 0)
                     {
                         characterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
@@ -82,7 +83,8 @@ namespace DnmEplusPassword.Library
                 }
                 else
                 {
-                    int characterIndex = Array.IndexOf(Common.AFe_CharList, recipient.Substring(i, 1));
+                    var character = recipient.Substring(i, 1);
+                    int characterIndex = Common.AFe_CharList.IndexOf(character);
                     if (characterIndex < 0)
                     {
                         characterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
@@ -101,7 +103,8 @@ namespace DnmEplusPassword.Library
                 }
                 else
                 {
-                    int characterIndex = Array.IndexOf(Common.AFe_CharList, sender.Substring(i, 1));
+                    var character = sender.Substring(i, 1);
+                    int characterIndex = Common.AFe_CharList.IndexOf(character);
                     if (characterIndex < 0)
                     {
                         characterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
@@ -167,7 +170,7 @@ namespace DnmEplusPassword.Library
 
             var output = new byte[charCount];
 
-            int[] indexTable = Common.mMpswd_select_idx_table[data[charOffset] & 3];
+            var indexTable = Common.mMpswd_select_idx_table[data[charOffset] & 3];
 
             for (int i = 0; i < charCount; i++)
             {
@@ -200,10 +203,10 @@ namespace DnmEplusPassword.Library
             byte[] buffer = [.. data];
 
             var parameters = Common.mMpswd_get_RSA_key_code(data);
-            int prime1 = parameters.Item1;
-            int prime2 = parameters.Item2;
-            int prime3 = parameters.Item3;
-            int[] indexTable = parameters.Item4;
+            var prime1 = parameters.Item1;
+            var prime2 = parameters.Item2;
+            var prime3 = parameters.Item3;
+            var indexTable = parameters.Item4;
 
             byte cipherValue = 0;
             int primeProduct = prime1 * prime2;
