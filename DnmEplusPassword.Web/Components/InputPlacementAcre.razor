@@ -1,7 +1,7 @@
 @using DnmEplusPassword.Web.Models
 
 <div class="row">
-    <label for="rowAcreInput" class="col col-form-label">Acre Row (ちょうめ)</label>
+    <label for="rowAcreInput" class="col col-form-label">Acre Row</label>
     <div class="col">
         <InputSelect @bind-Value="PlacementAcre.Row" id="rowAcreInput" class="form-select">
             @foreach (var row in PlacementAcre.ValidRows)
@@ -12,7 +12,7 @@
     </div>
 </div>
 <div class="row">
-    <label for="colAcreInput" class="col col-form-label">Acre Column (ばんち)</label>
+    <label for="colAcreInput" class="col col-form-label">Acre Column</label>
     <div class="col">
         <InputSelect @bind-Value="PlacementAcre.Col" id="colAcreInput" class="form-select">
             @foreach (var col in PlacementAcre.ValidCols)
