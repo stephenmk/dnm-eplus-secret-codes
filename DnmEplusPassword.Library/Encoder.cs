@@ -317,9 +317,7 @@ public static class Encoder
         }
     }
 
-#if DEBUG
-
-    public static string Encode(
+    public static string DebugEncode(
         CodeType codeType,
         int hitRateIndex,
         string recipientTown,
@@ -377,8 +375,6 @@ public static class Encoder
         Console.Write("\n\n");
     }
 
-#else
-
     public static string Encode(
         CodeType codeType,
         int hitRateIndex,
@@ -413,7 +409,5 @@ public static class Encoder
 
         return passwordString;
     }
-
-#endif
 
 }
