@@ -313,7 +313,7 @@ namespace DnmEplusPassword.Library
             PrintByteBuffer("mMpswd_transposition_cipher", PasswordData);
             byte[] Password = mMpswd_chg_6bits_code(PasswordData);
             PrintByteBuffer("mMpswd_chg_6bits_code", Password);
-            mMpswd_chg_common_font_code(ref Password);
+            mMpswd_chg_common_font_code(ref Password, false);
             PrintByteBuffer("mMpswd_chg_common_font_code", Password);
 
             // Construct password string
