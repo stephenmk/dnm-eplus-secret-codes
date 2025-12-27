@@ -185,7 +185,7 @@
             }
         }
 
-        
+
 
         public static void mMpswd_transposition_cipher(ref byte[] Data, bool Negate, int KeyIndex)
         {
@@ -359,7 +359,7 @@
 
             ByteTable = ((Data[3] >> 2) & 0x3C) >> 2;
 
-            return new Tuple<int, int, int, int[]>( mMpswd_prime_number[Bit10], mMpswd_prime_number[Bit32],
+            return new Tuple<int, int, int, int[]>(mMpswd_prime_number[Bit10], mMpswd_prime_number[Bit32],
                 mMpswd_prime_number[Data[0xC]], mMpswd_select_idx_table[ByteTable]);
         }
 

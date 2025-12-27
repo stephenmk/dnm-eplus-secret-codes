@@ -40,14 +40,14 @@ namespace DnmEplusPassword.Library
                     break;
             }
 
-            int Byte0 = ((int) CodeType << 5) & 0xE0;
+            int Byte0 = ((int)CodeType << 5) & 0xE0;
             Byte0 |= (realHitRateIndex << 2);
             Output[0] = (byte)Byte0;
             Output[1] = (byte)ExtraData;
             Output[2] = (byte)npcCode;
 
             // Copy Recipient Name
-            for(int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
                 if (i >= RecipientTown.Length)
                 {
@@ -129,12 +129,12 @@ namespace DnmEplusPassword.Library
             Output[0] |= (byte)((Checksum >> 2) & 3);
             Output[1] |= (byte)((Checksum & 3) << 6);
 
-            #if DEBUG
+#if DEBUG
             for (int i = 0; i < Output.Length; i++)
             {
                 Console.WriteLine(string.Format("Output[{0}]", i) + ": " + Output[i].ToString("X2"));
             }
-            #endif
+#endif
 
             return Output;
         }
