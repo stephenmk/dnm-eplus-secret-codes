@@ -326,26 +326,26 @@ public static class Encoder
         ushort itemId,
         int extraData)
     {
-        byte[] PasswordData = mMpswd_make_passcode(codeType, hitRateIndex, recipientTown, recipient, sender, itemId, extraData);
-        PrintByteBuffer("mMpswd_make_passcode", PasswordData);
-        mMpswd_substitution_cipher(ref PasswordData);
-        PrintByteBuffer("mMpswd_substitution_cipher", PasswordData);
-        Common.mMpswd_transposition_cipher(ref PasswordData, true, 0);
-        PrintByteBuffer("mMpswd_transposition_cipher", PasswordData);
-        mMpswd_bit_shuffle(ref PasswordData, 0); // this doesn't change the last byte. Is that necessary? Doesn't seem to be.
-        PrintByteBuffer("mMpswd_bit_shuffle", PasswordData);
-        mMpswd_chg_RSA_cipher(ref PasswordData);
-        PrintByteBuffer("mMpswd_chg_RSA_cipher", PasswordData);
-        mMpswd_bit_mix_code(ref PasswordData); // the problem appears to be in the bit mix function.
-        PrintByteBuffer("mMpswd_bit_mix_code", PasswordData);
-        mMpswd_bit_shuffle(ref PasswordData, 1);
-        PrintByteBuffer("mMpswd_bit_shuffle", PasswordData);
-        Common.mMpswd_transposition_cipher(ref PasswordData, false, 1);
-        PrintByteBuffer("mMpswd_transposition_cipher", PasswordData);
-        byte[] Password = mMpswd_chg_6bits_code(PasswordData);
-        PrintByteBuffer("mMpswd_chg_6bits_code", Password);
-        mMpswd_chg_common_font_code(ref Password, false);
-        PrintByteBuffer("mMpswd_chg_common_font_code", Password);
+        byte[] passwordData = mMpswd_make_passcode(codeType, hitRateIndex, recipientTown, recipient, sender, itemId, extraData);
+        PrintByteBuffer("mMpswd_make_passcode", passwordData);
+        mMpswd_substitution_cipher(ref passwordData);
+        PrintByteBuffer("mMpswd_substitution_cipher", passwordData);
+        Common.mMpswd_transposition_cipher(ref passwordData, true, 0);
+        PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
+        mMpswd_bit_shuffle(ref passwordData, 0); // this doesn't change the last byte. Is that necessary? Doesn't seem to be.
+        PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
+        mMpswd_chg_RSA_cipher(ref passwordData);
+        PrintByteBuffer("mMpswd_chg_RSA_cipher", passwordData);
+        mMpswd_bit_mix_code(ref passwordData); // the problem appears to be in the bit mix function.
+        PrintByteBuffer("mMpswd_bit_mix_code", passwordData);
+        mMpswd_bit_shuffle(ref passwordData, 1);
+        PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
+        Common.mMpswd_transposition_cipher(ref passwordData, false, 1);
+        PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
+        byte[] password = mMpswd_chg_6bits_code(passwordData);
+        PrintByteBuffer("mMpswd_chg_6bits_code", password);
+        mMpswd_chg_common_font_code(ref password, false);
+        PrintByteBuffer("mMpswd_chg_common_font_code", password);
 
         // Construct password string
         string passwordString = "";
@@ -355,7 +355,7 @@ public static class Encoder
             {
                 passwordString += "\r\n";
             }
-            passwordString += Common.AFe_CharList[Password[i]];
+            passwordString += Common.AFe_CharList[password[i]];
         }
 
         return passwordString;
@@ -385,16 +385,16 @@ public static class Encoder
         int extraData,
         bool englishPasswords)
     {
-        byte[] PasswordData = mMpswd_make_passcode(codeType, hitRateIndex, recipientTown, recipient, sender, itemId, extraData);
-        mMpswd_substitution_cipher(ref PasswordData);
-        Common.mMpswd_transposition_cipher(ref PasswordData, true, 0);
-        mMpswd_bit_shuffle(ref PasswordData, 0);
-        mMpswd_chg_RSA_cipher(ref PasswordData);
-        mMpswd_bit_mix_code(ref PasswordData);
-        mMpswd_bit_shuffle(ref PasswordData, 1);
-        Common.mMpswd_transposition_cipher(ref PasswordData, false, 1);
-        byte[] Password = mMpswd_chg_6bits_code(PasswordData);
-        mMpswd_chg_common_font_code(ref Password, englishPasswords);
+        byte[] passwordData = mMpswd_make_passcode(codeType, hitRateIndex, recipientTown, recipient, sender, itemId, extraData);
+        mMpswd_substitution_cipher(ref passwordData);
+        Common.mMpswd_transposition_cipher(ref passwordData, true, 0);
+        mMpswd_bit_shuffle(ref passwordData, 0);
+        mMpswd_chg_RSA_cipher(ref passwordData);
+        mMpswd_bit_mix_code(ref passwordData);
+        mMpswd_bit_shuffle(ref passwordData, 1);
+        Common.mMpswd_transposition_cipher(ref passwordData, false, 1);
+        byte[] password = mMpswd_chg_6bits_code(passwordData);
+        mMpswd_chg_common_font_code(ref password, englishPasswords);
 
         // Construct password string
         string passwordString = "";
@@ -404,7 +404,7 @@ public static class Encoder
             {
                 passwordString += "\r\n";
             }
-            passwordString += Common.AFe_CharList[Password[i]];
+            passwordString += Common.AFe_CharList[password[i]];
         }
 
         return passwordString;
