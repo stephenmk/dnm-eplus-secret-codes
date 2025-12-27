@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace DnmEplusPassword.Library;
 
 public static class Encoder
@@ -371,7 +373,7 @@ public static class Encoder
         Console.Write("\n\n");
     }
 
-    public static string Encode(
+    public static (string, string) Encode(
         CodeType codeType,
         int hitRateIndex,
         string recipientTown,
@@ -392,18 +394,9 @@ public static class Encoder
         byte[] password = mMpswd_chg_6bits_code(passwordData);
         mMpswd_chg_common_font_code(ref password, englishPasswords);
 
-        // Construct password string
-        string passwordString = "";
-        for (int i = 0; i < 32; i++)
-        {
-            if (i == 16)
-            {
-                passwordString += "\r\n";
-            }
-            passwordString += Common.AFe_CharList[password[i]];
-        }
+        var line1 = string.Join("", password.Take(16).Select(x => Common.AFe_CharList[x]));
+        var line2 = string.Join("", password.Skip(16).Select(x => Common.AFe_CharList[x]));
 
-        return passwordString;
+        return (line1, line2);
     }
-
 }
