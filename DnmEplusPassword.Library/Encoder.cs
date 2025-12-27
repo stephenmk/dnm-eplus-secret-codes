@@ -203,26 +203,22 @@ public static class Encoder
     {
         byte[] buffer = [.. data];
 
-        var parameters = Common.mMpswd_get_RSA_key_code(data);
-        var prime1 = parameters.Item1;
-        var prime2 = parameters.Item2;
-        var prime3 = parameters.Item3;
-        var indexTable = parameters.Item4;
+        var rsa = new RsaKeyCode(data);
 
         byte cipherValue = 0;
-        int primeProduct = prime1 * prime2;
+        int primeProduct = rsa.Prime1 * rsa.Prime2;
 
         for (int i = 0; i < 8; i++)
         {
-            int value = data[indexTable[i]];
+            int value = data[rsa.IndexTable[i]];
             int currentValue = value;
 
-            for (int x = 0; x < prime3 - 1; x++)
+            for (int x = 0; x < rsa.Prime3 - 1; x++)
             {
                 value = value * currentValue % primeProduct;
             }
 
-            buffer[indexTable[i]] = (byte)value;
+            buffer[rsa.IndexTable[i]] = (byte)value;
             value = (value >> 8) & 1;
             cipherValue |= (byte)(value << i);
         }

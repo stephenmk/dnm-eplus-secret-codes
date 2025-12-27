@@ -79,32 +79,27 @@ public class Decoder
 
     public static void mMpswd_decode_RSA_cipher(ref byte[] data)
     {
-        int modCount = 0;
         byte[] outputBuffer = [.. data];
 
-        var primeData = Common.mMpswd_get_RSA_key_code(data);
+        var rsa = new RsaKeyCode(data);
 
-        var prime1 = primeData.Item1;
-        var prime2 = primeData.Item2;
-        var prime3 = primeData.Item3;
-        var indexTable = primeData.Item4;
+        int primeProduct = rsa.Prime1 * rsa.Prime2;
+        int lessProduct = (rsa.Prime1 - 1) * (rsa.Prime2 - 1);
 
-        int primeProduct = prime1 * prime2;
-        int lessProduct = (prime1 - 1) * (prime2 - 1);
-
+        int modCount = 0;
         int loopEndValue;
         int modValue;
 
         do
         {
             modCount++;
-            loopEndValue = (modCount * lessProduct + 1) % prime3;
-            modValue = (modCount * lessProduct + 1) / prime3;
+            loopEndValue = (modCount * lessProduct + 1) % rsa.Prime3;
+            modValue = (modCount * lessProduct + 1) / rsa.Prime3;
         } while (loopEndValue != 0);
 
         for (int i = 0; i < 8; i++)
         {
-            int value = data[indexTable[i]];
+            int value = data[rsa.IndexTable[i]];
             value |= ((data[23] >> i) << 8) & 0x100;
             int currentValue = value;
 
@@ -113,7 +108,7 @@ public class Decoder
                 value = value * currentValue % primeProduct;
             }
 
-            outputBuffer[indexTable[i]] = (byte)value;
+            outputBuffer[rsa.IndexTable[i]] = (byte)value;
         }
 
         for (int i = 0; i < 24; i++)

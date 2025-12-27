@@ -294,48 +294,6 @@ public static class Common
         }
     }
 
-    public static (int, int, int, ImmutableArray<int>) mMpswd_get_RSA_key_code(byte[] Data)
-    {
-        int bit10 = Data[3] & 3;
-        int bit32 = (Data[3] >> 2) & 3;
-
-        if (bit10 == 3)
-        {
-            bit10 = (bit10 ^ bit32) & 3;
-            if (bit10 == 3)
-            {
-                bit10 = 0;
-            }
-        }
-
-        if (bit32 == 3)
-        {
-            bit32 = (bit10 + 1) & 3;
-            if (bit32 == 3)
-            {
-                bit32 = 1;
-            }
-        }
-
-        if (bit10 == bit32)
-        {
-            bit32 = (bit10 + 1) & 3;
-            if (bit32 == 3)
-            {
-                bit32 = 1;
-            }
-        }
-
-        int byteTable = ((Data[3] >> 2) & 0x3C) >> 2;
-
-        return (
-            mMpswd_prime_number[bit10],
-            mMpswd_prime_number[bit32],
-            mMpswd_prime_number[Data[0xC]],
-            mMpswd_select_idx_table[byteTable]
-        );
-    }
-
     public static bool mMpswd_new_password_zuru_check(
         int checksum,
         int CodeType,
