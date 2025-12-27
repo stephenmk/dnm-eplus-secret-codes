@@ -1,0 +1,127 @@
+﻿@page "/monument"
+@using System.Collections.Immutable
+@using DnmEplusPassword.Library
+@using DnmEplusPassword.Web.Components
+
+<PageTitle>Monument</PageTitle>
+
+<h1>Monument</h1>
+
+<div style="max-width: 400px;">
+    <InputRecipient Recipient="@Recipient" />
+
+    <div class="row">
+        <label for="decorationInput" class="col col-form-label">Decoration</label>
+        <div class="col">
+            <InputSelect @bind-Value="SelectedDecoration" id="decorationInput" class="form-select">
+                @foreach (var decoration in Decorations)
+                {
+                    <option value="@decoration">@decoration</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+    <div class="row">
+        <label for="priceInput" class="col col-form-label">Price</label>
+        <div class="col">
+            <InputNumber @bind-Value="Price" id="priceInput" class="form-control" min="1" max="999999" step="1" />
+        </div>
+    </div>
+    <div class="row">
+        <label for="rowAcreInput" class="col col-form-label">Acre Row (ちょうめ)</label>
+        <div class="col">
+            <InputSelect @bind-Value="SelectedAcreRow" id="rowAcreInput" class="form-select">
+                @foreach (var row in AcreRows)
+                {
+                    <option value="@row">@row</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+    <div class="row">
+        <label for="colAcreInput" class="col col-form-label">Acre Column (ばんち)</label>
+        <div class="col">
+            <InputSelect @bind-Value="SelectedAcreCol" id="colAcreInput" class="form-select">
+                @foreach (var col in AcreCols)
+                {
+                    <option value="@col">@col</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+    <div class="row">
+        <label for="englishInput" class="col col-form-label">English Code</label>
+        <div class="col">
+            <InputCheckbox id="englishInput" class="form-check-input" @bind-Value="IsEnglishPassword" />
+        </div>
+    </div>
+    <button class="btn btn-primary" @onclick="GeneratePassword">Generate Secret Code</button>
+</div>
+
+@if (Password.Item1 != string.Empty)
+{
+    <div class="password">
+    <div class="password-line">@Password.Item1</div>
+    <div class="password-line">@Password.Item2</div>
+</div>
+}
+
+@code {
+    private static readonly ImmutableArray<string> Decorations =
+    [
+        "Park Clock",
+        "Gas Lamp",
+        "Windpump",
+        "Flower Clock",
+        "Heliport",
+        "Wind Turbine",
+        "Pipe Stack",
+        "Stonehenge",
+        "Egg",
+        "Footprints",
+        "Geoglyph",
+        "Mushroom",
+        "Signpost",
+        "Well",
+        "Fountain",
+    ];
+    private string SelectedDecoration = Decorations.First();
+
+    private static readonly ImmutableArray<char> AcreRows = ['1', '2', '3', '4', '5', '6'];
+    private static readonly ImmutableArray<char> AcreCols = ['1', '2', '3', '4', '5'];
+    private char SelectedAcreRow = AcreRows.First();
+    private char SelectedAcreCol = AcreCols.First();
+
+    private Recipient Recipient = new();
+
+    private int Price = 1;
+    private bool IsEnglishPassword = false;
+
+    private (string, string) Password = (string.Empty, string.Empty);
+
+    private void GeneratePassword()
+    {
+        int monumentType = Decorations.IndexOf(SelectedDecoration);
+        int acreX = AcreRows.IndexOf(SelectedAcreRow) + 1;
+        int acreY = AcreCols.IndexOf(SelectedAcreCol) + 1;
+
+        try
+        {
+            Password = Encoder.Encode
+            (
+                codeType: CodeType.Monument,
+                hitRateIndex: 0,
+                recipientTown: Recipient.TownName.PadRight(6, ' '),
+                recipient: Recipient.Name.PadRight(6, ' '),
+                sender: Price.ToString().PadRight(6, ' '),
+                itemId: (ushort)(monumentType % 15),
+                extraData: ((acreX & 7) << 3) | (acreY & 7),
+                englishPasswords: IsEnglishPassword
+            );
+        }
+        catch
+        {
+            Password = (string.Empty, string.Empty);
+        }
+    }
+}

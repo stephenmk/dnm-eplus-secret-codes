@@ -1,0 +1,17 @@
+<div class="row">
+    <label for="townNameInput" class="col col-form-label">Recipient's Town Name</label>
+    <div class="col">
+        <InputText @bind-Value="Recipient.TownName" id="townNameInput" class="form-control" maxlength="6" />
+    </div>
+</div>
+<div class="row">
+    <label for="recipientInput" class="col col-form-label">Recipient's Name</label>
+    <div class="col">
+        <InputText @bind-Value="Recipient.Name" id="recipientInput" class="form-control" maxlength="6" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public required Recipient Recipient { get; set; }
+}
