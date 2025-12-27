@@ -1,0 +1,18 @@
+@using DnmEplusPassword.Web.Models
+
+<div class="row">
+    <label for="decorationInput" class="col col-form-label">Decoration</label>
+    <div class="col">
+        <InputSelect @bind-Value="Decoration.Id" id="decorationInput" class="form-select">
+            @foreach (var (key, value) in Decoration.ValidDecorations)
+            {
+                <option value="@key">@value</option>
+            }
+        </InputSelect>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public required Decoration Decoration { get; set; }
+}
