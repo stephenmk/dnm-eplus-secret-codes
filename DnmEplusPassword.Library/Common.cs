@@ -151,11 +151,11 @@
         ];
 
         // Methods
-        public static byte mMpswd_chg_password_font_code_sub(byte Character, in byte[] fontnum_tbl)
+        public static byte mMpswd_chg_password_font_code_sub(byte character, in byte[] fontnum_tbl)
         {
             for (byte i = 0; i < 0x40; i++)
             {
-                if (fontnum_tbl[i] == Character)
+                if (fontnum_tbl[i] == character)
                 {
                     return i;
                 }
@@ -163,70 +163,70 @@
             return 0xFF;
         }
 
-        public static void mMpswd_chg_password_font_code(ref byte[] Password, in byte[] fontnum_tbl)
+        public static void mMpswd_chg_password_font_code(ref byte[] password, in byte[] fontnum_tbl)
         {
             for (int i = 0; i < 32; i++)
             {
-                Password[i] = mMpswd_chg_password_font_code_sub(Password[i], fontnum_tbl);
+                password[i] = mMpswd_chg_password_font_code_sub(password[i], fontnum_tbl);
             }
         }
 
-        public static void mMpswd_transposition_cipher(ref byte[] Data, bool Negate, int KeyIndex)
+        public static void mMpswd_transposition_cipher(ref byte[] data, bool negate, int keyIndex)
         {
-            int Multiplier = Negate ? -1 : 1;
-            byte Key = Data[key_idx[KeyIndex]];
-            string[] TranspositionTable = mMpswd_transposition_cipher_char_table[KeyIndex];
-            string TranspositionCipher = TranspositionTable[Key & 0x0F];
+            var multiplier = negate ? -1 : 1;
+            var key = data[key_idx[keyIndex]];
+            var transpositionTable = mMpswd_transposition_cipher_char_table[keyIndex];
+            var transpositionCipher = transpositionTable[key & 0x0F];
 
-            int CipherIndex = 0;
+            int cipherIndex = 0;
 
             for (int i = 0; i < 24; i++)
             {
-                if (i != key_idx[KeyIndex])
+                if (i != key_idx[keyIndex])
                 {
-                    int ValueModifier = (TranspositionCipher[CipherIndex++] * Multiplier) & 0xFF;
-                    Data[i] = (byte)(Data[i] + ValueModifier);
-                    if (CipherIndex >= TranspositionCipher.Length)
+                    int valueModifier = (transpositionCipher[cipherIndex++] * multiplier) & 0xFF;
+                    data[i] = (byte)(data[i] + valueModifier);
+                    if (cipherIndex >= transpositionCipher.Length)
                     {
-                        CipherIndex = 0;
+                        cipherIndex = 0;
                     }
                 }
             }
         }
 
-        public static void mMpswd_bit_reverse(ref byte[] Data)
+        public static void mMpswd_bit_reverse(ref byte[] data)
         {
             for (int i = 0; i < 24; i++)
             {
                 if (i != 1)
                 {
-                    Data[i] ^= 0xFF;
+                    data[i] ^= 0xFF;
                 }
             }
         }
 
-        public static void mMpswd_bit_arrange_reverse(ref byte[] Data)
+        public static void mMpswd_bit_arrange_reverse(ref byte[] data)
         {
-            byte[] Buffer = new byte[23];
-            byte[] OutputBuffer = new byte[23];
+            byte[] buffer = new byte[23];
+            byte[] outputBuffer = new byte[23];
             for (int i = 0, idx = 0; i < 24; i++)
             {
                 if (i != 1)
                 {
-                    Buffer[idx++] = Data[i];
+                    buffer[idx++] = data[i];
                 }
             }
 
             for (int i = 0; i < 23; i++) // pretty sure this should be < 23
             {
-                byte value = Buffer[22 - i]; // this should be 22
+                byte value = buffer[22 - i]; // this should be 22
                 byte changedValue = 0;
                 for (var x = 0; x < 8; x++)
                 {
                     changedValue |= (byte)(((value >> x) & 1) << (7 - x));
                 }
 
-                OutputBuffer[i] = changedValue;
+                outputBuffer[i] = changedValue;
             }
 
             for (int i = 0, idx = 0; i < 23; i++)
@@ -235,32 +235,32 @@
                 {
                     idx++;
                 }
-                Data[idx++] = OutputBuffer[i];
+                data[idx++] = outputBuffer[i];
             }
         }
 
-        public static void mMpswd_bit_shift(ref byte[] Data, int Shift)
+        public static void mMpswd_bit_shift(ref byte[] data, int shift)
         {
-            byte[] Buffer = new byte[23];
+            byte[] buffer = new byte[23];
             for (int i = 0, idx = 0; i < 24; i++)
             {
                 if (i != 1)
                 {
-                    Buffer[idx++] = Data[i];
+                    buffer[idx++] = data[i];
                 }
             }
 
-            byte[] OutputBuffer = new byte[23];
+            byte[] outputBuffer = new byte[23];
 
-            if (Shift > 0)
+            if (shift > 0)
             {
-                int DestinationPosition = Shift / 8;
-                int DestinationOffset = Shift % 8;
+                int destinationPosition = shift / 8;
+                int destinationOffset = shift % 8;
 
                 for (int i = 0; i < 23; i++)
                 {
-                    OutputBuffer[(i + DestinationPosition) % 23] = (byte)((Buffer[i] << DestinationOffset)
-                        | (Buffer[(i + 22) % 23] >> (8 - DestinationOffset)));
+                    outputBuffer[(i + destinationPosition) % 23] = (byte)((buffer[i] << destinationOffset)
+                        | (buffer[(i + 22) % 23] >> (8 - destinationOffset)));
                 }
 
                 // Copy to original buffer
@@ -270,28 +270,28 @@
                     {
                         idx++;
                     }
-                    Data[idx++] = OutputBuffer[i];
+                    data[idx++] = outputBuffer[i];
                 }
             }
-            else if (Shift < 0)
+            else if (shift < 0)
             {
                 for (int i = 0; i < 23; i++)
                 {
-                    OutputBuffer[i] = Buffer[22 - i];
+                    outputBuffer[i] = buffer[22 - i];
                 }
-                Shift = -Shift;
+                shift = -shift;
 
-                int DestinationPosition = Shift / 8;
-                int DestinationOffset = Shift % 8;
+                int destinationPosition = shift / 8;
+                int destinationOffset = shift % 8;
 
                 for (int i = 0; i < 23; i++)
                 {
-                    Buffer[(i + DestinationPosition) % 23] = OutputBuffer[i];
+                    buffer[(i + destinationPosition) % 23] = outputBuffer[i];
                 }
 
                 for (int i = 0; i < 23; i++)
                 {
-                    OutputBuffer[i] = (byte)((Buffer[i] >> DestinationOffset) | ((Buffer[(i + 22) % 23]) << (8 - DestinationOffset)));
+                    outputBuffer[i] = (byte)((buffer[i] >> destinationOffset) | ((buffer[(i + 22) % 23]) << (8 - destinationOffset)));
                 }
 
                 for (int i = 0, idx = 0; i < 23; i++)
@@ -300,54 +300,62 @@
                     {
                         idx++;
                     }
-                    Data[idx++] = OutputBuffer[22 - i];
+                    data[idx++] = outputBuffer[22 - i];
                 }
             }
         }
 
         public static (int, int, int, int[]) mMpswd_get_RSA_key_code(byte[] Data)
         {
-            int Bit10 = Data[3] & 3;
-            int Bit32 = (Data[3] >> 2) & 3;
+            int bit10 = Data[3] & 3;
+            int bit32 = (Data[3] >> 2) & 3;
 
-            if (Bit10 == 3)
+            if (bit10 == 3)
             {
-                Bit10 = (Bit10 ^ Bit32) & 3;
-                if (Bit10 == 3)
+                bit10 = (bit10 ^ bit32) & 3;
+                if (bit10 == 3)
                 {
-                    Bit10 = 0;
+                    bit10 = 0;
                 }
             }
 
-            if (Bit32 == 3)
+            if (bit32 == 3)
             {
-                Bit32 = (Bit10 + 1) & 3;
-                if (Bit32 == 3)
+                bit32 = (bit10 + 1) & 3;
+                if (bit32 == 3)
                 {
-                    Bit32 = 1;
+                    bit32 = 1;
                 }
             }
 
-            if (Bit10 == Bit32)
+            if (bit10 == bit32)
             {
-                Bit32 = (Bit10 + 1) & 3;
-                if (Bit32 == 3)
+                bit32 = (bit10 + 1) & 3;
+                if (bit32 == 3)
                 {
-                    Bit32 = 1;
+                    bit32 = 1;
                 }
             }
 
-            int ByteTable = ((Data[3] >> 2) & 0x3C) >> 2;
+            int byteTable = ((Data[3] >> 2) & 0x3C) >> 2;
 
             return (
-                mMpswd_prime_number[Bit10],
-                mMpswd_prime_number[Bit32],
+                mMpswd_prime_number[bit10],
+                mMpswd_prime_number[bit32],
                 mMpswd_prime_number[Data[0xC]],
-                mMpswd_select_idx_table[ByteTable]
+                mMpswd_select_idx_table[byteTable]
             );
         }
 
-        public static bool mMpswd_new_password_zuru_check(int checksum, int CodeType, string Reciepiant, string TownName, string Sender, ushort ItemId, int NpcCode, int Unknown)
+        public static bool mMpswd_new_password_zuru_check(
+            int checksum,
+            int CodeType,
+            string recipient,
+            string townName,
+            string sender,
+            ushort itemId,
+            int npcCode,
+            int unknown)
         {
             if (CodeType == 2 || CodeType >= 8)
             {
@@ -357,14 +365,14 @@
             var invalid = true;
 
             var calculatedChecksum = 0;
-            calculatedChecksum += GetStringByteValue(Reciepiant);
-            calculatedChecksum += GetStringByteValue(TownName);
-            calculatedChecksum += GetStringByteValue(Sender);
-            calculatedChecksum += ItemId;
+            calculatedChecksum += GetStringByteValue(recipient);
+            calculatedChecksum += GetStringByteValue(townName);
+            calculatedChecksum += GetStringByteValue(sender);
+            calculatedChecksum += itemId;
 
             if ((calculatedChecksum & 0xF) == checksum &&
-                mMpswd_check_default_hit_rate(CodeType, NpcCode) &&
-                mMpswd_check_default_npc_code(CodeType, NpcCode, Unknown))
+                mMpswd_check_default_hit_rate(CodeType, npcCode) &&
+                mMpswd_check_default_npc_code(CodeType, npcCode, unknown))
             {
                 invalid = false;
             }
@@ -372,96 +380,97 @@
             return invalid;
         }
 
-        private static bool mMpswd_check_default_hit_rate(int CodeType, int CodeCheck)
+        private static bool mMpswd_check_default_hit_rate(int codeType, int codeCheck)
         {
-            bool HitRate = false;
-            if (CodeType == 3 && CodeCheck < 5)
+            bool hitRate = false;
+            if (codeType == 3 && codeCheck < 5)
             {
-                HitRate = true;
+                hitRate = true;
             }
-            else if (CodeCheck == 4)
+            else if (codeCheck == 4)
             {
-                HitRate = true;
+                hitRate = true;
             }
-            return HitRate;
+            return hitRate;
         }
 
-        private static bool mMpswd_check_default_npc_code(int CodeType, int NpcCode, int r3_9)
+        private static bool mMpswd_check_default_npc_code(int codeType, int npcCode, int r3_9)
         {
-            bool Valid = false;
-            if (CodeType >= 5)
+            bool valid = false;
+            if (codeType >= 5)
             {
-                if (CodeType == 7)
+                if (codeType == 7)
                 {
-                    if (NpcCode == 0xFF)
+                    if (npcCode == 0xFF)
                     {
-                        Valid = true;
+                        valid = true;
                     }
                 }
                 else
                 {
-                    Valid = true;
+                    valid = true;
                 }
             }
             else
             {
-                if (CodeType == 1)
+                if (codeType == 1)
                 {
-                    Valid = true;
+                    valid = true;
                 }
-                else if (CodeType >= 0)
+                else if (codeType >= 0)
                 {
-                    if (r3_9 == 0 && NpcCode == 0xFF)
+                    if (r3_9 == 0 && npcCode == 0xFF)
                     {
-                        Valid = true;
+                        valid = true;
                     }
                 }
             }
 
-            return Valid;
+            return valid;
         }
 
         // Custom Functions \\
-        public static int GetPasswordChecksum(byte[] PasswordData)
+        public static int GetPasswordChecksum(byte[] passwordData)
         {
-            int Checksum = 0;
+            int checksum = 0;
 
             for (int i = 0x03; i < 0x15; i++)
             {
-                Checksum += PasswordData[i];
+                checksum += passwordData[i];
             }
 
-            Checksum += (PasswordData[0x15] << 8) | PasswordData[16];
-            Checksum += PasswordData[2];
+            checksum += (passwordData[0x15] << 8) | passwordData[16];
+            checksum += passwordData[2];
 
-            return (((Checksum >> 2) & 3) << 2) | (((Checksum << 6) & 0xC0) >> 6);
+            return (((checksum >> 2) & 3) << 2) | (((checksum << 6) & 0xC0) >> 6);
         }
 
-        public static bool VerifyChecksum(byte[] PasswordData)
+        public static bool VerifyChecksum(byte[] passwordData)
         {
-            int CalculatedChecksum = GetPasswordChecksum(PasswordData);
-            int StoredChecksum = ((PasswordData[0] & 3) << 2) | ((PasswordData[1] & 0xC0) >> 6);
+            int calculatedChecksum = GetPasswordChecksum(passwordData);
+            int storedChecksum = ((passwordData[0] & 3) << 2) | ((passwordData[1] & 0xC0) >> 6);
 
-            Console.WriteLine($"Calculated Checksum: 0x{CalculatedChecksum:X}\nStored Checksum: 0x{StoredChecksum:X}");
+            Console.WriteLine($"Calculated Checksum: 0x{calculatedChecksum:X}\nStored Checksum: 0x{storedChecksum:X}");
 
-            return CalculatedChecksum == StoredChecksum;
+            return calculatedChecksum == storedChecksum;
         }
 
-        public static byte[] StringToAFByteArray(string Input)
+        public static byte[] StringToAFByteArray(string input)
         {
-            byte[] Output = new byte[Input.Length];
+            byte[] output = new byte[input.Length];
 
-            for (int i = 0; i < Input.Length; i++)
+            for (int i = 0; i < input.Length; i++)
             {
-                int Idx = Array.IndexOf(AFe_CharList, Input.Substring(i, 1));
-                if (Idx < 0)
+                var character = input.Substring(i, 1);
+                int idx = Array.IndexOf(AFe_CharList, character);
+                if (idx < 0)
                 {
-                    throw new Exception("The string had an invalid character in it!");
+                    throw new Exception($"The string had an invalid character in it: {character}");
                 }
-                Output[i] = (byte)Idx;
+                output[i] = (byte)idx;
             }
 
-            return Output;
+            return output;
         }
 
         private static int GetStringByteValue(string input)

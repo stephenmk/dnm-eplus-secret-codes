@@ -2,279 +2,288 @@ namespace DnmEplusPassword.Library
 {
     public static class Encoder
     {
-        public static byte[] mMpswd_make_passcode(CodeType CodeType, int HitRateIndex, string RecipientTown, string Recipient, string Sender, ushort ItemId, int ExtraData)
+        public static byte[] mMpswd_make_passcode(
+            CodeType codeType,
+            int hitRateIndex,
+            string recipientTown,
+            string recipient,
+            string sender,
+            ushort itemId,
+            int extraData)
         {
-            byte[] Output = new byte[24];
+            byte[] output = new byte[24];
 
             int realHitRateIndex;
             int npcCode = 0;
 
-            switch (CodeType)
+            switch (codeType)
             {
                 case CodeType.Famicom:
                 case CodeType.User:
                 case CodeType.Card_E_Mini:
                     realHitRateIndex = 4;
-                    ExtraData = 0;
+                    extraData = 0;
                     npcCode = 0xFF;
                     break;
                 case CodeType.NPC:
                 case CodeType.New_NPC:
-                    ExtraData &= 3;
+                    extraData &= 3;
                     realHitRateIndex = 4;
                     break;
                 case CodeType.Magazine:
                     // Valid indices are 0 - 4. Hit rates are: { 80.0f, 60.0f, 30.0f, 0.0f, 100.0f }. The hit is RNG based and the player "wins" if hit < hitRate.
-                    realHitRateIndex = HitRateIndex & 7;
-                    ExtraData = 0;
+                    realHitRateIndex = hitRateIndex & 7;
+                    extraData = 0;
                     npcCode = 0xFF;
                     break;
                 case CodeType.Monument:
-                    ExtraData &= 0xFF;
+                    extraData &= 0xFF;
                     realHitRateIndex = 4;
                     npcCode = 0xFF;
                     break;
                 default:
                     realHitRateIndex = 4;
-                    CodeType = CodeType.User;
+                    codeType = CodeType.User;
                     break;
             }
 
-            int Byte0 = ((int)CodeType << 5) & 0xE0;
-            Byte0 |= (realHitRateIndex << 2);
-            Output[0] = (byte)Byte0;
-            Output[1] = (byte)ExtraData;
-            Output[2] = (byte)npcCode;
+            int byte0 = ((int)codeType << 5) & 0xE0;
+            byte0 |= realHitRateIndex << 2;
+
+            output[0] = (byte)byte0;
+            output[1] = (byte)extraData;
+            output[2] = (byte)npcCode;
 
             // Copy Recipient Name
             for (int i = 0; i < 6; i++)
             {
-                if (i >= RecipientTown.Length)
+                if (i >= recipientTown.Length)
                 {
-                    Output[3 + i] = 0x20; // Space Character value
+                    output[3 + i] = 0x20; // Space Character value
                 }
                 else
                 {
-                    int CharacterIndex = Array.IndexOf(Common.AFe_CharList, RecipientTown.Substring(i, 1));
-                    if (CharacterIndex < 0)
+                    int characterIndex = Array.IndexOf(Common.AFe_CharList, recipientTown.Substring(i, 1));
+                    if (characterIndex < 0)
                     {
-                        CharacterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
+                        characterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
                         Console.WriteLine("Encountered an invalid character in the Recipient's Name at string offset: " + i);
                     }
-                    Output[3 + i] = (byte)CharacterIndex;
+                    output[3 + i] = (byte)characterIndex;
                 }
             }
 
             // Copy Recipient Town Name
             for (int i = 0; i < 6; i++)
             {
-                if (i >= Recipient.Length)
+                if (i >= recipient.Length)
                 {
-                    Output[9 + i] = 0x20; // Space Character value
+                    output[9 + i] = 0x20; // Space Character value
                 }
                 else
                 {
-                    int CharacterIndex = Array.IndexOf(Common.AFe_CharList, Recipient.Substring(i, 1));
-                    if (CharacterIndex < 0)
+                    int characterIndex = Array.IndexOf(Common.AFe_CharList, recipient.Substring(i, 1));
+                    if (characterIndex < 0)
                     {
-                        CharacterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
+                        characterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
                         Console.WriteLine("Encountered an invalid character in the Recipient's Town Name at string offset: " + i);
                     }
-                    Output[9 + i] = (byte)CharacterIndex;
+                    output[9 + i] = (byte)characterIndex;
                 }
             }
 
             // Copy Sender Name
             for (int i = 0; i < 6; i++)
             {
-                if (i >= Sender.Length)
+                if (i >= sender.Length)
                 {
-                    Output[15 + i] = 0x20; // Space Character value
+                    output[15 + i] = 0x20; // Space Character value
                 }
                 else
                 {
-                    int CharacterIndex = Array.IndexOf(Common.AFe_CharList, Sender.Substring(i, 1));
-                    if (CharacterIndex < 0)
+                    int characterIndex = Array.IndexOf(Common.AFe_CharList, sender.Substring(i, 1));
+                    if (characterIndex < 0)
                     {
-                        CharacterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
+                        characterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
                         Console.WriteLine("Encountered an invalid character in the Sender's Name at string offset: " + i);
                     }
-                    Output[15 + i] = (byte)CharacterIndex;
+                    output[15 + i] = (byte)characterIndex;
                 }
             }
 
             // Copy Item ID
-            Output[0x15] = (byte)(ItemId >> 8);
-            Output[0x16] = (byte)ItemId;
+            output[0x15] = (byte)(itemId >> 8);
+            output[0x16] = (byte)itemId;
 
             // Add up byte totals of all characters in each string
-            int Checksum = 0;
+            int checksum = 0;
             for (int i = 0; i < 6; i++)
             {
-                Checksum += Output[3 + i];
+                checksum += output[3 + i];
             }
 
             for (int i = 0; i < 6; i++)
             {
-                Checksum += Output[9 + i];
+                checksum += output[9 + i];
             }
 
             for (int i = 0; i < 6; i++)
             {
-                Checksum += Output[15 + i];
+                checksum += output[15 + i];
             }
 
-            Checksum += ItemId;
-            Checksum += npcCode;
-            Output[0] |= (byte)((Checksum >> 2) & 3);
-            Output[1] |= (byte)((Checksum & 3) << 6);
+            checksum += itemId;
+            checksum += npcCode;
+            output[0] |= (byte)((checksum >> 2) & 3);
+            output[1] |= (byte)((checksum & 3) << 6);
 
 #if DEBUG
-            for (int i = 0; i < Output.Length; i++)
+            for (int i = 0; i < output.Length; i++)
             {
-                Console.WriteLine(string.Format("Output[{0}]", i) + ": " + Output[i].ToString("X2"));
+                Console.WriteLine($"Output[{i}]: {output[i]:X2}");
             }
 #endif
 
-            return Output;
+            return output;
         }
 
-        public static void mMpswd_substitution_cipher(ref byte[] Data)
+        public static void mMpswd_substitution_cipher(ref byte[] data)
         {
             for (int i = 0; i < 24; i++)
             {
-                Data[i] = Common.mMpswd_chg_code_table[Data[i]];
+                data[i] = Common.mMpswd_chg_code_table[data[i]];
             }
         }
 
-        public static void mMpswd_bit_shuffle(ref byte[] Data, int Key)
+        public static void mMpswd_bit_shuffle(ref byte[] data, int key)
         {
-            int CharOffset = Key == 0 ? 0xD : 9;
-            int CharCount = Key == 0 ? 0x16 : 0x17;
+            int charOffset = key == 0 ? 0xD : 9;
+            int charCount = key == 0 ? 0x16 : 0x17;
 
-            var Buffer = Data.Take(CharOffset)
-                .Concat(Data.Skip(CharOffset + 1)
-                .Take(23 - CharOffset))
+            var buffer = data.Take(charOffset)
+                .Concat(data.Skip(charOffset + 1)
+                .Take(23 - charOffset))
                 .ToArray();
 
-            var Output = new byte[CharCount];
+            var output = new byte[charCount];
 
-            int[] IndexTable = Common.mMpswd_select_idx_table[Data[CharOffset] & 3];
+            int[] indexTable = Common.mMpswd_select_idx_table[data[charOffset] & 3];
 
-            for (int i = 0; i < CharCount; i++)
+            for (int i = 0; i < charCount; i++)
             {
-                var selectedByte = Buffer[i];
+                var selectedByte = buffer[i];
                 for (var x = 0; x < 8; x++)
                 {
-                    var OutputOffset = IndexTable[x] + i;
-                    if (OutputOffset >= CharCount)
+                    var outputOffset = indexTable[x] + i;
+                    if (outputOffset >= charCount)
                     {
-                        OutputOffset -= CharCount;
+                        outputOffset -= charCount;
                     }
 
-                    Output[OutputOffset] |= (byte)(((selectedByte >> x) & 1) << x);
+                    output[outputOffset] |= (byte)(((selectedByte >> x) & 1) << x);
                 }
             }
 
-            for (int i = 0; i < CharOffset; i++)
+            for (int i = 0; i < charOffset; i++)
             {
-                Data[i] = Output[i];
+                data[i] = output[i];
             }
 
-            for (int i = CharOffset; i < CharCount; i++)
+            for (int i = charOffset; i < charCount; i++)
             {
-                Data[i + 1] = Output[i]; // Data[i + 1] to skip the "Char" byte
+                data[i + 1] = output[i]; // Data[i + 1] to skip the "Char" byte
             }
         }
 
-        public static void mMpswd_chg_RSA_cipher(ref byte[] Data)
+        public static void mMpswd_chg_RSA_cipher(ref byte[] data)
         {
-            byte[] Buffer = [.. Data];
-            Tuple<int, int, int, int[]> Parameters = Common.mMpswd_get_RSA_key_code(Data);
-            int Prime1 = Parameters.Item1;
-            int Prime2 = Parameters.Item2;
-            int Prime3 = Parameters.Item3;
-            int[] IndexTable = Parameters.Item4;
+            byte[] buffer = [.. data];
 
-            byte CipherValue = 0;
-            int PrimeProduct = Prime1 * Prime2;
+            var parameters = Common.mMpswd_get_RSA_key_code(data);
+            int prime1 = parameters.Item1;
+            int prime2 = parameters.Item2;
+            int prime3 = parameters.Item3;
+            int[] indexTable = parameters.Item4;
+
+            byte cipherValue = 0;
+            int primeProduct = prime1 * prime2;
 
             for (int i = 0; i < 8; i++)
             {
-                int Value = Data[IndexTable[i]];
-                int CurrentValue = Value;
+                int value = data[indexTable[i]];
+                int currentValue = value;
 
-                for (int x = 0; x < Prime3 - 1; x++)
+                for (int x = 0; x < prime3 - 1; x++)
                 {
-                    Value = (Value * CurrentValue) % PrimeProduct;
+                    value = value * currentValue % primeProduct;
                 }
 
-                Buffer[IndexTable[i]] = (byte)Value;
-                Value = (Value >> 8) & 1;
-                CipherValue |= (byte)(Value << i);
+                buffer[indexTable[i]] = (byte)value;
+                value = (value >> 8) & 1;
+                cipherValue |= (byte)(value << i);
             }
-            Buffer[23] = CipherValue;
+            buffer[23] = cipherValue;
 
             for (int i = 0; i < 24; i++)
             {
-                Data[i] = Buffer[i];
+                data[i] = buffer[i];
             }
         }
 
-        public static void mMpswd_bit_mix_code(ref byte[] Data)
+        public static void mMpswd_bit_mix_code(ref byte[] data)
         {
-            int SwitchType = Data[1] & 0x0F;
-            if (SwitchType > 0x0C)
+            int switchType = data[1] & 0x0F;
+            if (switchType > 0x0C)
             {
-                Common.mMpswd_bit_arrange_reverse(ref Data);
-                Common.mMpswd_bit_reverse(ref Data);
-                Common.mMpswd_bit_shift(ref Data, SwitchType * 3);
+                Common.mMpswd_bit_arrange_reverse(ref data);
+                Common.mMpswd_bit_reverse(ref data);
+                Common.mMpswd_bit_shift(ref data, switchType * 3);
             }
-            else if (SwitchType > 0x08)
+            else if (switchType > 0x08)
             {
-                Common.mMpswd_bit_arrange_reverse(ref Data);
-                Common.mMpswd_bit_shift(ref Data, SwitchType * -5);
+                Common.mMpswd_bit_arrange_reverse(ref data);
+                Common.mMpswd_bit_shift(ref data, switchType * -5);
             }
-            else if (SwitchType > 0x04)
+            else if (switchType > 0x04)
             {
-                Common.mMpswd_bit_shift(ref Data, SwitchType * -5);
-                Common.mMpswd_bit_reverse(ref Data);
+                Common.mMpswd_bit_shift(ref data, switchType * -5);
+                Common.mMpswd_bit_reverse(ref data);
             }
             else
             {
-                Common.mMpswd_bit_shift(ref Data, SwitchType * 3);
-                Common.mMpswd_bit_arrange_reverse(ref Data);
+                Common.mMpswd_bit_shift(ref data, switchType * 3);
+                Common.mMpswd_bit_arrange_reverse(ref data);
             }
         }
 
-        public static byte[] mMpswd_chg_6bits_code(byte[] Data)
+        public static byte[] mMpswd_chg_6bits_code(byte[] data)
         {
-            byte[] Password = new byte[32];
+            byte[] password = new byte[32];
 
             int bit6Idx = 0;
             int bit8Idx = 0;
             int byte6Idx = 0;
             int byte8Idx = 0;
 
-            int Value = 0;
-            int Total = 0;
+            int value = 0;
+            int total = 0;
 
             while (true)
             {
-                Value |= ((Data[byte8Idx] >> bit8Idx) & 1) << bit6Idx;
+                value |= ((data[byte8Idx] >> bit8Idx) & 1) << bit6Idx;
                 bit8Idx++;
                 bit6Idx++;
 
                 if (bit6Idx == 6)
                 {
-                    Password[byte6Idx] = (byte)Value;
-                    Value = 0;
+                    password[byte6Idx] = (byte)value;
+                    value = 0;
                     bit6Idx = 0;
                     byte6Idx++;
-                    Total++;
-                    if (Total == 32)
+                    total++;
+                    if (total == 32)
                     {
-                        return Password;
+                        return password;
                     }
                 }
 
@@ -286,28 +295,36 @@ namespace DnmEplusPassword.Library
             }
         }
 
-        public static void mMpswd_chg_common_font_code(ref byte[] Password, bool englishPasswords)
+        public static void mMpswd_chg_common_font_code(ref byte[] password, bool englishPasswords)
         {
             if (englishPasswords)
             {
                 for (int i = 0; i < 32; i++)
                 {
-                    Password[i] = Common.usable_to_fontnum_new_translation[Password[i]];
+                    password[i] = Common.usable_to_fontnum_new_translation[password[i]];
                 }
             }
             else
             {
                 for (int i = 0; i < 32; i++)
                 {
-                    Password[i] = Common.usable_to_fontnum_new[Password[i]];
+                    password[i] = Common.usable_to_fontnum_new[password[i]];
                 }
             }
         }
 
 #if DEBUG
-        public static string Encode(CodeType CodeType, int HitRateIndex, string RecipientTown, string Recipient, string Sender, ushort ItemId, int ExtraData)
+
+        public static string Encode(
+            CodeType codeType,
+            int hitRateIndex,
+            string recipientTown,
+            string recipient,
+            string sender,
+            ushort itemId,
+            int extraData)
         {
-            byte[] PasswordData = mMpswd_make_passcode(CodeType, HitRateIndex, RecipientTown, Recipient, Sender, ItemId, ExtraData);
+            byte[] PasswordData = mMpswd_make_passcode(codeType, hitRateIndex, recipientTown, recipient, sender, itemId, extraData);
             PrintByteBuffer("mMpswd_make_passcode", PasswordData);
             mMpswd_substitution_cipher(ref PasswordData);
             PrintByteBuffer("mMpswd_substitution_cipher", PasswordData);
@@ -329,17 +346,17 @@ namespace DnmEplusPassword.Library
             PrintByteBuffer("mMpswd_chg_common_font_code", Password);
 
             // Construct password string
-            string PasswordString = "";
+            string passwordString = "";
             for (int i = 0; i < 32; i++)
             {
                 if (i == 16)
                 {
-                    PasswordString += "\r\n";
+                    passwordString += "\r\n";
                 }
-                PasswordString += Common.AFe_CharList[Password[i]];
+                passwordString += Common.AFe_CharList[Password[i]];
             }
 
-            return PasswordString;
+            return passwordString;
         }
 
         private static void PrintByteBuffer(string stage, byte[] buffer)
@@ -355,10 +372,20 @@ namespace DnmEplusPassword.Library
             }
             Console.Write("\n\n");
         }
+
 #else
-        public static string Encode(CodeType CodeType, int HitRateIndex, string RecipientTown, string Recipient, string Sender, ushort ItemId, int ExtraData, bool englishPasswords)
+
+        public static string Encode(
+            CodeType codeType,
+            int hitRateIndex,
+            string recipientTown,
+            string recipient,
+            string sender,
+            ushort itemId,
+            int extraData,
+            bool englishPasswords)
         {
-            byte[] PasswordData = mMpswd_make_passcode(CodeType, HitRateIndex, RecipientTown, Recipient, Sender, ItemId, ExtraData);
+            byte[] PasswordData = mMpswd_make_passcode(codeType, hitRateIndex, recipientTown, recipient, sender, itemId, extraData);
             mMpswd_substitution_cipher(ref PasswordData);
             Common.mMpswd_transposition_cipher(ref PasswordData, true, 0);
             mMpswd_bit_shuffle(ref PasswordData, 0);
@@ -370,18 +397,20 @@ namespace DnmEplusPassword.Library
             mMpswd_chg_common_font_code(ref Password, englishPasswords);
 
             // Construct password string
-            string PasswordString = "";
+            string passwordString = "";
             for (int i = 0; i < 32; i++)
             {
                 if (i == 16)
                 {
-                    PasswordString += "\r\n";
+                    passwordString += "\r\n";
                 }
-                PasswordString += Common.AFe_CharList[Password[i]];
+                passwordString += Common.AFe_CharList[Password[i]];
             }
 
-            return PasswordString;
+            return passwordString;
         }
+
 #endif
+
     }
 }

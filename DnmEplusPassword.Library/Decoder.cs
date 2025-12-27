@@ -2,13 +2,13 @@ namespace DnmEplusPassword.Library
 {
     public class Decoder
     {
-        public static void mMpswd_decode_bit_shuffle(ref byte[] Data, bool keyIdx)
+        public static void mMpswd_decode_bit_shuffle(ref byte[] data, bool keyIdx)
         {
             int count = keyIdx ? 0x17 : 0x16; // Count
             int bitIdx = keyIdx ? 0x09 : 0x0D; // Bit index
 
-            byte TableIndex = Data[bitIdx];
-            byte[] ShuffledData = new byte[23]; // Exclude the r31 byte
+            byte tableIndex = data[bitIdx];
+            byte[] shuffledData = new byte[23]; // Exclude the r31 byte
 
             for (int i = 0, idx = 0; i < 23; i++)
             {
@@ -16,155 +16,155 @@ namespace DnmEplusPassword.Library
                 {
                     idx++; // Skip r31 byte
                 }
-                ShuffledData[i] = Data[idx++];
+                shuffledData[i] = data[idx++];
             }
 
-            byte[] ZeroedData = new byte[23];
-            int[] ShuffleTable = Common.mMpswd_select_idx_table[Data[bitIdx] & 3];
+            byte[] zeroedData = new byte[23];
+            int[] shuffleTable = Common.mMpswd_select_idx_table[data[bitIdx] & 3];
+            int offsetIdx = 0;
+            int zeroedDataIdx = 0;
 
-            int OffsetIdx = 0;
-            int ZeroedDataIdx = 0;
-            while (OffsetIdx < count)
+            while (offsetIdx < count)
             {
                 int outputIdx = 0;
                 int bit = 0;
 
                 for (int x = 0; x < 8; x++)
                 {
-                    int OutputOffset = ShuffleTable[outputIdx++] + OffsetIdx;
-                    if (OutputOffset >= count)
+                    int outputOffset = shuffleTable[outputIdx++] + offsetIdx;
+                    if (outputOffset >= count)
                     {
-                        OutputOffset -= count;
+                        outputOffset -= count;
                     }
 
-                    ZeroedData[ZeroedDataIdx] |= (byte)(((ShuffledData[OutputOffset] >> bit) & 1) << bit);
+                    zeroedData[zeroedDataIdx] |= (byte)(((shuffledData[outputOffset] >> bit) & 1) << bit);
                     bit++;
                 }
 
-                OffsetIdx++;
-                ZeroedDataIdx++;
+                offsetIdx++;
+                zeroedDataIdx++;
             }
 
-            ZeroedData.Take(bitIdx).ToArray().CopyTo(Data, 0);
-            Data[bitIdx] = TableIndex;
-            ZeroedData.Skip(bitIdx).Take(ZeroedDataIdx - bitIdx).ToArray().CopyTo(Data, bitIdx + 1);
+            zeroedData.Take(bitIdx).ToArray().CopyTo(data, 0);
+            data[bitIdx] = tableIndex;
+            zeroedData.Skip(bitIdx).Take(zeroedDataIdx - bitIdx).ToArray().CopyTo(data, bitIdx + 1);
         }
 
-        public static void mMpswd_decode_bit_code(ref byte[] Data)
+        public static void mMpswd_decode_bit_code(ref byte[] data)
         {
-            int Method = Data[1] & 0x0F;
+            int method = data[1] & 0x0F;
 
-            if (Method > 12)
+            if (method > 12)
             {
-                Common.mMpswd_bit_shift(ref Data, -Method * 3);
-                Common.mMpswd_bit_reverse(ref Data);
-                Common.mMpswd_bit_arrange_reverse(ref Data);
+                Common.mMpswd_bit_shift(ref data, -method * 3);
+                Common.mMpswd_bit_reverse(ref data);
+                Common.mMpswd_bit_arrange_reverse(ref data);
             }
-            else if (Method > 8)
+            else if (method > 8)
             {
-                Common.mMpswd_bit_shift(ref Data, Method * 5);
-                Common.mMpswd_bit_arrange_reverse(ref Data);
+                Common.mMpswd_bit_shift(ref data, method * 5);
+                Common.mMpswd_bit_arrange_reverse(ref data);
             }
-            else if (Method > 4)
+            else if (method > 4)
             {
-                Common.mMpswd_bit_reverse(ref Data);
-                Common.mMpswd_bit_shift(ref Data, Method * 5);
+                Common.mMpswd_bit_reverse(ref data);
+                Common.mMpswd_bit_shift(ref data, method * 5);
             }
             else
             {
-                Common.mMpswd_bit_arrange_reverse(ref Data);
-                Common.mMpswd_bit_shift(ref Data, -Method * 3);
+                Common.mMpswd_bit_arrange_reverse(ref data);
+                Common.mMpswd_bit_shift(ref data, -method * 3);
             }
         }
 
-        public static void mMpswd_decode_RSA_cipher(ref byte[] Data)
+        public static void mMpswd_decode_RSA_cipher(ref byte[] data)
         {
-            int ModCount = 0;
-            byte[] OutputBuffer = [.. Data];
+            int modCount = 0;
+            byte[] outputBuffer = [.. data];
 
-            Tuple<int, int, int, int[]> PrimeData = Common.mMpswd_get_RSA_key_code(Data);
+            var primeData = Common.mMpswd_get_RSA_key_code(data);
 
-            int Prime1 = PrimeData.Item1;
-            int Prime2 = PrimeData.Item2;
-            int Prime3 = PrimeData.Item3;
-            int[] IndexTable = PrimeData.Item4;
+            int prime1 = primeData.Item1;
+            int prime2 = primeData.Item2;
+            int prime3 = primeData.Item3;
+            int[] indexTable = primeData.Item4;
 
-            int PrimeProduct = Prime1 * Prime2;
-            int LessProduct = (Prime1 - 1) * (Prime2 - 1);
-            int LoopEndValue;
-            int ModValue;
+            int primeProduct = prime1 * prime2;
+            int lessProduct = (prime1 - 1) * (prime2 - 1);
+            int loopEndValue;
+            int modValue;
 
             do
             {
-                ModCount++;
-                LoopEndValue = (ModCount * LessProduct + 1) % Prime3;
-                ModValue = (ModCount * LessProduct + 1) / Prime3;
-            } while (LoopEndValue != 0);
+                modCount++;
+                loopEndValue = (modCount * lessProduct + 1) % prime3;
+                modValue = (modCount * lessProduct + 1) / prime3;
+            } while (loopEndValue != 0);
 
             for (int i = 0; i < 8; i++)
             {
-                int Value = Data[IndexTable[i]];
-                Value |= ((Data[23] >> i) << 8) & 0x100;
-                int CurrentValue = Value;
+                int value = data[indexTable[i]];
+                value |= ((data[23] >> i) << 8) & 0x100;
+                int currentValue = value;
 
-                for (int x = 0; x < ModValue - 1; x++)
+                for (int x = 0; x < modValue - 1; x++)
                 {
-                    Value = Value * CurrentValue % PrimeProduct;
+                    value = value * currentValue % primeProduct;
                 }
 
-                OutputBuffer[IndexTable[i]] = (byte)Value;
+                outputBuffer[indexTable[i]] = (byte)value;
             }
 
             for (int i = 0; i < 24; i++)
             {
-                Data[i] = OutputBuffer[i];
+                data[i] = outputBuffer[i];
             }
         }
 
-        public static void mMpswd_chg_8bits_code(ref byte[] StoredLocation, byte[] Password)
+        public static void mMpswd_chg_8bits_code(ref byte[] storedLocation, byte[] password)
         {
-            int PasswordIndex = 0;
-            int StoredLocationIndex = 0;
+            int passwordIndex = 0;
+            int storedLocationIndex = 0;
 
-            int StoredValue = 0;
-            int Count = 0;
-            int ShiftRightValue = 0;
-            int ShiftLeftValue = 0;
+            int storedValue = 0;
+            int count = 0;
+            int shiftRightValue = 0;
+            int shiftLeftValue = 0;
 
             while (true)
             {
-                StoredValue |= (((Password[PasswordIndex] >> ShiftRightValue) & 1) << ShiftLeftValue) & 0xFF;
-                ShiftRightValue++;
-                ShiftLeftValue++;
+                storedValue |= (((password[passwordIndex] >> shiftRightValue) & 1) << shiftLeftValue) & 0xFF;
+                shiftRightValue++;
+                shiftLeftValue++;
 
-                if (ShiftLeftValue > 7)
+                if (shiftLeftValue > 7)
                 {
-                    Count++;
-                    StoredLocation[StoredLocationIndex++] = (byte)StoredValue;
-                    ShiftLeftValue = 0;
-                    if (Count >= 24)
+                    count++;
+                    storedLocation[storedLocationIndex++] = (byte)storedValue;
+                    shiftLeftValue = 0;
+                    if (count >= 24)
                     {
                         return;
                     }
-                    StoredValue = 0;
+                    storedValue = 0;
                 }
-                if (ShiftRightValue > 5)
+                if (shiftRightValue > 5)
                 {
-                    ShiftRightValue = 0;
-                    PasswordIndex++;
+                    shiftRightValue = 0;
+                    passwordIndex++;
                 }
             }
         }
 
-        public static void mMpswd_decode_substitution_cipher(ref byte[] Data)
+        public static void mMpswd_decode_substitution_cipher(ref byte[] data)
         {
             for (int i = 0; i < 24; i++)
             {
                 for (int x = 0; x < 256; x++)
                 {
-                    if (Data[i] == Common.mMpswd_chg_code_table[x])
+                    if (data[i] == Common.mMpswd_chg_code_table[x])
                     {
-                        Data[i] = (byte)x;
+                        data[i] = (byte)x;
                         break;
                     }
                 }
@@ -172,43 +172,43 @@ namespace DnmEplusPassword.Library
         }
 
         // Main Code \\
-        public static byte[] Decode(byte[] Input, bool englishPasswords)
+        public static byte[] Decode(byte[] input, bool englishPasswords)
         {
-            if (Input.Length != 32)
+            if (input.Length != 32)
             {
-                throw new Exception("Input must be 32 bytes long");
+                throw new ArgumentException("Input must be 32 bytes long", nameof(input));
             }
 
-            byte[] PasswordData = new byte[24];
+            byte[] passwordData = new byte[24];
 
-            Common.mMpswd_chg_password_font_code(ref Input, englishPasswords ? Common.usable_to_fontnum_new_translation : Common.usable_to_fontnum_new);
-            mMpswd_chg_8bits_code(ref PasswordData, Input);
-            Common.mMpswd_transposition_cipher(ref PasswordData, true, 1);
-            mMpswd_decode_bit_shuffle(ref PasswordData, true);
-            mMpswd_decode_bit_code(ref PasswordData);
-            mMpswd_decode_RSA_cipher(ref PasswordData);
-            mMpswd_decode_bit_shuffle(ref PasswordData, false);
-            Common.mMpswd_transposition_cipher(ref PasswordData, false, 0);
-            mMpswd_decode_substitution_cipher(ref PasswordData);
+            Common.mMpswd_chg_password_font_code(ref input, englishPasswords ? Common.usable_to_fontnum_new_translation : Common.usable_to_fontnum_new);
+            mMpswd_chg_8bits_code(ref passwordData, input);
+            Common.mMpswd_transposition_cipher(ref passwordData, true, 1);
+            mMpswd_decode_bit_shuffle(ref passwordData, true);
+            mMpswd_decode_bit_code(ref passwordData);
+            mMpswd_decode_RSA_cipher(ref passwordData);
+            mMpswd_decode_bit_shuffle(ref passwordData, false);
+            Common.mMpswd_transposition_cipher(ref passwordData, false, 0);
+            mMpswd_decode_substitution_cipher(ref passwordData);
 
-            return PasswordData;
+            return passwordData;
         }
 
-        public static byte[]? Decode(string Password, bool englishPasswords = false)
+        public static byte[]? Decode(string password, bool englishPasswords = false)
         {
-            if (Password.Length == 32)
+            if (password.Length == 32)
             {
-                byte[] Data = new byte[32];
+                byte[] data = new byte[32];
                 for (int i = 0; i < 32; i++)
                 {
-                    int Idx = Array.IndexOf(Common.AFe_CharList, Password.Substring(i, 1));
+                    int Idx = Array.IndexOf(Common.AFe_CharList, password.Substring(i, 1));
                     if (Idx < 0)
                     {
                         throw new Exception("The password contains an invalid character!");
                     }
-                    Data[i] = (byte)Idx;
+                    data[i] = (byte)Idx;
                 }
-                return Decode(Data, englishPasswords);
+                return Decode(data, englishPasswords);
             }
             return null;
         }
