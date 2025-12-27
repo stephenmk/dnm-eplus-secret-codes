@@ -31,7 +31,8 @@ public static class Encoder
                 realHitRateIndex = 4;
                 break;
             case CodeType.Magazine:
-                // Valid indices are 0 - 4. Hit rates are: { 80.0f, 60.0f, 30.0f, 0.0f, 100.0f }. The hit is RNG based and the player "wins" if hit < hitRate.
+                // Valid indices are 0 - 4. Hit rates are: { 80.0f, 60.0f, 30.0f, 0.0f, 100.0f }.
+                // The hit is RNG based and the player "wins" if hit < hitRate.
                 realHitRateIndex = hitRateIndex & 7;
                 extraData = 0;
                 npcCode = 0xFF;
