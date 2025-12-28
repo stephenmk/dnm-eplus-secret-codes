@@ -7,7 +7,7 @@
 
 <h1>Monument</h1>
 
-<div style="max-width: 400px;">
+<EditForm Model="@Model" style="max-width: 400px;">
     <InputRecipient Recipient="@Model.Recipient" />
     <InputDecoration Decoration="@Model.Decoration" />
     <InputPrice Price="@Model.Price" />
@@ -17,7 +17,7 @@
     <button class="btn btn-primary" @onclick="Model.GeneratePassword">
         Generate Secret Code
     </button>
-</div>
+</EditForm>
 
 @if (Model.SecretCode is not null)
 {
