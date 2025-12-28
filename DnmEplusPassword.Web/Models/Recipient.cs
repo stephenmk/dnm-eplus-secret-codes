@@ -4,11 +4,16 @@ namespace DnmEplusPassword.Web.Models;
 
 public sealed record Recipient
 {
-    [Required]
-    [StringLength(maximumLength: 6, ErrorMessage = "Maximum name length is 6 characters")]
+    private const string ValidCharacters =
+        """
+        あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみ !"むめ%&'()~♥, -.♪0123456789:🌢<+>?@ABCDEFGHIJKLMNOPQRSTUVWXYZも💢やゆ_よabcdefghijklmnopqrstuvwxyzらりるれ�□。｢｣、･ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワンヴ☺ろわをんぁぃぅぇぉゃゅょっガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ
+        """;
+
+    [StringLength(maximumLength: 6, MinimumLength = 1, ErrorMessage = "Must contain at least 1 character.")]
+    [RegularExpression($@"^[{ValidCharacters}]+$", ErrorMessage = "Name contains invalid characters.")]
     public string Name { get; set; } = string.Empty;
 
-    [Required]
-    [StringLength(maximumLength: 6, ErrorMessage = "Maximum town name length is 6 characters")]
+    [StringLength(maximumLength: 6, MinimumLength = 1, ErrorMessage = "Must contain at least 1 character.")]
+    [RegularExpression($@"^[{ValidCharacters}]+$", ErrorMessage = "Town name contains invalid characters.")]
     public string TownName { get; set; } = string.Empty;
 }
