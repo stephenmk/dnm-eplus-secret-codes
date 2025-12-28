@@ -2,9 +2,9 @@
 @using DnmEplusPassword.Web.Components
 @using DnmEplusPassword.Web.Models
 
-<PageTitle>Monument</PageTitle>
+<PageTitle>Monument Codes</PageTitle>
 
-<h1>Monument</h1>
+<h1>Monument Secret Code Generator</h1>
 
 <EditForm Model="@Model" OnValidSubmit="GenerateSecretCode" OnInvalidSubmit="ClearSecretCode" style="max-width: 400px;">
     <DataAnnotationsValidator />
@@ -15,7 +15,7 @@
     <InputPlacementAcre PlacementAcre="@Model.PlacementAcre" />
     <InputLanguage Language="@Model.Language" />
 
-    <button type="submit" class="btn btn-primary">Generate Secret Code</button>
+    <button type="submit" class="btn btn-primary">Generate</button>
 </EditForm>
 
 @if (SecretCode is not null)
