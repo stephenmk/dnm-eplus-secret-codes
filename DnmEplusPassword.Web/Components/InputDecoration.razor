@@ -1,15 +1,13 @@
 @using DnmEplusPassword.Web.Models
 
-<div class="row">
-    <label for="decorationInput" class="col col-form-label">Decoration</label>
-    <div class="col">
-        <InputSelect @bind-Value="Decoration.Id" id="decorationInput" class="form-select">
-            @foreach (var (key, value) in Decoration.ValidDecorations)
-            {
-                <option value="@key">@value</option>
-            }
-        </InputSelect>
-    </div>
+<div class="col form-group">
+    <label for="decorationInput" class="form-label">Decoration</label>
+    <InputSelect @bind-Value="Decoration.Id" id="decorationInput" class="form-select">
+        @foreach (var (key, value) in Decoration.ValidDecorations)
+        {
+            <option value="@key">@value</option>
+        }
+    </InputSelect>
 </div>
 
 @code {

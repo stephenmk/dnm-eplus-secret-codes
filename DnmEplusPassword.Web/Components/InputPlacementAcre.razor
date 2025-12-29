@@ -1,26 +1,22 @@
 @using DnmEplusPassword.Web.Models
 
-<div class="row">
-    <label for="rowAcreInput" class="col col-form-label">Acre Row</label>
-    <div class="col">
-        <InputSelect @bind-Value="PlacementAcre.Row" id="rowAcreInput" class="form-select">
-            @foreach (var row in PlacementAcre.ValidRows)
-            {
-                <option value="@row">@row</option>
-            }
-        </InputSelect>
-    </div>
+<div class="col form-group">
+    <label for="rowAcreInput" class="form-label">Acre Row</label>
+    <InputSelect @bind-Value="PlacementAcre.Row" id="rowAcreInput" class="form-select">
+        @foreach (var row in PlacementAcre.ValidRows)
+        {
+            <option value="@row">@row</option>
+        }
+    </InputSelect>
 </div>
-<div class="row">
-    <label for="colAcreInput" class="col col-form-label">Acre Column</label>
-    <div class="col">
-        <InputSelect @bind-Value="PlacementAcre.Col" id="colAcreInput" class="form-select">
-            @foreach (var col in PlacementAcre.ValidCols)
-            {
-                <option value="@col">@col</option>
-            }
-        </InputSelect>
-    </div>
+<div class="col form-group">
+    <label for="colAcreInput" class="form-label">Acre Column</label>
+    <InputSelect @bind-Value="PlacementAcre.Col" id="colAcreInput" class="form-select">
+        @foreach (var col in PlacementAcre.ValidCols)
+        {
+            <option value="@col">@col</option>
+        }
+    </InputSelect>
 </div>
 
 @code {

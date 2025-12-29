@@ -1,20 +1,18 @@
 @using DnmEplusPassword.Web.Models
 
-<div class="row">
-    <label for="englishInput" class="col col-form-label">Language</label>
-    <div class="col">
-        <InputRadioGroup @bind-Value="@Language.Name">
-            @foreach (var name in Enum.GetValues<LanguageName>())
-            {
-                <div class="form-check">
-                    <InputRadio Value="@name" class="form-check-input" id="@name" />
-                    <label class="form-check-label" for="@name">
-                        @name
-                    </label>
-                </div>
-            }
-        </InputRadioGroup>
-    </div>
+<div class="col form-group">
+    <label for="englishInput" class="form-label">Language</label>
+    <InputRadioGroup @bind-Value="@Language.Name">
+        @foreach (var name in Enum.GetValues<LanguageName>())
+        {
+            <div class="form-check">
+                <InputRadio Value="@name" class="form-check-input" id="@name" />
+                <label class="form-check-label" for="@name">
+                    @name
+                </label>
+            </div>
+        }
+    </InputRadioGroup>
 </div>
 
 @code {

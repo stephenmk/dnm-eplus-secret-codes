@@ -1,17 +1,13 @@
 @using DnmEplusPassword.Web.Models
 
-<div class="row">
-    <label for="townNameInput" class="col col-form-label">Recipient's Town Name</label>
-    <div class="col">
-        <InputText @bind-Value="Recipient.TownName" id="townNameInput" class="form-control" maxlength="6" />
-    </div>
+<div class="col form-group">
+    <label for="townNameInput" class="form-label">Recipient's Town Name</label>
+    <InputText @bind-Value="Recipient.TownName" id="townNameInput" class="form-control" maxlength="6" />
     <ValidationMessage For="@(() => Recipient.TownName)" />
 </div>
-<div class="row">
-    <label for="recipientInput" class="col col-form-label">Recipient's Name</label>
-    <div class="col">
-        <InputText @bind-Value="Recipient.Name" id="recipientInput" class="form-control" maxlength="6" />
-    </div>
+<div class="col form-group">
+    <label for="recipientInput" class="form-label">Recipient's Name</label>
+    <InputText @bind-Value="Recipient.Name" id="recipientInput" class="form-control" maxlength="6" />
     <ValidationMessage For="@(() => Recipient.Name)" />
 </div>
 

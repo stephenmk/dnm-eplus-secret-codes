@@ -6,12 +6,16 @@
 
 <h1>Item Secret Code Generator</h1>
 
-<EditForm Model="@Model" OnValidSubmit="GenerateSecretCode" OnInvalidSubmit="ClearSecretCode" style="max-width: 400px;">
+<EditForm Model="@Model" OnValidSubmit="GenerateSecretCode" OnInvalidSubmit="ClearSecretCode" style="max-width: 600px;">
     <DataAnnotationsValidator />
 
-    <InputRecipient Recipient="@Model.Recipient" />
-    <InputSender Sender="@Model.Sender" />
-    <InputItem Item="@Model.Item" />
+    <div class="row">
+        <InputRecipient Recipient="@Model.Recipient" />
+        <InputSender Sender="@Model.Sender" />
+    </div>
+    <div class="row">
+        <InputItem Item="@Model.Item" />
+    </div>
     <InputLanguage Language="@Model.Language" />
 
     <button type="submit" class="btn btn-primary">Generate</button>

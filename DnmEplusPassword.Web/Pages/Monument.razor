@@ -9,10 +9,16 @@
 <EditForm Model="@Model" OnValidSubmit="GenerateSecretCode" OnInvalidSubmit="ClearSecretCode" style="max-width: 400px;">
     <DataAnnotationsValidator />
 
-    <InputRecipient Recipient="@Model.Recipient" />
-    <InputDecoration Decoration="@Model.Decoration" />
-    <InputPrice Price="@Model.Price" />
-    <InputPlacementAcre PlacementAcre="@Model.PlacementAcre" />
+    <div class="row">
+        <InputRecipient Recipient="@Model.Recipient" />
+    </div>
+    <div class="row">
+        <InputDecoration Decoration="@Model.Decoration" />
+        <InputPrice Price="@Model.Price" />
+    </div>
+    <div class="row">
+        <InputPlacementAcre PlacementAcre="@Model.PlacementAcre" />
+    </div>
     <InputLanguage Language="@Model.Language" />
 
     <button type="submit" class="btn btn-primary">Generate</button>

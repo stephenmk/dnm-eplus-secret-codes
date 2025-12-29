@@ -1,20 +1,20 @@
 @using DnmEplusPassword.Web.Models
 
-<div class="row">
-    <label for="itemIdInput" class="col col-form-label">Item ID</label>
-    <div class="col">
-        <InputText @bind-Value="Item.Id" id="itemIdInput" class="form-control" maxlength="4" />
-    </div>
-    <ValidationMessage For="@(() => Item.Id)" />
-</div>
-
-<div class="row">
-    <div class="col" />
-    <div class="col">
-        <button type="button" class="btn btn-primary" @onclick="ViewCatalog">View Catalog</button>
-        <ModalDialog @ref="ModalCatalog" Title="Item Catalog">
-            <ItemCatalog Item="@Item" />
-        </ModalDialog>
+<div class="col">
+    <div class="form-group">
+        <label for="itemIdInput" class="form-label">Item ID</label>
+        <div class="row">
+            <div class="col">
+                <InputText @bind-Value="Item.Id" id="itemIdInput" class="form-control" maxlength="4" />
+                <ValidationMessage For="@(() => Item.Id)" />
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-primary" @onclick="ViewCatalog">View Catalog</button>
+                <ModalDialog @ref="ModalCatalog" Title="Item Catalog">
+                    <ItemCatalog Item="@Item" />
+                </ModalDialog>
+            </div>
+        </div>
     </div>
 </div>
 
