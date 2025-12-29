@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace DnmEplusPassword.Library;
 
 public static class Encoder
@@ -57,63 +55,66 @@ public static class Encoder
         output[1] = (byte)extraData;
         output[2] = (byte)npcCode;
 
-        // Copy Recipient Name
+        // Copy Recipient Town Name
+        var recipientTownRunes = recipientTown.EnumerateRunes().ToArray();
         for (int i = 0; i < 6; i++)
         {
-            if (i >= recipientTown.Length)
+            if (i >= recipientTownRunes.Length)
             {
                 output[3 + i] = 0x20; // Space Character value
             }
             else
             {
-                var character = recipientTown.Substring(i, 1);
-                int characterIndex = Common.AFe_CharList.IndexOf(character);
-                if (characterIndex < 0)
+                var rune = recipientTownRunes[i];
+                int runeIndex = Common.AFe_CharList.IndexOf(rune);
+                if (runeIndex < 0)
                 {
-                    characterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
+                    runeIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
                     Console.WriteLine("Encountered an invalid character in the Recipient's Name at string offset: " + i);
                 }
-                output[3 + i] = (byte)characterIndex;
+                output[3 + i] = (byte)runeIndex;
             }
         }
 
-        // Copy Recipient Town Name
+        // Copy Recipient Name
+        var recipientRunes = recipient.EnumerateRunes().ToArray();
         for (int i = 0; i < 6; i++)
         {
-            if (i >= recipient.Length)
+            if (i >= recipientRunes.Length)
             {
                 output[9 + i] = 0x20; // Space Character value
             }
             else
             {
-                var character = recipient.Substring(i, 1);
-                int characterIndex = Common.AFe_CharList.IndexOf(character);
-                if (characterIndex < 0)
+                var rune = recipientRunes[i];
+                int runeIndex = Common.AFe_CharList.IndexOf(rune);
+                if (runeIndex < 0)
                 {
-                    characterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
+                    runeIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
                     Console.WriteLine("Encountered an invalid character in the Recipient's Town Name at string offset: " + i);
                 }
-                output[9 + i] = (byte)characterIndex;
+                output[9 + i] = (byte)runeIndex;
             }
         }
 
         // Copy Sender Name
+        var senderRunes = sender.EnumerateRunes().ToArray();
         for (int i = 0; i < 6; i++)
         {
-            if (i >= sender.Length)
+            if (i >= senderRunes.Length)
             {
                 output[15 + i] = 0x20; // Space Character value
             }
             else
             {
-                var character = sender.Substring(i, 1);
-                int characterIndex = Common.AFe_CharList.IndexOf(character);
-                if (characterIndex < 0)
+                var rune = senderRunes[i];
+                int runeIndex = Common.AFe_CharList.IndexOf(rune);
+                if (runeIndex < 0)
                 {
-                    characterIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
+                    runeIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
                     Console.WriteLine("Encountered an invalid character in the Sender's Name at string offset: " + i);
                 }
-                output[15 + i] = (byte)characterIndex;
+                output[15 + i] = (byte)runeIndex;
             }
         }
 
@@ -315,7 +316,7 @@ public static class Encoder
         }
     }
 
-    public static string DebugEncode(
+    public static (string, string) DebugEncode(
         CodeType codeType,
         int hitRateIndex,
         string recipientTown,
@@ -345,18 +346,10 @@ public static class Encoder
         mMpswd_chg_common_font_code(ref password, false);
         PrintByteBuffer("mMpswd_chg_common_font_code", password);
 
-        // Construct password string
-        string passwordString = "";
-        for (int i = 0; i < 32; i++)
-        {
-            if (i == 16)
-            {
-                passwordString += "\r\n";
-            }
-            passwordString += Common.AFe_CharList[password[i]];
-        }
+        var line1 = string.Join("", password.Take(16).Select(x => Common.AFe_CharList[x]));
+        var line2 = string.Join("", password.Skip(16).Select(x => Common.AFe_CharList[x]));
 
-        return passwordString;
+        return (line1, line2);
     }
 
     private static void PrintByteBuffer(string stage, byte[] buffer)

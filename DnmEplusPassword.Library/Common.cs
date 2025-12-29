@@ -1,28 +1,16 @@
 ﻿using System.Collections.Immutable;
+using System.Text;
 
 namespace DnmEplusPassword.Library;
 
 public static class Common
 {
-    public static readonly ImmutableArray<string> AFe_CharList =
-    [
-        "あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ", "た",
-        "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "ま", "み",
-        " ", "!", "\"", "む", "め", "%", "&", "'", "(", ")", "~", "♥", ",", "-", ".", "♪",
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", "🌢", "<", "+", ">", "?",
-        "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-        "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "も", "💢", "や", "ゆ", "_",
-        "よ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
-        "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ら", "り", "る", "れ", "�",
-        "□", "。", "｢", "｣", "、", "･", "ヲ", "ァ", "ィ", "ゥ", "ェ", "ォ", "ャ", "ュ", "ョ", "ッ",
-        "ー", "ア", "イ", "ウ", "エ", "オ", "カ", "キ", "ク", "ケ", "コ", "サ", "シ", "ス", "セ", "ソ",
-        "タ", "チ", "ツ", "テ", "ト", "ナ", "ニ", "ヌ", "ネ", "ノ", "ハ", "ヒ", "フ", "ヘ", "ホ", "マ",
-        "ミ", "ム", "メ", "モ", "ヤ", "ユ", "ヨ", "ラ", "リ", "ル", "レ", "ロ", "ワ", "ン", "ヴ", "☺",
-        "ろ", "わ", "を", "ん", "ぁ", "ぃ", "ぅ", "ぇ", "ぉ", "ゃ", "ゅ", "ょ", "っ", "⏎", "ガ", "ギ",
-        "グ", "ゲ", "ゴ", "ザ", "ジ", "ズ", "ゼ", "ゾ", "ダ", "ヂ", "ヅ", "デ", "ド", "バ", "ビ", "ブ",
-        "ベ", "ボ", "パ", "ピ", "プ", "ペ", "ポ", "が", "ぎ", "ぐ", "げ", "ご", "ざ", "じ", "ず", "ぜ",
-        "ぞ", "だ", "ぢ", "づ", "で", "ど", "ば", "び", "ぶ", "べ", "ぼ", "ぱ", "ぴ", "ぷ", "ぺ", "ぽ",
-    ];
+    public static readonly string AFe_Characters =
+        """
+        あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみ !"むめ%&'()~♥,-.♪0123456789:🌢<+>?@ABCDEFGHIJKLMNOPQRSTUVWXYZも💢やゆ_よabcdefghijklmnopqrstuvwxyzらりるれ�□。｢｣、･ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワンヴ☺ろわをんぁぃぅぇぉゃゅょっ⏎ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ
+        """;
+
+    public static readonly ImmutableArray<Rune> AFe_CharList = [.. AFe_Characters.EnumerateRunes()];
 
     public static readonly ImmutableArray<int> mMpswd_prime_number =
     [
@@ -404,15 +392,16 @@ public static class Common
 
     public static byte[] StringToAFByteArray(string input)
     {
-        byte[] output = new byte[input.Length];
+        var inputRunes = input.EnumerateRunes().ToArray();
+        var output = new byte[inputRunes.Length];
 
         for (int i = 0; i < input.Length; i++)
         {
-            var character = input.Substring(i, 1);
-            int idx = AFe_CharList.IndexOf(character);
+            var rune = inputRunes[i];
+            var idx = AFe_CharList.IndexOf(rune);
             if (idx < 0)
             {
-                throw new Exception($"The string had an invalid character in it: {character}");
+                throw new Exception($"The string had an invalid character in it: {rune}");
             }
             output[i] = (byte)idx;
         }

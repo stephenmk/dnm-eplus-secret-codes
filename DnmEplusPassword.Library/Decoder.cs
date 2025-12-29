@@ -196,21 +196,26 @@ public class Decoder
 
     public static byte[]? Decode(string password, bool englishPasswords = false)
     {
-        if (password.Length == 32)
+        var passwordRunes = password.EnumerateRunes().ToArray();
+
+        if (passwordRunes.Length != 32)
         {
-            byte[] data = new byte[32];
-            for (int i = 0; i < 32; i++)
-            {
-                var character = password.Substring(i, 1);
-                int idx = Common.AFe_CharList.IndexOf(character);
-                if (idx < 0)
-                {
-                    throw new Exception($"The password contains an invalid character: '{character}'");
-                }
-                data[i] = (byte)idx;
-            }
-            return Decode(data, englishPasswords);
+            return null;
         }
-        return null;
+
+        var data = new byte[32];
+
+        for (int i = 0; i < 32; i++)
+        {
+            var rune = passwordRunes[i];
+            int idx = Common.AFe_CharList.IndexOf(rune);
+            if (idx < 0)
+            {
+                throw new Exception($"The password contains an invalid character: '{rune}'");
+            }
+            data[i] = (byte)idx;
+        }
+
+        return Decode(data, englishPasswords);
     }
 }
