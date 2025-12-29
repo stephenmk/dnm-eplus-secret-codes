@@ -1,25 +1,63 @@
 @inject HttpClient Http
 @using Microsoft.AspNetCore.Components.QuickGrid
 
-@if (CatalogItems is null)
+@if (FilteredCatalogItems is null)
 {
     <p><em>Loading item catalog...</em></p>
 }
 else
 {
-    <QuickGrid Items="@CatalogItems" Pagination="@Pagination" style="max-width: 600px;">
-        <PropertyColumn Property="@(i => i.Id)" Sortable="true" />
-        <PropertyColumn Property="@(i => i.En)" Sortable="true" />
-        <PropertyColumn Property="@(i => i.Ja)" Sortable="true" />
-    </QuickGrid>
+    <div class="grid" tabindex="-1">
+        <QuickGrid Items="@FilteredCatalogItems" Pagination="@Pagination" style="max-width: 600px;">
+            <PropertyColumn Title="ID" Property="@(i => i.Id)" Sortable="true" />
+            <PropertyColumn Title="English Name" Property="@(i => i.En)" Sortable="true">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <input type="search" autofocus @bind="EnFilter" @bind:event="oninput" placeholder="Item name..." />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Title="Japanese Name" Property="@(i => i.Ja)" Sortable="true">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <input type="search" autofocus @bind="JaFilter" @bind:event="oninput" placeholder="Item name..." />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+        </QuickGrid>
+    </div>
     <Paginator State="@Pagination" />
 }
 
 @code {
     record CatalogItem(string Id, string En, string Ja);
 
+    PaginationState Pagination = new() { ItemsPerPage = 20 };
     IQueryable<CatalogItem>? CatalogItems;
-    PaginationState Pagination = new() { ItemsPerPage = 10 };
+
+    string EnFilter;
+    string JaFilter;
+
+    IQueryable<CatalogItem>? FilteredCatalogItems
+    {
+        get
+        {
+            if (CatalogItems is null)
+            {
+                return null;
+            }
+            var result = CatalogItems;
+            if (!string.IsNullOrEmpty(EnFilter))
+            {
+                result = result.Where(item => item.En.Contains(EnFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+            if (!string.IsNullOrEmpty(JaFilter))
+            {
+                result = result.Where(item => item.Ja.Contains(JaFilter, StringComparison.CurrentCultureIgnoreCase));
+            }
+            return result;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -27,4 +65,6 @@ else
             ? items.AsQueryable()
             : null;
     }
+
+
 }
