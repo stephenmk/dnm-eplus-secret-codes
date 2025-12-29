@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace DnmEplusPassword.Library;
 
 public static class Encoder
@@ -11,7 +13,7 @@ public static class Encoder
         ushort itemId,
         int extraData)
     {
-        byte[] output = new byte[24];
+        var output = new byte[24];
 
         int realHitRateIndex;
         int npcCode = 0;
@@ -55,95 +57,25 @@ public static class Encoder
         output[1] = (byte)extraData;
         output[2] = (byte)npcCode;
 
-        // Copy Recipient Town Name
-        var recipientTownRunes = recipientTown.EnumerateRunes().ToArray();
-        for (int i = 0; i < 6; i++)
-        {
-            byte outputByte;
-            if (i < recipientTownRunes.Length)
-            {
-                var rune = recipientTownRunes[i];
-                int runeIndex = Common.AFe_CharList.IndexOf(rune);
-                if (runeIndex == -1)
-                {
-                    throw new Exception($"Invalid character: '{rune}'");
-                }
-                outputByte = (byte)runeIndex;
-            }
-            else
-            {
-                outputByte = 0x20; // Space Character value
-            }
-            output[3 + i] = outputByte;
-        }
+        int checksum = npcCode + itemId;
+        Span<byte> nameBytes = stackalloc byte[6];
 
-        // Copy Recipient Name
-        var recipientRunes = recipient.EnumerateRunes().ToArray();
-        for (int i = 0; i < 6; i++)
-        {
-            byte outputByte;
-            if (i < recipientRunes.Length)
-            {
-                var rune = recipientRunes[i];
-                int runeIndex = Common.AFe_CharList.IndexOf(rune);
-                if (runeIndex == -1)
-                {
-                    throw new Exception($"Invalid character: '{rune}'");
-                }
-                outputByte = (byte)runeIndex;
-            }
-            else
-            {
-                outputByte = 0x20; // Space Character value
-            }
-            output[9 + i] = outputByte;
-        }
+        AfNameToBytes(recipientTown, ref nameBytes);
+        nameBytes.CopyTo(output.AsSpan(3));
+        checksum += nameBytes.Sum();
 
-        // Copy Sender Name
-        var senderRunes = sender.EnumerateRunes().ToArray();
-        for (int i = 0; i < 6; i++)
-        {
-            byte outputByte;
-            if (i < senderRunes.Length)
-            {
-                var rune = senderRunes[i];
-                int runeIndex = Common.AFe_CharList.IndexOf(rune);
-                if (runeIndex == -1)
-                {
-                    throw new Exception($"Invalid character: '{rune}'");
-                }
-                outputByte = (byte)runeIndex;
-            }
-            else
-            {
-                outputByte = 0x20; // Space Character value
-            }
-            output[15 + i] = outputByte;
-        }
+        AfNameToBytes(recipient, ref nameBytes);
+        nameBytes.CopyTo(output.AsSpan(9));
+        checksum += nameBytes.Sum();
+
+        AfNameToBytes(sender, ref nameBytes);
+        nameBytes.CopyTo(output.AsSpan(15));
+        checksum += nameBytes.Sum();
 
         // Copy Item ID
-        output[0x15] = (byte)(itemId >> 8);
-        output[0x16] = (byte)itemId;
+        output[21] = (byte)(itemId >> 8);
+        output[22] = (byte)itemId;
 
-        // Add up byte totals of all characters in each string
-        int checksum = 0;
-        for (int i = 0; i < 6; i++)
-        {
-            checksum += output[3 + i];
-        }
-
-        for (int i = 0; i < 6; i++)
-        {
-            checksum += output[9 + i];
-        }
-
-        for (int i = 0; i < 6; i++)
-        {
-            checksum += output[15 + i];
-        }
-
-        checksum += itemId;
-        checksum += npcCode;
         output[0] |= (byte)((checksum >> 2) & 3);
         output[1] |= (byte)((checksum & 3) << 6);
 
@@ -155,6 +87,54 @@ public static class Encoder
 #endif
 
         return output;
+    }
+
+    private static int Sum(this Span<byte> bytes)
+    {
+        int sum = 0;
+        foreach (var b in bytes)
+        {
+            sum += b;
+        }
+        return sum;
+    }
+
+    public static void AfNameToBytes(ReadOnlySpan<char> input, ref Span<byte> output)
+    {
+        int i = 0;
+        foreach (var inputRune in input.EnumerateRunes())
+        {
+            if (i < output.Length)
+            {
+                var idx = Common.AFe_CharList.IndexOf(inputRune);
+                if (idx < 0)
+                {
+                    throw new ArgumentException($"Invalid character: '{inputRune}'", nameof(input));
+                }
+                output[i] = (byte)idx;
+                i++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        if (i == output.Length)
+        {
+            return;
+        }
+        // Fill the rest of the output with spaces.
+        var spaceRune = new Rune(' ');
+        var spaceIdx = Common.AFe_CharList.IndexOf(spaceRune);
+        if (spaceIdx < 0)
+        {
+            throw new ArgumentException($"Invalid character: '{spaceRune}'", nameof(input));
+        }
+        while (i < output.Length)
+        {
+            output[i] = (byte)spaceIdx;
+            i++;
+        }
     }
 
     public static void mMpswd_substitution_cipher(ref byte[] data)

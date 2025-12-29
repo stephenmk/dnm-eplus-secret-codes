@@ -401,7 +401,7 @@ public static class Common
             var idx = AFe_CharList.IndexOf(rune);
             if (idx < 0)
             {
-                throw new Exception($"The string had an invalid character in it: {rune}");
+                throw new ArgumentException($"Invalid character: {rune}", nameof(input));
             }
             output[i] = (byte)idx;
         }
