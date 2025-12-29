@@ -1,0 +1,17 @@
+@using DnmEplusPassword.Web.Models
+
+<div class="row">
+    <label for="senderNameInput" class="col col-form-label">Sender's Name</label>
+    <div class="col">
+        <InputText @bind-Value="Sender.Name" id="senderNameInput" class="form-control" maxlength="6" />
+    </div>
+    <ValidationMessage For="@(() => Sender.Name)" />
+</div>
+
+@code {
+    [Parameter]
+    public required Sender Sender { get; set; }
+
+    [CascadingParameter]
+    public required EditContext EditContext { get; set; }
+}
