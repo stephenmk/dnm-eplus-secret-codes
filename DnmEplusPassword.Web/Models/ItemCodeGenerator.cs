@@ -1,3 +1,4 @@
+using static System.Globalization.NumberStyles;
 using DnmEplusPassword.Library;
 
 namespace DnmEplusPassword.Web.Models;
@@ -12,6 +13,28 @@ public sealed class ItemCodeGenerator
 
     public SecretCode? GenerateSecretCode()
     {
-        return null;
+        try
+        {
+            var password = Encoder.Encode
+            (
+                codeType: CodeType.User,
+                hitRateIndex: 1,
+                recipientTown: Recipient.TownName.PadRight(6, ' '),
+                recipient: Recipient.Name.PadRight(6, ' '),
+                sender: Recipient.Name.PadRight(6, ' '),
+                itemId: ushort.Parse(Item.Id, HexNumber),
+                extraData: 0,
+                englishPasswords: Language.IsEnglish
+            );
+            return new()
+            {
+                Line1 = password.Item1,
+                Line2 = password.Item2,
+            };
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
