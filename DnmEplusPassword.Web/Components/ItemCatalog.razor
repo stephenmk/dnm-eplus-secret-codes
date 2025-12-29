@@ -1,5 +1,6 @@
 @inject HttpClient Http
 @using Microsoft.AspNetCore.Components.QuickGrid
+@using DnmEplusPassword.Web.Models
 
 @if (FilteredCatalogItems is null)
 {
@@ -24,21 +25,31 @@ else
                     </div>
                 </ColumnOptions>
             </PropertyColumn>
+            <TemplateColumn Title="Action">
+                <button type="button" class="btn @context.ButtonClass" @onclick="@(() => SelectItem(context))">Select</button>
+            </TemplateColumn>
         </QuickGrid>
     </div>
     <Paginator State="@Pagination" />
 }
 
 @code {
-    record CatalogItem(string Id, string En, string Ja);
+    [Parameter]
+    public required Item Item { get; set; }
 
-    PaginationState Pagination = new() { ItemsPerPage = 20 };
-    IQueryable<CatalogItem>? CatalogItems;
+    private record CatalogItem(string Id, string En, string Ja)
+    {
+        public bool IsSelected { get; set; } = false;
+        public string ButtonClass => IsSelected ? "btn-primary" : "btn-secondary";
+    };
 
-    string EnFilter;
-    string JaFilter;
+    private PaginationState Pagination = new() { ItemsPerPage = 10 };
+    private IQueryable<CatalogItem>? CatalogItems;
 
-    IQueryable<CatalogItem>? FilteredCatalogItems
+    private string? EnFilter;
+    private string? JaFilter;
+
+    private IQueryable<CatalogItem>? FilteredCatalogItems
     {
         get
         {
@@ -66,5 +77,16 @@ else
             : null;
     }
 
-
+    void SelectItem(CatalogItem item)
+    {
+        Item.Id = item.Id;
+        foreach (var i in CatalogItems!)
+        {
+            if (i.IsSelected)
+            {
+                i.IsSelected = false;
+            }
+        }
+        item.IsSelected = true;
+    }
 }

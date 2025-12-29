@@ -13,7 +13,7 @@
     <div class="col">
         <button type="button" class="btn btn-primary" @onclick="ViewCatalog">View Catalog</button>
         <ModalDialog @ref="ModalCatalog" Title="Item Catalog">
-            <ItemCatalog />
+            <ItemCatalog Item="@Item" />
         </ModalDialog>
     </div>
 </div>
