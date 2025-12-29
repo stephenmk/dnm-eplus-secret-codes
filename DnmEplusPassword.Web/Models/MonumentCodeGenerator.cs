@@ -19,9 +19,9 @@ public sealed class MonumentCodeGenerator
             (
                 codeType: CodeType.Monument,
                 hitRateIndex: 0,
-                recipientTown: Recipient.TownName.PadRight(6, ' '),
-                recipient: Recipient.Name.PadRight(6, ' '),
-                sender: Price.Value.ToString().PadRight(6, ' '),
+                recipientTown: Recipient.TownName,
+                recipient: Recipient.Name,
+                sender: Price.Value.ToString(),
                 itemId: (ushort)(Decoration.Id % 15),
                 extraData: ((PlacementAcre.Row & 7) << 3) | (PlacementAcre.Col & 7),
                 englishPasswords: Language.IsEnglish

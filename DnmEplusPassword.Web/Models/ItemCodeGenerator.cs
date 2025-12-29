@@ -19,9 +19,9 @@ public sealed class ItemCodeGenerator
             (
                 codeType: CodeType.User,
                 hitRateIndex: 1,
-                recipientTown: Recipient.TownName.PadRight(6, ' '),
-                recipient: Recipient.Name.PadRight(6, ' '),
-                sender: Recipient.Name.PadRight(6, ' '),
+                recipientTown: Recipient.TownName,
+                recipient: Recipient.Name,
+                sender: Recipient.Name,
                 itemId: ushort.Parse(Item.Id, HexNumber),
                 extraData: 0,
                 englishPasswords: Language.IsEnglish

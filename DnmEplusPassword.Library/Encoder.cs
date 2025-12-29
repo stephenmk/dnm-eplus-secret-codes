@@ -59,63 +59,66 @@ public static class Encoder
         var recipientTownRunes = recipientTown.EnumerateRunes().ToArray();
         for (int i = 0; i < 6; i++)
         {
-            if (i >= recipientTownRunes.Length)
-            {
-                output[3 + i] = 0x20; // Space Character value
-            }
-            else
+            byte outputByte;
+            if (i < recipientTownRunes.Length)
             {
                 var rune = recipientTownRunes[i];
                 int runeIndex = Common.AFe_CharList.IndexOf(rune);
-                if (runeIndex < 0)
+                if (runeIndex == -1)
                 {
-                    runeIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
-                    Console.WriteLine("Encountered an invalid character in the Recipient's Name at string offset: " + i);
+                    throw new Exception($"Invalid character: '{rune}'");
                 }
-                output[3 + i] = (byte)runeIndex;
+                outputByte = (byte)runeIndex;
             }
+            else
+            {
+                outputByte = 0x20; // Space Character value
+            }
+            output[3 + i] = outputByte;
         }
 
         // Copy Recipient Name
         var recipientRunes = recipient.EnumerateRunes().ToArray();
         for (int i = 0; i < 6; i++)
         {
-            if (i >= recipientRunes.Length)
-            {
-                output[9 + i] = 0x20; // Space Character value
-            }
-            else
+            byte outputByte;
+            if (i < recipientRunes.Length)
             {
                 var rune = recipientRunes[i];
                 int runeIndex = Common.AFe_CharList.IndexOf(rune);
-                if (runeIndex < 0)
+                if (runeIndex == -1)
                 {
-                    runeIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
-                    Console.WriteLine("Encountered an invalid character in the Recipient's Town Name at string offset: " + i);
+                    throw new Exception($"Invalid character: '{rune}'");
                 }
-                output[9 + i] = (byte)runeIndex;
+                outputByte = (byte)runeIndex;
             }
+            else
+            {
+                outputByte = 0x20; // Space Character value
+            }
+            output[9 + i] = outputByte;
         }
 
         // Copy Sender Name
         var senderRunes = sender.EnumerateRunes().ToArray();
         for (int i = 0; i < 6; i++)
         {
-            if (i >= senderRunes.Length)
-            {
-                output[15 + i] = 0x20; // Space Character value
-            }
-            else
+            byte outputByte;
+            if (i < senderRunes.Length)
             {
                 var rune = senderRunes[i];
                 int runeIndex = Common.AFe_CharList.IndexOf(rune);
-                if (runeIndex < 0)
+                if (runeIndex == -1)
                 {
-                    runeIndex = 0x20; // Set to space? TODO: Maybe we should return "invalid code" if this happens
-                    Console.WriteLine("Encountered an invalid character in the Sender's Name at string offset: " + i);
+                    throw new Exception($"Invalid character: '{rune}'");
                 }
-                output[15 + i] = (byte)runeIndex;
+                outputByte = (byte)runeIndex;
             }
+            else
+            {
+                outputByte = 0x20; // Space Character value
+            }
+            output[15 + i] = outputByte;
         }
 
         // Copy Item ID
@@ -377,6 +380,7 @@ public static class Encoder
         bool englishPasswords)
     {
         byte[] passwordData = mMpswd_make_passcode(codeType, hitRateIndex, recipientTown, recipient, sender, itemId, extraData);
+
         mMpswd_substitution_cipher(ref passwordData);
         Common.mMpswd_transposition_cipher(ref passwordData, true, 0);
         mMpswd_bit_shuffle(ref passwordData, 0);
@@ -384,7 +388,9 @@ public static class Encoder
         mMpswd_bit_mix_code(ref passwordData);
         mMpswd_bit_shuffle(ref passwordData, 1);
         Common.mMpswd_transposition_cipher(ref passwordData, false, 1);
+
         byte[] password = mMpswd_chg_6bits_code(passwordData);
+
         mMpswd_chg_common_font_code(ref password, englishPasswords);
 
         var line1 = string.Join("", password.Take(16).Select(x => Common.AFe_CharList[x]));
