@@ -13,19 +13,23 @@ public sealed class ItemCodeGenerator
 
     public SecretCode? GenerateSecretCode()
     {
+        if (!ushort.TryParse(Item.Id, HexNumber, null, out var itemId))
+        {
+            return null;
+        }
+        var passwordInput = new PasswordInput
+        {
+            CodeType = CodeType.User,
+            HitRateIndex = 1,
+            RecipientTown = Recipient.TownName,
+            Recipient = Recipient.Name,
+            Sender = Recipient.Name,
+            ItemId = itemId,
+            ExtraData = 0,
+        };
         try
         {
-            var password = Encoder.Encode
-            (
-                codeType: CodeType.User,
-                hitRateIndex: 1,
-                recipientTown: Recipient.TownName,
-                recipient: Recipient.Name,
-                sender: Recipient.Name,
-                itemId: ushort.Parse(Item.Id, HexNumber),
-                extraData: 0,
-                englishPasswords: Language.IsEnglish
-            );
+            var password = Encoder.Encode(passwordInput, Language.IsEnglish);
             return new()
             {
                 Line1 = password.Item1,

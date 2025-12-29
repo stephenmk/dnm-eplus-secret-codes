@@ -4,77 +4,72 @@ namespace DnmEplusPassword.Library;
 
 public static class Encoder
 {
-    public static byte[] mMpswd_make_passcode(
-        CodeType codeType,
-        int hitRateIndex,
-        string recipientTown,
-        string recipient,
-        string sender,
-        ushort itemId,
-        int extraData)
+    public static byte[] mMpswd_make_passcode(in PasswordInput input)
     {
         var output = new byte[24];
 
+        // Valid indices are 0 - 4. Hit rates are: { 80.0f, 60.0f, 30.0f, 0.0f, 100.0f }.
+        // The hit is RNG based and the player "wins" if hit < hitRate.
         int realHitRateIndex;
-        int npcCode = 0;
+        int realExtraData = input.ExtraData;
+        int npcCode;
 
-        switch (codeType)
+        switch (input.CodeType)
         {
             case CodeType.Famicom:
             case CodeType.User:
             case CodeType.Card_E_Mini:
                 realHitRateIndex = 4;
-                extraData = 0;
+                realExtraData = 0;
                 npcCode = 0xFF;
                 break;
             case CodeType.NPC:
             case CodeType.New_NPC:
-                extraData &= 3;
                 realHitRateIndex = 4;
+                realExtraData &= 3;
+                npcCode = 0;
                 break;
             case CodeType.Magazine:
-                // Valid indices are 0 - 4. Hit rates are: { 80.0f, 60.0f, 30.0f, 0.0f, 100.0f }.
-                // The hit is RNG based and the player "wins" if hit < hitRate.
-                realHitRateIndex = hitRateIndex & 7;
-                extraData = 0;
+                realHitRateIndex = input.HitRateIndex & 7;
+                realExtraData = 0;
                 npcCode = 0xFF;
                 break;
             case CodeType.Monument:
-                extraData &= 0xFF;
                 realHitRateIndex = 4;
+                realExtraData &= 0xFF;
                 npcCode = 0xFF;
                 break;
+            case CodeType.Card_E:
+                throw new NotImplementedException($"{nameof(CodeType.Card_E)} code type is not implemented.");
             default:
-                realHitRateIndex = 4;
-                codeType = CodeType.User;
-                break;
+                throw new ArgumentOutOfRangeException(nameof(PasswordInput.CodeType));
         }
 
-        int byte0 = ((int)codeType << 5) & 0xE0;
+        int byte0 = ((int)input.CodeType << 5) & 0xE0;
         byte0 |= realHitRateIndex << 2;
 
         output[0] = (byte)byte0;
-        output[1] = (byte)extraData;
+        output[1] = (byte)realExtraData;
         output[2] = (byte)npcCode;
 
-        int checksum = npcCode + itemId;
+        int checksum = npcCode + input.ItemId;
         Span<byte> nameBytes = stackalloc byte[6];
 
-        AfNameToBytes(recipientTown, ref nameBytes);
+        AfNameToBytes(input.RecipientTown, ref nameBytes);
         nameBytes.CopyTo(output.AsSpan(3));
         checksum += nameBytes.Sum();
 
-        AfNameToBytes(recipient, ref nameBytes);
+        AfNameToBytes(input.Recipient, ref nameBytes);
         nameBytes.CopyTo(output.AsSpan(9));
         checksum += nameBytes.Sum();
 
-        AfNameToBytes(sender, ref nameBytes);
+        AfNameToBytes(input.Sender, ref nameBytes);
         nameBytes.CopyTo(output.AsSpan(15));
         checksum += nameBytes.Sum();
 
         // Copy Item ID
-        output[21] = (byte)(itemId >> 8);
-        output[22] = (byte)itemId;
+        output[21] = (byte)(input.ItemId >> 8);
+        output[22] = (byte)input.ItemId;
 
         output[0] |= (byte)((checksum >> 2) & 3);
         output[1] |= (byte)((checksum & 3) << 6);
@@ -299,16 +294,9 @@ public static class Encoder
         }
     }
 
-    public static (string, string) DebugEncode(
-        CodeType codeType,
-        int hitRateIndex,
-        string recipientTown,
-        string recipient,
-        string sender,
-        ushort itemId,
-        int extraData)
+    public static (string, string) DebugEncode(in PasswordInput input)
     {
-        byte[] passwordData = mMpswd_make_passcode(codeType, hitRateIndex, recipientTown, recipient, sender, itemId, extraData);
+        byte[] passwordData = mMpswd_make_passcode(input);
         PrintByteBuffer("mMpswd_make_passcode", passwordData);
         mMpswd_substitution_cipher(ref passwordData);
         PrintByteBuffer("mMpswd_substitution_cipher", passwordData);
@@ -349,17 +337,9 @@ public static class Encoder
         Console.Write("\n\n");
     }
 
-    public static (string, string) Encode(
-        CodeType codeType,
-        int hitRateIndex,
-        string recipientTown,
-        string recipient,
-        string sender,
-        ushort itemId,
-        int extraData,
-        bool englishPasswords)
+    public static (string, string) Encode(in PasswordInput input, bool englishPasswords)
     {
-        byte[] passwordData = mMpswd_make_passcode(codeType, hitRateIndex, recipientTown, recipient, sender, itemId, extraData);
+        byte[] passwordData = mMpswd_make_passcode(input);
 
         mMpswd_substitution_cipher(ref passwordData);
         Common.mMpswd_transposition_cipher(ref passwordData, true, 0);

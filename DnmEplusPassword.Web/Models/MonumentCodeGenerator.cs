@@ -13,19 +13,19 @@ public sealed class MonumentCodeGenerator
 
     public SecretCode? GenerateSecretCode()
     {
+        var passwordInput = new PasswordInput
+        {
+            CodeType = CodeType.Monument,
+            HitRateIndex = 0,
+            RecipientTown = Recipient.TownName,
+            Recipient = Recipient.Name,
+            Sender = Price.Value.ToString(),
+            ItemId = (ushort)(Decoration.Id % 15),
+            ExtraData = ((PlacementAcre.Row & 7) << 3) | (PlacementAcre.Col & 7),
+        };
         try
         {
-            var password = Encoder.Encode
-            (
-                codeType: CodeType.Monument,
-                hitRateIndex: 0,
-                recipientTown: Recipient.TownName,
-                recipient: Recipient.Name,
-                sender: Price.Value.ToString(),
-                itemId: (ushort)(Decoration.Id % 15),
-                extraData: ((PlacementAcre.Row & 7) << 3) | (PlacementAcre.Col & 7),
-                englishPasswords: Language.IsEnglish
-            );
+            var password = Encoder.Encode(passwordInput, Language.IsEnglish);
             return new()
             {
                 Line1 = password.Item1,
