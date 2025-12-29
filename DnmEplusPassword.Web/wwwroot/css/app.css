@@ -38,6 +38,8 @@ a, .btn-link {
 
 .validation-message {
     color: red;
+    text-align: right;
+    margin-top: 0.5rem;
 }
 
 #blazor-error-ui {

@@ -4,8 +4,8 @@
     <label for="itemIdInput" class="col col-form-label">Item ID</label>
     <div class="col">
         <InputText @bind-Value="Item.Id" id="itemIdInput" class="form-control" maxlength="4" />
-        <ValidationMessage For="@(() => Item.Id)" />
     </div>
+    <ValidationMessage For="@(() => Item.Id)" />
 </div>
 
 <div class="row">
