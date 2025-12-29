@@ -77,16 +77,16 @@ else
             : null;
     }
 
-    void SelectItem(CatalogItem item)
+    void SelectItem(CatalogItem selectedItem)
     {
-        Item.Id = item.Id;
-        foreach (var i in CatalogItems!)
+        Item.Id = selectedItem.Id;
+        foreach (var item in CatalogItems!)
         {
-            if (i.IsSelected)
+            if (item.IsSelected)
             {
-                i.IsSelected = false;
+                item.IsSelected = false;
             }
         }
-        item.IsSelected = true;
+        selectedItem.IsSelected = true;
     }
 }
