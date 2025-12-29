@@ -1,0 +1,30 @@
+@inject HttpClient Http
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+@if (CatalogItems is null)
+{
+    <p><em>Loading item catalog...</em></p>
+}
+else
+{
+    <QuickGrid Items="@CatalogItems" Pagination="@Pagination" style="max-width: 600px;">
+        <PropertyColumn Property="@(i => i.Id)" Sortable="true" />
+        <PropertyColumn Property="@(i => i.En)" Sortable="true" />
+        <PropertyColumn Property="@(i => i.Ja)" Sortable="true" />
+    </QuickGrid>
+    <Paginator State="@Pagination" />
+}
+
+@code {
+    record CatalogItem(string Id, string En, string Ja);
+
+    IQueryable<CatalogItem>? CatalogItems;
+    PaginationState Pagination = new() { ItemsPerPage = 10 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        CatalogItems = await Http.GetFromJsonAsync<CatalogItem[]>("data/DnmEplusItemCatalog.json") is CatalogItem[] items
+            ? items.AsQueryable()
+            : null;
+    }
+}

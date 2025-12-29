@@ -1,0 +1,37 @@
+@page "/item"
+@using DnmEplusPassword.Web.Components
+@using DnmEplusPassword.Web.Models
+
+<PageTitle>Item Codes</PageTitle>
+
+<h1>Item Secret Code Generator</h1>
+
+<EditForm Model="@Model" OnValidSubmit="GenerateSecretCode" OnInvalidSubmit="ClearSecretCode" style="max-width: 400px;">
+    <DataAnnotationsValidator />
+
+    <InputRecipient Recipient="@Model.Recipient" />
+    <InputItem Item="@Model.Item" />
+    <InputLanguage Language="@Model.Language" />
+
+    <button type="submit" class="btn btn-primary">Generate</button>
+</EditForm>
+
+@if (SecretCode is not null)
+{
+    <OutputSecretCode SecretCode="@SecretCode" />
+}
+
+@code {
+    private ItemCodeGenerator Model = new();
+    private SecretCode? SecretCode = null;
+
+    public void GenerateSecretCode()
+    {
+        SecretCode = Model.GenerateSecretCode();
+    }
+
+    public void ClearSecretCode()
+    {
+        SecretCode = null;
+    }
+}
