@@ -4,27 +4,22 @@ public sealed record Decoration
 {
     public int Id { get; set; } = ValidDecorations.Keys.First();
 
-    private static readonly string[] DecorationNames =
-    [
-        "Park Clock",
-        "Gas Lamp",
-        "Windpump",
-        "Flower Clock",
-        "Heliport",
-        "Wind Turbine",
-        "Pipe Stack",
-        "Stonehenge",
-        "Egg",
-        "Footprints",
-        "Geoglyph",
-        "Mushroom",
-        "Signpost",
-        "Well",
-        "Fountain",
-    ];
-
-    public static IReadOnlyDictionary<int, string> ValidDecorations { get; } =
-        DecorationNames
-            .Select(static (name, idx) => new KeyValuePair<int, string>(idx, name))
-            .ToDictionary();
+    public static IReadOnlyDictionary<int, string> ValidDecorations { get; } = new Dictionary<int, string>()
+    {
+        {00, "Park Clock"},
+        {01, "Gas Lamp"},
+        {02, "Windpump"},
+        {03, "Flower Clock"},
+        {04, "Heliport"},
+        {05, "Wind Turbine"},
+        {06, "Pipe Stack"},
+        {07, "Stonehenge"},
+        {08, "Egg"},
+        {09, "Footprints"},
+        {10, "Geoglyph"},
+        {11, "Mushroom"},
+        {12, "Signpost"},
+        {13, "Well"},
+        {14, "Fountain"},
+    };
 }
