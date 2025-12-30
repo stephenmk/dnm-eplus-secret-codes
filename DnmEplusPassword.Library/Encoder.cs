@@ -6,51 +6,14 @@ public static class Encoder
 {
     public static void mMpswd_make_passcode(in PasswordInput input, Span<byte> output)
     {
-        // Valid indices are 0 - 4. Hit rates are: { 80.0f, 60.0f, 30.0f, 0.0f, 100.0f }.
-        // The hit is RNG based and the player "wins" if hit < hitRate.
-        int realHitRateIndex;
-        int realExtraData = input.ExtraData;
-        int npcCode;
-
-        switch (input.CodeType)
-        {
-            case CodeType.Famicom:
-            case CodeType.User:
-            case CodeType.Card_E_Mini:
-                realHitRateIndex = 4;
-                realExtraData = 0;
-                npcCode = 0xFF;
-                break;
-            case CodeType.NPC:
-            case CodeType.New_NPC:
-                realHitRateIndex = 4;
-                realExtraData &= 3;
-                npcCode = 0;
-                break;
-            case CodeType.Magazine:
-                realHitRateIndex = input.HitRateIndex & 7;
-                realExtraData = 0;
-                npcCode = 0xFF;
-                break;
-            case CodeType.Monument:
-                realHitRateIndex = 4;
-                realExtraData &= 0xFF;
-                npcCode = 0xFF;
-                break;
-            case CodeType.Card_E:
-                throw new NotImplementedException($"{nameof(CodeType.Card_E)} code type is not implemented.");
-            default:
-                throw new ArgumentOutOfRangeException(nameof(PasswordInput.CodeType));
-        }
-
         int byte0 = ((int)input.CodeType << 5) & 0xE0;
-        byte0 |= realHitRateIndex << 2;
+        byte0 |= input.HitRateIndex << 2;
 
         output[0] = (byte)byte0;
-        output[1] = (byte)realExtraData;
-        output[2] = (byte)npcCode;
+        output[1] = (byte)input.ExtraData;
+        output[2] = input.NpcCode;
 
-        int checksum = npcCode + input.ItemId;
+        int checksum = input.NpcCode + input.ItemId;
         Span<byte> nameBytes = stackalloc byte[6];
 
         AfNameToBytes(input.RecipientTown, nameBytes);
@@ -65,7 +28,6 @@ public static class Encoder
         nameBytes.CopyTo(output[15..]);
         checksum += nameBytes.Sum();
 
-        // Copy Item ID
         output[21] = (byte)(input.ItemId >> 8);
         output[22] = (byte)input.ItemId;
 

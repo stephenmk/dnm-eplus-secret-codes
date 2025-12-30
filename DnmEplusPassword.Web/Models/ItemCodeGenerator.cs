@@ -20,7 +20,6 @@ public sealed class ItemCodeGenerator
         var passwordInput = new PasswordInput
         {
             CodeType = CodeType.User,
-            HitRateIndex = 1,
             RecipientTown = Recipient.TownName,
             Recipient = Recipient.Name,
             Sender = Recipient.Name,

@@ -16,7 +16,6 @@ public sealed class MonumentCodeGenerator
         var passwordInput = new PasswordInput
         {
             CodeType = CodeType.Monument,
-            HitRateIndex = 0,
             RecipientTown = Recipient.TownName,
             Recipient = Recipient.Name,
             Sender = Price.Value.ToString(),
