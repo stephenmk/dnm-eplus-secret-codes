@@ -2,13 +2,13 @@ namespace DnmEplusPassword.Library;
 
 public class Decoder
 {
-    public static void mMpswd_decode_bit_shuffle(ref byte[] data, bool keyIdx)
+    public static void mMpswd_decode_bit_shuffle(Span<byte> data, bool keyIdx)
     {
         int count = keyIdx ? 0x17 : 0x16; // Count
         int bitIdx = keyIdx ? 0x09 : 0x0D; // Bit index
 
         byte tableIndex = data[bitIdx];
-        byte[] shuffledData = new byte[23]; // Exclude the r31 byte
+        Span<byte> shuffledData = stackalloc byte[23]; // Exclude the r31 byte
 
         for (int i = 0, idx = 0; i < 23; i++)
         {
@@ -19,7 +19,7 @@ public class Decoder
             shuffledData[i] = data[idx++];
         }
 
-        var zeroedData = new byte[23];
+        Span<byte> zeroedData = stackalloc byte[23];
         var shuffleTable = Common.mMpswd_select_idx_table[data[bitIdx] & 3];
         int offsetIdx = 0;
         int zeroedDataIdx = 0;
@@ -45,41 +45,42 @@ public class Decoder
             zeroedDataIdx++;
         }
 
-        zeroedData.Take(bitIdx).ToArray().CopyTo(data, 0);
+        zeroedData.Slice(0, bitIdx).CopyTo(data);
         data[bitIdx] = tableIndex;
-        zeroedData.Skip(bitIdx).Take(zeroedDataIdx - bitIdx).ToArray().CopyTo(data, bitIdx + 1);
+        zeroedData.Slice(bitIdx + 1, zeroedDataIdx - bitIdx).CopyTo(data.Slice(bitIdx + 1));
     }
 
-    public static void mMpswd_decode_bit_code(ref byte[] data)
+    public static void mMpswd_decode_bit_code(Span<byte> data)
     {
         int method = data[1] & 0x0F;
 
         if (method > 12)
         {
-            Common.mMpswd_bit_shift(ref data, -method * 3);
-            Common.mMpswd_bit_reverse(ref data);
-            Common.mMpswd_bit_arrange_reverse(ref data);
+            Common.mMpswd_bit_shift(data, -method * 3);
+            Common.mMpswd_bit_reverse(data);
+            Common.mMpswd_bit_arrange_reverse(data);
         }
         else if (method > 8)
         {
-            Common.mMpswd_bit_shift(ref data, method * 5);
-            Common.mMpswd_bit_arrange_reverse(ref data);
+            Common.mMpswd_bit_shift(data, method * 5);
+            Common.mMpswd_bit_arrange_reverse(data);
         }
         else if (method > 4)
         {
-            Common.mMpswd_bit_reverse(ref data);
-            Common.mMpswd_bit_shift(ref data, method * 5);
+            Common.mMpswd_bit_reverse(data);
+            Common.mMpswd_bit_shift(data, method * 5);
         }
         else
         {
-            Common.mMpswd_bit_arrange_reverse(ref data);
-            Common.mMpswd_bit_shift(ref data, -method * 3);
+            Common.mMpswd_bit_arrange_reverse(data);
+            Common.mMpswd_bit_shift(data, -method * 3);
         }
     }
 
-    public static void mMpswd_decode_RSA_cipher(ref byte[] data)
+    public static void mMpswd_decode_RSA_cipher(Span<byte> data)
     {
-        byte[] outputBuffer = [.. data];
+        Span<byte> outputBuffer = stackalloc byte[data.Length];
+        data.CopyTo(outputBuffer);
 
         var rsa = new RsaKeyCode(data);
 
@@ -117,7 +118,7 @@ public class Decoder
         }
     }
 
-    public static void mMpswd_chg_8bits_code(ref byte[] storedLocation, byte[] password)
+    public static void mMpswd_chg_8bits_code(Span<byte> storedLocation, ReadOnlySpan<byte> password)
     {
         int passwordIndex = 0;
         int storedLocationIndex = 0;
@@ -152,7 +153,7 @@ public class Decoder
         }
     }
 
-    public static void mMpswd_decode_substitution_cipher(ref byte[] data)
+    public static void mMpswd_decode_substitution_cipher(Span<byte> data)
     {
         for (int i = 0; i < 24; i++)
         {
@@ -168,42 +169,38 @@ public class Decoder
     }
 
     // Main Code \\
-    public static byte[] Decode(byte[] input, bool englishPasswords)
+    public static void Decode(Span<byte> input, Span<byte> output, bool englishPasswords = false)
     {
         if (input.Length != 32)
         {
             throw new ArgumentException("Input must be 32 bytes long", nameof(input));
         }
 
-        byte[] passwordData = new byte[24];
-
         var passwordAlphabet = englishPasswords
             ? Common.usable_to_fontnum_new_translation
             : Common.usable_to_fontnum_new;
 
-        Common.mMpswd_chg_password_font_code(ref input, passwordAlphabet);
-        mMpswd_chg_8bits_code(ref passwordData, input);
-        Common.mMpswd_transposition_cipher(ref passwordData, true, 1);
-        mMpswd_decode_bit_shuffle(ref passwordData, true);
-        mMpswd_decode_bit_code(ref passwordData);
-        mMpswd_decode_RSA_cipher(ref passwordData);
-        mMpswd_decode_bit_shuffle(ref passwordData, false);
-        Common.mMpswd_transposition_cipher(ref passwordData, false, 0);
-        mMpswd_decode_substitution_cipher(ref passwordData);
-
-        return passwordData;
+        Common.mMpswd_chg_password_font_code(input, passwordAlphabet);
+        mMpswd_chg_8bits_code(output, input);
+        Common.mMpswd_transposition_cipher(output, true, 1);
+        mMpswd_decode_bit_shuffle(output, true);
+        mMpswd_decode_bit_code(output);
+        mMpswd_decode_RSA_cipher(output);
+        mMpswd_decode_bit_shuffle(output, false);
+        Common.mMpswd_transposition_cipher(output, false, 0);
+        mMpswd_decode_substitution_cipher(output);
     }
 
-    public static byte[]? Decode(string password, bool englishPasswords = false)
+    public static void Decode(string password, Span<byte> output, bool englishPasswords = false)
     {
         var passwordRunes = password.EnumerateRunes().ToArray();
 
         if (passwordRunes.Length != 32)
         {
-            return null;
+            return;
         }
 
-        var data = new byte[32];
+        Span<byte> passwordBytes = stackalloc byte[32];
 
         for (int i = 0; i < 32; i++)
         {
@@ -213,9 +210,9 @@ public class Decoder
             {
                 throw new Exception($"The password contains an invalid character: '{rune}'");
             }
-            data[i] = (byte)idx;
+            passwordBytes[i] = (byte)idx;
         }
 
-        return Decode(data, englishPasswords);
+        Decode(passwordBytes, output, englishPasswords);
     }
 }

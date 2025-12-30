@@ -140,7 +140,7 @@ public static class Common
         return 0xFF;
     }
 
-    public static void mMpswd_chg_password_font_code(ref byte[] password, in ImmutableArray<byte> fontnum_tbl)
+    public static void mMpswd_chg_password_font_code(Span<byte> password, in ImmutableArray<byte> fontnum_tbl)
     {
         for (int i = 0; i < 32; i++)
         {
@@ -148,7 +148,7 @@ public static class Common
         }
     }
 
-    public static void mMpswd_transposition_cipher(ref byte[] data, bool negate, int keyIndex)
+    public static void mMpswd_transposition_cipher(Span<byte> data, bool negate, int keyIndex)
     {
         var multiplier = negate ? -1 : 1;
         var key = data[key_idx[keyIndex]];
@@ -171,7 +171,7 @@ public static class Common
         }
     }
 
-    public static void mMpswd_bit_reverse(ref byte[] data)
+    public static void mMpswd_bit_reverse(Span<byte> data)
     {
         for (int i = 0; i < 24; i++)
         {
@@ -182,10 +182,11 @@ public static class Common
         }
     }
 
-    public static void mMpswd_bit_arrange_reverse(ref byte[] data)
+    public static void mMpswd_bit_arrange_reverse(Span<byte> data)
     {
-        byte[] buffer = new byte[23];
-        byte[] outputBuffer = new byte[23];
+        Span<byte> buffer = stackalloc byte[23];
+        Span<byte> outputBuffer = stackalloc byte[23];
+
         for (int i = 0, idx = 0; i < 24; i++)
         {
             if (i != 1)
@@ -216,9 +217,10 @@ public static class Common
         }
     }
 
-    public static void mMpswd_bit_shift(ref byte[] data, int shift)
+    public static void mMpswd_bit_shift(Span<byte> data, int shift)
     {
-        byte[] buffer = new byte[23];
+        Span<byte> buffer = stackalloc byte[23];
+
         for (int i = 0, idx = 0; i < 24; i++)
         {
             if (i != 1)
@@ -365,7 +367,7 @@ public static class Common
     }
 
     // Custom Functions \\
-    public static int GetPasswordChecksum(byte[] passwordData)
+    public static int GetPasswordChecksum(ReadOnlySpan<byte> passwordData)
     {
         int checksum = 0;
 
@@ -380,7 +382,7 @@ public static class Common
         return (((checksum >> 2) & 3) << 2) | (((checksum << 6) & 0xC0) >> 6);
     }
 
-    public static bool VerifyChecksum(byte[] passwordData)
+    public static bool VerifyChecksum(ReadOnlySpan<byte> passwordData)
     {
         int calculatedChecksum = GetPasswordChecksum(passwordData);
         int storedChecksum = ((passwordData[0] & 3) << 2) | ((passwordData[1] & 0xC0) >> 6);

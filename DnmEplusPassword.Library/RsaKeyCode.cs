@@ -9,7 +9,7 @@ internal readonly ref struct RsaKeyCode
     public readonly int Prime3 { get; }
     public readonly ImmutableArray<int> IndexTable { get; }
 
-    public RsaKeyCode(byte[] data)
+    public RsaKeyCode(ReadOnlySpan<byte> data)
     {
         int bit10 = data[3] & 3;
         int bit32 = (data[3] >> 2) & 3;
