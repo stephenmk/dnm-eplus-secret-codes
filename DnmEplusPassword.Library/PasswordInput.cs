@@ -26,7 +26,7 @@ public readonly ref struct PasswordInput
 
     public readonly int ExtraData => CodeType switch
     {
-        CodeType.Monument => (((RowAcre & 7) << 3) | (ColAcre & 7)) & 0xFF,
+        CodeType.Monument => (RowAcre << 3) | ColAcre,
         _ => 0
     };
 
