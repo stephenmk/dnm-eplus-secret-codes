@@ -11,6 +11,9 @@ public static class Common
         """.EnumerateRunes()
     ];
 
+    /// <remarks>
+    /// IReadOnlyList doesn't have an IndexOf method, so we'll convert the list to a dictionary for that functionality.
+    /// </remarks>
     public static readonly IReadOnlyDictionary<Rune, byte> UnicodeCharacterCodepointDictionary =
         UnicodeCharacterCodepoints
             .Select(static (rune, idx) => new KeyValuePair<Rune, byte>(rune, (byte)idx))
