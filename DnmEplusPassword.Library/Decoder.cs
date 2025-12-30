@@ -45,9 +45,9 @@ public class Decoder
             zeroedDataIdx++;
         }
 
-        zeroedData.Slice(0, bitIdx).CopyTo(data);
+        zeroedData[..bitIdx].CopyTo(data);
         data[bitIdx] = tableIndex;
-        zeroedData.Slice(bitIdx + 1, zeroedDataIdx - bitIdx).CopyTo(data.Slice(bitIdx + 1));
+        zeroedData.Slice(bitIdx + 1, zeroedDataIdx - bitIdx).CopyTo(data[(bitIdx + 1)..]);
     }
 
     public static void mMpswd_decode_bit_code(Span<byte> data)
