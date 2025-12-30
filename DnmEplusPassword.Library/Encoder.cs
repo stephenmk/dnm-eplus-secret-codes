@@ -7,7 +7,7 @@ public static class Encoder
     public static void mMpswd_make_passcode(in PasswordInput input, Span<byte> output)
     {
         int byte0 = ((int)input.CodeType << 5) & 0xE0;
-        byte0 |= input.HitRateIndex << 2;
+        byte0 |= (byte)input.HitRate << 2;
 
         output[0] = (byte)byte0;
         output[1] = (byte)input.ExtraData;

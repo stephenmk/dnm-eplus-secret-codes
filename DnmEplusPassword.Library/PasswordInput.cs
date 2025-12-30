@@ -10,16 +10,12 @@ public readonly ref struct PasswordInput
     public readonly byte RowAcre { get; init; }
     public readonly byte ColAcre { get; init; }
 
-    /// <remarks>
-    /// Valid indices are 0 - 4. Hit rates are: { 80.0f, 60.0f, 30.0f, 0.0f, 100.0f }.
-    /// The hit is RNG based and the player "wins" if hit < hitRate.
-    /// </remarks>
-    public readonly byte HitRateIndex
+    public readonly HitRate HitRate
     {
         get => CodeType switch
         {
             CodeType.Magazine => field,
-            _ => 4
+            _ => HitRate.OneHundredPercent
         };
         init;
     }
