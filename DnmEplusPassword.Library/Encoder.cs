@@ -4,7 +4,7 @@ namespace DnmEplusPassword.Library;
 
 public static class Encoder
 {
-    public static void mMpswd_make_passcode(in PasswordInput input, Span<byte> output)
+    public static void MakePasscode(in PasswordInput input, Span<byte> output)
     {
         int byte0 = ((int)input.CodeType << 5) & 0xE0;
         byte0 |= (byte)input.HitRate << 2;
@@ -59,7 +59,7 @@ public static class Encoder
         {
             if (i < output.Length)
             {
-                var idx = Common.AFe_CharList.IndexOf(inputRune);
+                var idx = Common.UnicodeCharacterCodepoints.IndexOf(inputRune);
                 if (idx < 0)
                 {
                     throw new ArgumentException($"Invalid character: '{inputRune}'", nameof(input));
@@ -78,7 +78,7 @@ public static class Encoder
         }
         // Fill the rest of the output with spaces.
         var spaceRune = new Rune(' ');
-        var spaceIdx = Common.AFe_CharList.IndexOf(spaceRune);
+        var spaceIdx = Common.UnicodeCharacterCodepoints.IndexOf(spaceRune);
         if (spaceIdx < 0)
         {
             throw new ArgumentException($"Invalid character: '{spaceRune}'", nameof(input));
@@ -90,15 +90,15 @@ public static class Encoder
         }
     }
 
-    public static void mMpswd_substitution_cipher(Span<byte> data)
+    public static void SubstitutionCipher(Span<byte> data)
     {
         for (int i = 0; i < 24; i++)
         {
-            data[i] = Common.mMpswd_chg_code_table[data[i]];
+            data[i] = Common.ChangeCodeTable[data[i]];
         }
     }
 
-    public static void mMpswd_bit_shuffle(Span<byte> data, int key)
+    public static void BitShuffle(Span<byte> data, int key)
     {
         int charOffset = key == 0 ? 0xD : 9;
         int charCount = key == 0 ? 0x16 : 0x17;
@@ -109,7 +109,7 @@ public static class Encoder
 
         Span<byte> output = stackalloc byte[charCount];
 
-        var indexTable = Common.mMpswd_select_idx_table[data[charOffset] & 3];
+        var indexTable = Common.SelectIndexTable[data[charOffset] & 3];
 
         for (int i = 0; i < charCount; i++)
         {
@@ -137,7 +137,7 @@ public static class Encoder
         }
     }
 
-    public static void mMpswd_chg_RSA_cipher(Span<byte> data)
+    public static void ChangeRsaCipher(Span<byte> data)
     {
         Span<byte> buffer = stackalloc byte[data.Length];
         data.CopyTo(buffer);
@@ -169,33 +169,33 @@ public static class Encoder
         }
     }
 
-    public static void mMpswd_bit_mix_code(Span<byte> data)
+    public static void BitMixCode(Span<byte> data)
     {
         int switchType = data[1] & 0x0F;
         if (switchType > 0x0C)
         {
-            Common.mMpswd_bit_arrange_reverse(data);
-            Common.mMpswd_bit_reverse(data);
-            Common.mMpswd_bit_shift(data, switchType * 3);
+            Common.BitArrangeReverse(data);
+            Common.BitReverse(data);
+            Common.BitShift(data, switchType * 3);
         }
         else if (switchType > 0x08)
         {
-            Common.mMpswd_bit_arrange_reverse(data);
-            Common.mMpswd_bit_shift(data, switchType * -5);
+            Common.BitArrangeReverse(data);
+            Common.BitShift(data, switchType * -5);
         }
         else if (switchType > 0x04)
         {
-            Common.mMpswd_bit_shift(data, switchType * -5);
-            Common.mMpswd_bit_reverse(data);
+            Common.BitShift(data, switchType * -5);
+            Common.BitReverse(data);
         }
         else
         {
-            Common.mMpswd_bit_shift(data, switchType * 3);
-            Common.mMpswd_bit_arrange_reverse(data);
+            Common.BitShift(data, switchType * 3);
+            Common.BitArrangeReverse(data);
         }
     }
 
-    public static void mMpswd_chg_6bits_code(ReadOnlySpan<byte> input, Span<byte> output)
+    public static void CangeSixBitsCode(ReadOnlySpan<byte> input, Span<byte> output)
     {
         int bit6Idx = 0;
         int bit8Idx = 0;
@@ -232,20 +232,20 @@ public static class Encoder
         }
     }
 
-    public static void mMpswd_chg_common_font_code(Span<byte> password, bool englishPasswords)
+    public static void CangeCommonFontCode(Span<byte> password, bool englishPasswords)
     {
         if (englishPasswords)
         {
             for (int i = 0; i < 32; i++)
             {
-                password[i] = Common.usable_to_fontnum_new_translation[password[i]];
+                password[i] = Common.TranslatedCharacterCodepoints[password[i]];
             }
         }
         else
         {
             for (int i = 0; i < 32; i++)
             {
-                password[i] = Common.usable_to_fontnum_new[password[i]];
+                password[i] = Common.CharacterCodepoints[password[i]];
             }
         }
     }
@@ -254,28 +254,28 @@ public static class Encoder
     {
         Span<byte> passwordData = stackalloc byte[24];
 
-        mMpswd_make_passcode(input, passwordData);
+        MakePasscode(input, passwordData);
         PrintByteBuffer("mMpswd_make_passcode", passwordData);
-        mMpswd_substitution_cipher(passwordData);
+        SubstitutionCipher(passwordData);
         PrintByteBuffer("mMpswd_substitution_cipher", passwordData);
-        Common.mMpswd_transposition_cipher(passwordData, true, 0);
+        Common.TranspositionCipher(passwordData, true, 0);
         PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
-        mMpswd_bit_shuffle(passwordData, 0); // this doesn't change the last byte. Is that necessary? Doesn't seem to be.
+        BitShuffle(passwordData, 0); // this doesn't change the last byte. Is that necessary? Doesn't seem to be.
         PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
-        mMpswd_chg_RSA_cipher(passwordData);
+        ChangeRsaCipher(passwordData);
         PrintByteBuffer("mMpswd_chg_RSA_cipher", passwordData);
-        mMpswd_bit_mix_code(passwordData); // the problem appears to be in the bit mix function.
+        BitMixCode(passwordData); // the problem appears to be in the bit mix function.
         PrintByteBuffer("mMpswd_bit_mix_code", passwordData);
-        mMpswd_bit_shuffle(passwordData, 1);
+        BitShuffle(passwordData, 1);
         PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
-        Common.mMpswd_transposition_cipher(passwordData, false, 1);
+        Common.TranspositionCipher(passwordData, false, 1);
         PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
 
         Span<byte> password = stackalloc byte[32];
-        mMpswd_chg_6bits_code(passwordData, password);
+        CangeSixBitsCode(passwordData, password);
 
         PrintByteBuffer("mMpswd_chg_6bits_code", password);
-        mMpswd_chg_common_font_code(password, false);
+        CangeCommonFontCode(password, false);
         PrintByteBuffer("mMpswd_chg_common_font_code", password);
 
         var line1 = password[..16].ToPasswordLine();
@@ -302,18 +302,18 @@ public static class Encoder
     {
         Span<byte> passwordData = stackalloc byte[24];
 
-        mMpswd_make_passcode(input, passwordData);
-        mMpswd_substitution_cipher(passwordData);
-        Common.mMpswd_transposition_cipher(passwordData, true, 0);
-        mMpswd_bit_shuffle(passwordData, 0);
-        mMpswd_chg_RSA_cipher(passwordData);
-        mMpswd_bit_mix_code(passwordData);
-        mMpswd_bit_shuffle(passwordData, 1);
-        Common.mMpswd_transposition_cipher(passwordData, false, 1);
+        MakePasscode(input, passwordData);
+        SubstitutionCipher(passwordData);
+        Common.TranspositionCipher(passwordData, true, 0);
+        BitShuffle(passwordData, 0);
+        ChangeRsaCipher(passwordData);
+        BitMixCode(passwordData);
+        BitShuffle(passwordData, 1);
+        Common.TranspositionCipher(passwordData, false, 1);
 
         Span<byte> password = stackalloc byte[32];
-        mMpswd_chg_6bits_code(passwordData, password);
-        mMpswd_chg_common_font_code(password, englishPasswords);
+        CangeSixBitsCode(passwordData, password);
+        CangeCommonFontCode(password, englishPasswords);
 
         var line1 = password[..16].ToPasswordLine();
         var line2 = password[16..].ToPasswordLine();
@@ -327,7 +327,7 @@ public static class Encoder
         int length = 0;
         for (int i = 0; i < bytes.Length; i++)
         {
-            var rune = Common.AFe_CharList[bytes[i]];
+            var rune = Common.UnicodeCharacterCodepoints[bytes[i]];
             runes[i] = rune;
             length += rune.Utf16SequenceLength;
         }

@@ -43,9 +43,9 @@ internal readonly ref struct RsaKeyCode
 
         int tableIdx = ((data[3] >> 2) & 0x3C) >> 2;
 
-        Prime1 = Common.mMpswd_prime_number[bit10];
-        Prime2 = Common.mMpswd_prime_number[bit32];
-        Prime3 = Common.mMpswd_prime_number[data[0xC]];
-        IndexTable = Common.mMpswd_select_idx_table[tableIdx];
+        Prime1 = Common.PrimeNumbers[bit10];
+        Prime2 = Common.PrimeNumbers[bit32];
+        Prime3 = Common.PrimeNumbers[data[0xC]];
+        IndexTable = Common.SelectIndexTable[tableIdx];
     }
 }
