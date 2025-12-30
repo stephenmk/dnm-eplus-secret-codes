@@ -40,7 +40,7 @@ else
     private record CatalogItem(string Id, string En, string Ja)
     {
         public bool IsSelected { get; set; } = false;
-        public string ButtonClass => IsSelected ? "btn-primary" : "btn-secondary";
+        public string ButtonClass => IsSelected ? "btn-dark" : "btn-light";
     };
 
     private PaginationState Pagination = new() { ItemsPerPage = 10 };
