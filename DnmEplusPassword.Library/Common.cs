@@ -1,18 +1,22 @@
-﻿using System.Collections.Immutable;
-using System.Text;
+﻿using System.Text;
 
 namespace DnmEplusPassword.Library;
 
 public static class Common
 {
-    public static readonly ImmutableArray<Rune> UnicodeCharacterCodepoints =
+    public static readonly IReadOnlyList<Rune> UnicodeCharacterCodepoints =
     [..
         """
         あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみ !"むめ%&'()~♥,-.♪0123456789:🌢<+>?@ABCDEFGHIJKLMNOPQRSTUVWXYZも💢やゆ_よabcdefghijklmnopqrstuvwxyzらりるれ�□。｢｣、･ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワンヴ☺ろわをんぁぃぅぇぉゃゅょっ⏎ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ
         """.EnumerateRunes()
     ];
 
-    public static readonly ImmutableArray<int> PrimeNumbers =
+    public static readonly IReadOnlyDictionary<Rune, byte> UnicodeCharacterCodepointDictionary =
+        UnicodeCharacterCodepoints
+            .Select(static (rune, idx) => new KeyValuePair<Rune, byte>(rune, (byte)idx))
+            .ToDictionary();
+
+    public static readonly IReadOnlyList<int> PrimeNumbers =
     [
         0x0011, 0x0013, 0x0017, 0x001D, 0x001F, 0x0025, 0x0029, 0x002B, 0x002F, 0x0035, 0x003B, 0x003D, 0x0043, 0x0047, 0x0049, 0x004F,
         0x0053, 0x0059, 0x0061, 0x0065, 0x0067, 0x006B, 0x006D, 0x0071, 0x007F, 0x0083, 0x0089, 0x008B, 0x0095, 0x0097, 0x009D, 0x00A3,
@@ -32,7 +36,7 @@ public static class Common
         0x061F, 0x0623, 0x062B, 0x062F, 0x063D, 0x0641, 0x0647, 0x0649, 0x064D, 0x0653, 0x0655, 0x065B, 0x0665, 0x0679, 0x067F, 0x0683,
     ];
 
-    public static readonly ImmutableArray<byte> TranslatedCharacterCodepoints =
+    public static readonly IReadOnlyList<byte> TranslatedCharacterCodepoints =
     [
         0x62, 0x4B, 0x7A, 0x35, 0x63, 0x71, 0x59, 0x5A, 0x4F, 0x64, 0x74, 0x36, 0x6E, 0x6C, 0x42, 0x79,
         0x6F, 0x38, 0x34, 0x4C, 0x6B, 0x25, 0x41, 0x51, 0x6D, 0x44, 0x50, 0x49, 0x37, 0x26, 0x52, 0x73,
@@ -40,7 +44,7 @@ public static class Common
         0x75, 0x4E, 0x69, 0x58, 0x57, 0x66, 0x54, 0x4A, 0x46, 0x53, 0x48, 0x70, 0x32, 0x61, 0x6A, 0x68,
     ];
 
-    public static readonly ImmutableArray<byte> CharacterCodepoints =
+    public static readonly IReadOnlyList<byte> CharacterCodepoints =
     [
         0x0A, 0x1F, 0x1D, 0xF0, 0xF1, 0xF5, 0x0D, 0x05, 0xF2, 0x1E, 0xE7, 0x60, 0xEB, 0x11, 0x17, 0x04,
         0xED, 0x15, 0x23, 0xE9, 0xE8, 0xEF, 0x16, 0x10, 0x09, 0xF4, 0xC2, 0x12, 0xF8, 0xC0, 0x0F, 0xC3,
@@ -48,9 +52,9 @@ public static class Common
         0x01, 0x13, 0x07, 0x7E, 0x18, 0xF3, 0x14, 0x1C, 0x5D, 0x03, 0xEE, 0x1B, 0x0B, 0x7D, 0xC1, 0x06,
     ];
 
-    public static readonly ImmutableArray<int> KeyIndices = [0x16, 0x6];
+    public static readonly IReadOnlyList<int> KeyIndices = [0x16, 0x6];
 
-    public static readonly ImmutableArray<ImmutableArray<string>> TranspositionCipherCharTable =
+    public static readonly IReadOnlyList<IReadOnlyList<string>> TranspositionCipherCharTable =
     [[
         "NiiMasaru",            // Animal Crossing programmer (worked on the original N64 title)
         "KomatsuKunihiro",      // Animal Crossing programmer (AF, AF+, AC, AFe+)
@@ -87,7 +91,7 @@ public static class Common
         "KedamonoNoMori",       // Translates to "Animal Forest" or "Beast Forest"
     ]];
 
-    public static readonly ImmutableArray<byte> ChangeCodeTable =
+    public static readonly IReadOnlyList<byte> ChangeCodeTable =
     [
         0xF0, 0x83, 0xFD, 0x62, 0x93, 0x49, 0x0D, 0x3E, 0xE1, 0xA4, 0x2B, 0xAF, 0x3A, 0x25, 0xD0, 0x82,
         0x7F, 0x97, 0xD2, 0x03, 0xB2, 0x32, 0xB4, 0xE6, 0x09, 0x42, 0x57, 0x27, 0x60, 0xEA, 0x76, 0xAB,
@@ -107,7 +111,7 @@ public static class Common
         0x6B, 0x30, 0xEC, 0x4B, 0x48, 0x1C, 0xAD, 0xE2, 0x21, 0x1E, 0xA2, 0xBD, 0x5A, 0xD8, 0x43, 0x7A,
     ];
 
-    public static readonly ImmutableArray<ImmutableArray<int>> SelectIndexTable =
+    public static readonly IReadOnlyList<IReadOnlyList<int>> SelectIndexTable =
     [
         [0x11, 0x0B, 0x00, 0x14, 0x0E, 0x06, 0x08, 0x04],
         [0x05, 0x08, 0x0B, 0x10, 0x04, 0x06, 0x09, 0x13],
@@ -128,7 +132,7 @@ public static class Common
     ];
 
     // Methods
-    public static byte ChangePasswordFontCodeSub(byte characterCodepoint, in ImmutableArray<byte> characterCodepoints)
+    public static byte ChangePasswordFontCodeSub(byte characterCodepoint, IReadOnlyList<byte> characterCodepoints)
     {
         for (byte i = 0; i < 0x40; i++)
         {
@@ -140,7 +144,7 @@ public static class Common
         return 0xFF;
     }
 
-    public static void ChangePasswordFontCode(Span<byte> password, in ImmutableArray<byte> characterCodepoints)
+    public static void ChangePasswordFontCode(Span<byte> password, IReadOnlyList<byte> characterCodepoints)
     {
         for (int i = 0; i < 32; i++)
         {
@@ -395,12 +399,14 @@ public static class Common
         for (int i = 0; i < input.Length; i++)
         {
             var rune = inputRunes[i];
-            var idx = UnicodeCharacterCodepoints.IndexOf(rune);
-            if (idx < 0)
+            if (UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
+            {
+                output[i] = idx;
+            }
+            else
             {
                 throw new ArgumentException($"Invalid character: {rune}", nameof(input));
             }
-            output[i] = (byte)idx;
         }
 
         return output;

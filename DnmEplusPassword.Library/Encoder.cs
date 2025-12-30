@@ -57,19 +57,18 @@ public static class Encoder
         int i = 0;
         foreach (var inputRune in input.EnumerateRunes())
         {
-            if (i < output.Length)
+            if (i == output.Length)
             {
-                var idx = Common.UnicodeCharacterCodepoints.IndexOf(inputRune);
-                if (idx < 0)
-                {
-                    throw new ArgumentException($"Invalid character: '{inputRune}'", nameof(input));
-                }
-                output[i] = (byte)idx;
+                break;
+            }
+            if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(inputRune, out var idx))
+            {
+                output[i] = idx;
                 i++;
             }
             else
             {
-                break;
+                throw new ArgumentException($"Invalid character: '{inputRune}'", nameof(input));
             }
         }
         if (i == output.Length)
@@ -78,14 +77,13 @@ public static class Encoder
         }
         // Fill the rest of the output with spaces.
         var spaceRune = new Rune(' ');
-        var spaceIdx = Common.UnicodeCharacterCodepoints.IndexOf(spaceRune);
-        if (spaceIdx < 0)
+        if (!Common.UnicodeCharacterCodepointDictionary.TryGetValue(spaceRune, out var spaceIdx))
         {
             throw new ArgumentException($"Invalid character: '{spaceRune}'", nameof(input));
         }
         while (i < output.Length)
         {
-            output[i] = (byte)spaceIdx;
+            output[i] = spaceIdx;
             i++;
         }
     }

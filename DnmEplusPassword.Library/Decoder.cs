@@ -204,12 +204,14 @@ public class Decoder
         for (int i = 0; i < 32; i++)
         {
             var rune = passwordRunes[i];
-            int idx = Common.UnicodeCharacterCodepoints.IndexOf(rune);
-            if (idx < 0)
+            if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
+            {
+                passwordBytes[i] = idx;
+            }
+            else
             {
                 throw new Exception($"The password contains an invalid character: '{rune}'");
             }
-            passwordBytes[i] = (byte)idx;
         }
 
         Decode(passwordBytes, output, englishPasswords);

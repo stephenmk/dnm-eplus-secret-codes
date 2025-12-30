@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace DnmEplusPassword.Library;
 
 internal readonly ref struct RsaKeyCode
@@ -7,7 +5,7 @@ internal readonly ref struct RsaKeyCode
     public readonly int Prime1 { get; }
     public readonly int Prime2 { get; }
     public readonly int Prime3 { get; }
-    public readonly ImmutableArray<int> IndexTable { get; }
+    public readonly IReadOnlyList<int> IndexTable { get; }
 
     public RsaKeyCode(ReadOnlySpan<byte> data)
     {
