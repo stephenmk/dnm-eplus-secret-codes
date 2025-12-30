@@ -125,7 +125,6 @@ public class Decoder
         int storedLocationIndex = 0;
 
         int storedValue = 0;
-        int count = 0;
         int shiftRightValue = 0;
         int shiftLeftValue = 0;
 
@@ -137,10 +136,9 @@ public class Decoder
 
             if (shiftLeftValue > 7)
             {
-                count++;
                 storedLocation[storedLocationIndex++] = (byte)storedValue;
                 shiftLeftValue = 0;
-                if (count >= 24)
+                if (storedLocationIndex >= 24)
                 {
                     return;
                 }
