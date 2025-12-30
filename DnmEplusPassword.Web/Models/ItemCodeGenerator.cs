@@ -22,7 +22,7 @@ public sealed class ItemCodeGenerator
             CodeType = CodeType.User,
             RecipientTown = Recipient.TownName,
             Recipient = Recipient.Name,
-            Sender = Recipient.Name,
+            Sender = Sender.Name,
             ItemId = itemId,
         };
         try
