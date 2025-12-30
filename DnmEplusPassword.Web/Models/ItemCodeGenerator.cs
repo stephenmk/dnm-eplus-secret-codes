@@ -25,7 +25,6 @@ public sealed class ItemCodeGenerator
             Recipient = Recipient.Name,
             Sender = Recipient.Name,
             ItemId = itemId,
-            ExtraData = 0,
         };
         try
         {

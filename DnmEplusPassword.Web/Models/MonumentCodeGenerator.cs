@@ -21,7 +21,8 @@ public sealed class MonumentCodeGenerator
             Recipient = Recipient.Name,
             Sender = Price.Value.ToString(),
             ItemId = (ushort)(Decoration.Id % 15),
-            ExtraData = ((PlacementAcre.Row & 7) << 3) | (PlacementAcre.Col & 7),
+            RowAcre = PlacementAcre.Row,
+            ColAcre = PlacementAcre.Col,
         };
         try
         {
