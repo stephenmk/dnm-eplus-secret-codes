@@ -9,20 +9,20 @@ public sealed record Decoration
 
     public static IReadOnlyDictionary<Monument, string> ValidDecorations { get; } = new Dictionary<Monument, string>()
     {
-        {ParkClock, "Park Clock"},
-        {GasLamp, "Gas Lamp"},
-        {Windpump, "Windpump"},
+        {ParkClock,   "Park Clock"},
+        {GasLamp,     "Gas Lamp"},
+        {Windpump,    "Windpump"},
         {FlowerClock, "Flower Clock"},
-        {Heliport, "Heliport"},
+        {Heliport,    "Heliport"},
         {WindTurbine, "Wind Turbine"},
-        {PipeStack, "Pipe Stack"},
-        {Stonehenge, "Stonehenge"},
-        {Egg, "Egg"},
-        {Footprints, "Footprints"},
-        {Geoglyph, "Geoglyph"},
-        {Mushroom, "Mushroom"},
-        {Signpost, "Signpost"},
-        {Well, "Well"},
-        {Fountain, "Fountain"},
+        {PipeStack,   "Pipe Stack"},
+        {Stonehenge,  "Stonehenge"},
+        {Egg,         "Egg"},
+        {Footprints,  "Footprints"},
+        {Geoglyph,    "Geoglyph"},
+        {Mushroom,    "Mushroom"},
+        {Signpost,    "Signpost"},
+        {Well,        "Well"},
+        {Fountain,    "Fountain"},
     };
 }
