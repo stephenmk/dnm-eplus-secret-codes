@@ -59,7 +59,7 @@ public static class Encoder
         {
             if (i == output.Length)
             {
-                break;
+                return;
             }
             if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(inputRune, out var idx))
             {
@@ -70,10 +70,6 @@ public static class Encoder
             {
                 throw new ArgumentException($"Invalid character: '{inputRune}'", nameof(input));
             }
-        }
-        if (i == output.Length)
-        {
-            return;
         }
         // Fill the rest of the output with spaces.
         var spaceRune = new Rune(' ');
