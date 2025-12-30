@@ -20,4 +20,20 @@ public sealed class EncoderTests
         Assert.AreEqual("すまぜんふねちそそこずぎやむぐら", password.Item1);
         Assert.AreEqual("みなまえざほにぎごべぢぜびけもじ", password.Item2);
     }
+
+    [TestMethod]
+    public void TestFestiveFlag()
+    {
+        var input = new PasswordInput
+        {
+            CodeType = CodeType.User,
+            RecipientTown = "ああああ",
+            Recipient = "いいいい",
+            Sender = "クーパー",
+            ItemId = 0x32BC, // おまつりのはた
+        };
+        var password = Encoder.Encode(input, englishPasswords: false);
+        Assert.AreEqual("ゆとやいどだせでねそめにめめつめ", password.Item1);
+        Assert.AreEqual("のつはゆうりむいどずあとれえずか", password.Item2);
+    }
 }
