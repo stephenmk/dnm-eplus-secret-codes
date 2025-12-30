@@ -4,8 +4,8 @@ public class Decoder
 {
     public static void mMpswd_decode_bit_shuffle(Span<byte> data, bool keyIdx)
     {
-        int count = keyIdx ? 0x17 : 0x16; // Count
-        int bitIdx = keyIdx ? 0x09 : 0x0D; // Bit index
+        int count = keyIdx ? 0x17 : 0x16;
+        int bitIdx = keyIdx ? 0x09 : 0x0D;
 
         byte tableIndex = data[bitIdx];
         Span<byte> shuffledData = stackalloc byte[23]; // Exclude the r31 byte
@@ -47,7 +47,8 @@ public class Decoder
 
         zeroedData[..bitIdx].CopyTo(data);
         data[bitIdx] = tableIndex;
-        zeroedData.Slice(bitIdx + 1, zeroedDataIdx - bitIdx).CopyTo(data[(bitIdx + 1)..]);
+        zeroedData.Slice(bitIdx + 1, zeroedDataIdx - bitIdx)
+            .CopyTo(data[(bitIdx + 1)..]);
     }
 
     public static void mMpswd_decode_bit_code(Span<byte> data)
@@ -79,9 +80,6 @@ public class Decoder
 
     public static void mMpswd_decode_RSA_cipher(Span<byte> data)
     {
-        Span<byte> outputBuffer = stackalloc byte[data.Length];
-        data.CopyTo(outputBuffer);
-
         var rsa = new RsaKeyCode(data);
 
         int primeProduct = rsa.Prime1 * rsa.Prime2;
@@ -97,6 +95,9 @@ public class Decoder
             loopEndValue = (modCount * lessProduct + 1) % rsa.Prime3;
             modValue = (modCount * lessProduct + 1) / rsa.Prime3;
         } while (loopEndValue != 0);
+
+        Span<byte> outputBuffer = stackalloc byte[data.Length];
+        data.CopyTo(outputBuffer);
 
         for (int i = 0; i < 8; i++)
         {
