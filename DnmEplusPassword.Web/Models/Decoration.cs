@@ -1,25 +1,28 @@
+using DnmEplusPassword.Library;
+using static DnmEplusPassword.Library.Monument;
+
 namespace DnmEplusPassword.Web.Models;
 
 public sealed record Decoration
 {
-    public int Id { get; set; } = ValidDecorations.Keys.First();
+    public Monument Id { get; set; } = ValidDecorations.Keys.First();
 
-    public static IReadOnlyDictionary<int, string> ValidDecorations { get; } = new Dictionary<int, string>()
+    public static IReadOnlyDictionary<Monument, string> ValidDecorations { get; } = new Dictionary<Monument, string>()
     {
-        {00, "Park Clock"},
-        {01, "Gas Lamp"},
-        {02, "Windpump"},
-        {03, "Flower Clock"},
-        {04, "Heliport"},
-        {05, "Wind Turbine"},
-        {06, "Pipe Stack"},
-        {07, "Stonehenge"},
-        {08, "Egg"},
-        {09, "Footprints"},
-        {10, "Geoglyph"},
-        {11, "Mushroom"},
-        {12, "Signpost"},
-        {13, "Well"},
-        {14, "Fountain"},
+        {ParkClock, "Park Clock"},
+        {GasLamp, "Gas Lamp"},
+        {Windpump, "Windpump"},
+        {FlowerClock, "Flower Clock"},
+        {Heliport, "Heliport"},
+        {WindTurbine, "Wind Turbine"},
+        {PipeStack, "Pipe Stack"},
+        {Stonehenge, "Stonehenge"},
+        {Egg, "Egg"},
+        {Footprints, "Footprints"},
+        {Geoglyph, "Geoglyph"},
+        {Mushroom, "Mushroom"},
+        {Signpost, "Signpost"},
+        {Well, "Well"},
+        {Fountain, "Fountain"},
     };
 }

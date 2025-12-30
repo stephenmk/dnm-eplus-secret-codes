@@ -5,9 +5,9 @@ namespace DnmEplusPassword.Library;
 /// </remarks>
 public enum HitRate : byte
 {
-    EightyPercent = 0,
-    SixtyPercent = 1,
-    ThirtyPercent = 2,
-    ZeroPercent = 3,
-    OneHundredPercent = 4,
+    EightyPercent = 0x00,
+    SixtyPercent = 0x01,
+    ThirtyPercent = 0x02,
+    ZeroPercent = 0x03,
+    OneHundredPercent = 0x04,
 }

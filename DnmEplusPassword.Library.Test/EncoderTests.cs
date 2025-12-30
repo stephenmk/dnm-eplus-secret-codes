@@ -12,7 +12,7 @@ public sealed class EncoderTests
             RecipientTown = "コーヒーまめ",
             Recipient = "クーパー",
             Sender = "1", // Price
-            ItemId = 8, // Egg
+            ItemId = (ushort)Monument.Egg,
             RowAcre = 2,
             ColAcre = 4,
         };

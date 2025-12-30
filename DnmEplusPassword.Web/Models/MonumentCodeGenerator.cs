@@ -19,7 +19,7 @@ public sealed class MonumentCodeGenerator
             RecipientTown = Recipient.TownName,
             Recipient = Recipient.Name,
             Sender = Price.Value.ToString(),
-            ItemId = (ushort)(Decoration.Id % 15),
+            ItemId = (ushort)Decoration.Id,
             RowAcre = PlacementAcre.Row,
             ColAcre = PlacementAcre.Col,
         };
