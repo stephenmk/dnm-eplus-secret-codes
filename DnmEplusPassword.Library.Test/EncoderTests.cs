@@ -4,7 +4,7 @@
 public sealed class EncoderTests
 {
     [TestMethod]
-    public void TestEggMonument()
+    public void TestMonumentEgg()
     {
         var input = new PasswordInput
         {
@@ -22,7 +22,7 @@ public sealed class EncoderTests
     }
 
     [TestMethod]
-    public void TestFestiveFlag()
+    public void TestUserFestiveFlag()
     {
         var input = new PasswordInput
         {
@@ -35,5 +35,21 @@ public sealed class EncoderTests
         var password = Encoder.Encode(input, englishPasswords: false);
         Assert.AreEqual("ゆとやいどだせでねそめにめめつめ", password.Item1);
         Assert.AreEqual("のつはゆうりむいどずあとれえずか", password.Item2);
+    }
+
+    [TestMethod]
+    public void TestUserSandbag()
+    {
+        var input = new PasswordInput
+        {
+            CodeType = CodeType.User,
+            RecipientTown = "コーヒーまめ",
+            Recipient = "クーパー",
+            Sender = "ああああ",
+            ItemId = 0x3394, // サンドバッグ
+        };
+        var password = Encoder.Encode(input, englishPasswords: false);
+        Assert.AreEqual("さふぶゆろじをねぐくよぬがねみみ", password.Item1);
+        Assert.AreEqual("ぐべごすねぬげをなづぞほえこひか", password.Item2);
     }
 }
