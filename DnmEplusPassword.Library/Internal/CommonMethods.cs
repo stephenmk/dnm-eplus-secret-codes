@@ -1,5 +1,4 @@
-﻿using System.Text;
-using static DnmEplusPassword.Library.Internal.Constants;
+﻿using static DnmEplusPassword.Library.Internal.Constants;
 
 namespace DnmEplusPassword.Library.Internal;
 
