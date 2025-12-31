@@ -2,6 +2,13 @@ namespace DnmEplusPassword.Library.Internal;
 
 internal static class Constants
 {
+    /// <summary>
+    /// Map of DnM's 16x16 usable character block to corresponding unicode characters.
+    /// </summary>
+    /// <remarks>
+    /// The index represents the byte code of the DnM character.
+    /// So for example, 'あ' is 0x00 (first index) and 'ぽ' is 0xFF (last index).
+    /// </remarks>
     public static readonly IReadOnlyList<char> UnicodeCharacterCodepoints =
     [
         'あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た',
