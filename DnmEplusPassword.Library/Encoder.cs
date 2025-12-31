@@ -55,20 +55,20 @@ public static class Encoder
     public static void AfNameToBytes(ReadOnlySpan<char> input, Span<byte> output)
     {
         int i = 0;
-        foreach (var inputRune in input.EnumerateRunes())
+        foreach (var rune in input.EnumerateRunes())
         {
             if (i == output.Length)
             {
                 return;
             }
-            if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(inputRune, out var idx))
+            if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
             {
                 output[i] = idx;
                 i++;
             }
             else
             {
-                throw new ArgumentException($"Invalid character: '{inputRune}'", nameof(input));
+                throw new ArgumentException($"Invalid character: '{rune}'", nameof(input));
             }
         }
         // Fill the rest of the output with spaces.
