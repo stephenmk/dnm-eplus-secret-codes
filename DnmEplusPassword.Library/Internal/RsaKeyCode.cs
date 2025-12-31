@@ -1,3 +1,5 @@
+using static DnmEplusPassword.Library.Internal.Constants;
+
 namespace DnmEplusPassword.Library.Internal;
 
 internal readonly ref struct RsaKeyCode
@@ -41,9 +43,9 @@ internal readonly ref struct RsaKeyCode
 
         int tableIdx = ((data[3] >> 2) & 0x3C) >> 2;
 
-        Prime1 = Common.PrimeNumbers[bit10];
-        Prime2 = Common.PrimeNumbers[bit32];
-        Prime3 = Common.PrimeNumbers[data[0xC]];
-        IndexTable = Common.SelectIndexTable[tableIdx];
+        Prime1 = PrimeNumbers[bit10];
+        Prime2 = PrimeNumbers[bit32];
+        Prime3 = PrimeNumbers[data[0xC]];
+        IndexTable = SelectIndexTable[tableIdx];
     }
 }

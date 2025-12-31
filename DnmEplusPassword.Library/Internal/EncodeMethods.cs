@@ -1,5 +1,7 @@
 using System.Text;
 using DnmEplusPassword.Library.Data;
+using static DnmEplusPassword.Library.Internal.CommonMethods;
+using static DnmEplusPassword.Library.Internal.Constants;
 
 namespace DnmEplusPassword.Library.Internal;
 
@@ -62,7 +64,7 @@ public static class EncodeMethods
             {
                 return;
             }
-            if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
+            if (UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
             {
                 output[i] = idx;
                 i++;
@@ -74,7 +76,7 @@ public static class EncodeMethods
         }
         // Fill the rest of the output with spaces.
         var spaceRune = new Rune(' ');
-        if (!Common.UnicodeCharacterCodepointDictionary.TryGetValue(spaceRune, out var spaceIdx))
+        if (!UnicodeCharacterCodepointDictionary.TryGetValue(spaceRune, out var spaceIdx))
         {
             throw new ArgumentException($"Invalid character: '{spaceRune}'", nameof(input));
         }
@@ -89,7 +91,7 @@ public static class EncodeMethods
     {
         for (int i = 0; i < 24; i++)
         {
-            data[i] = Common.ChangeCodeTable[data[i]];
+            data[i] = ChangeCodeTable[data[i]];
         }
     }
 
@@ -104,7 +106,7 @@ public static class EncodeMethods
 
         Span<byte> output = stackalloc byte[charCount];
 
-        var indexTable = Common.SelectIndexTable[data[charOffset] & 3];
+        var indexTable = SelectIndexTable[data[charOffset] & 3];
 
         for (int i = 0; i < charCount; i++)
         {
@@ -169,24 +171,24 @@ public static class EncodeMethods
         int switchType = data[1] & 0x0F;
         if (switchType > 0x0C)
         {
-            Common.BitArrangeReverse(data);
-            Common.BitReverse(data);
-            Common.BitShift(data, switchType * 3);
+            BitArrangeReverse(data);
+            BitReverse(data);
+            BitShift(data, switchType * 3);
         }
         else if (switchType > 0x08)
         {
-            Common.BitArrangeReverse(data);
-            Common.BitShift(data, switchType * -5);
+            BitArrangeReverse(data);
+            BitShift(data, switchType * -5);
         }
         else if (switchType > 0x04)
         {
-            Common.BitShift(data, switchType * -5);
-            Common.BitReverse(data);
+            BitShift(data, switchType * -5);
+            BitReverse(data);
         }
         else
         {
-            Common.BitShift(data, switchType * 3);
-            Common.BitArrangeReverse(data);
+            BitShift(data, switchType * 3);
+            BitArrangeReverse(data);
         }
     }
 
@@ -233,14 +235,14 @@ public static class EncodeMethods
         {
             for (int i = 0; i < 32; i++)
             {
-                password[i] = Common.TranslatedCharacterCodepoints[password[i]];
+                password[i] = TranslatedCharacterCodepoints[password[i]];
             }
         }
         else
         {
             for (int i = 0; i < 32; i++)
             {
-                password[i] = Common.CharacterCodepoints[password[i]];
+                password[i] = CharacterCodepoints[password[i]];
             }
         }
     }

@@ -1,3 +1,6 @@
+using static DnmEplusPassword.Library.Internal.CommonMethods;
+using static DnmEplusPassword.Library.Internal.Constants;
+
 namespace DnmEplusPassword.Library.Internal;
 
 public static class DecodeMethods
@@ -20,7 +23,7 @@ public static class DecodeMethods
         }
 
         Span<byte> zeroedData = stackalloc byte[23];
-        var shuffleTable = Common.SelectIndexTable[data[bitIdx] & 3];
+        var shuffleTable = SelectIndexTable[data[bitIdx] & 3];
         int offsetIdx = 0;
         int zeroedDataIdx = 0;
 
@@ -57,24 +60,24 @@ public static class DecodeMethods
 
         if (method > 12)
         {
-            Common.BitShift(data, -method * 3);
-            Common.BitReverse(data);
-            Common.BitArrangeReverse(data);
+            BitShift(data, -method * 3);
+            BitReverse(data);
+            BitArrangeReverse(data);
         }
         else if (method > 8)
         {
-            Common.BitShift(data, method * 5);
-            Common.BitArrangeReverse(data);
+            BitShift(data, method * 5);
+            BitArrangeReverse(data);
         }
         else if (method > 4)
         {
-            Common.BitReverse(data);
-            Common.BitShift(data, method * 5);
+            BitReverse(data);
+            BitShift(data, method * 5);
         }
         else
         {
-            Common.BitArrangeReverse(data);
-            Common.BitShift(data, -method * 3);
+            BitArrangeReverse(data);
+            BitShift(data, -method * 3);
         }
     }
 
@@ -158,7 +161,7 @@ public static class DecodeMethods
         {
             for (int x = 0; x < 256; x++)
             {
-                if (data[i] == Common.ChangeCodeTable[x])
+                if (data[i] == ChangeCodeTable[x])
                 {
                     data[i] = (byte)x;
                     break;

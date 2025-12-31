@@ -1,6 +1,6 @@
-using System.Text;
 using DnmEplusPassword.Library.Data;
 using DnmEplusPassword.Library.Internal;
+using static DnmEplusPassword.Library.Internal.CommonMethods;
 
 namespace DnmEplusPassword.Library;
 
@@ -12,12 +12,12 @@ public static class Encoder
 
         EncodeMethods.MakePasscode(input, passwordData);
         EncodeMethods.SubstitutionCipher(passwordData);
-        Common.TranspositionCipher(passwordData, true, 0);
+        TranspositionCipher(passwordData, true, 0);
         EncodeMethods.BitShuffle(passwordData, 0);
         EncodeMethods.ChangeRsaCipher(passwordData);
         EncodeMethods.BitMixCode(passwordData);
         EncodeMethods.BitShuffle(passwordData, 1);
-        Common.TranspositionCipher(passwordData, false, 1);
+        TranspositionCipher(passwordData, false, 1);
 
         Span<byte> password = stackalloc byte[32];
         EncodeMethods.ChangeSixBitsCode(passwordData, password);
@@ -37,7 +37,7 @@ public static class Encoder
         PrintByteBuffer("mMpswd_make_passcode", passwordData);
         EncodeMethods.SubstitutionCipher(passwordData);
         PrintByteBuffer("mMpswd_substitution_cipher", passwordData);
-        Common.TranspositionCipher(passwordData, true, 0);
+        TranspositionCipher(passwordData, true, 0);
         PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
         EncodeMethods.BitShuffle(passwordData, 0); // this doesn't change the last byte. Is that necessary? Doesn't seem to be.
         PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
@@ -47,7 +47,7 @@ public static class Encoder
         PrintByteBuffer("mMpswd_bit_mix_code", passwordData);
         EncodeMethods.BitShuffle(passwordData, 1);
         PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
-        Common.TranspositionCipher(passwordData, false, 1);
+        TranspositionCipher(passwordData, false, 1);
         PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
 
         Span<byte> password = stackalloc byte[32];

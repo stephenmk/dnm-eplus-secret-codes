@@ -1,12 +1,13 @@
 using System.Text;
 using DnmEplusPassword.Library.Data;
 using DnmEplusPassword.Library.Internal;
+using static DnmEplusPassword.Library.Internal.CommonMethods;
+using static DnmEplusPassword.Library.Internal.Constants;
 
 namespace DnmEplusPassword.Library;
 
 public class Decoder
 {
-    // Main Code \\
     private const int pwLength = 32;
 
     public static PasswordInput Decode(string password, bool englishPasswords = false)
@@ -21,7 +22,7 @@ public class Decoder
         Span<byte> passwordBytes = stackalloc byte[pwLength];
         for (int i = 0; i < pwLength; i++)
         {
-            if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(runes[i], out var idx))
+            if (UnicodeCharacterCodepointDictionary.TryGetValue(runes[i], out var idx))
             {
                 passwordBytes[i] = idx;
             }
@@ -92,17 +93,17 @@ public class Decoder
     private static void Decode(Span<byte> input, Span<byte> output, bool englishPasswords)
     {
         var characterCodepoints = englishPasswords
-            ? Common.TranslatedCharacterCodepoints
-            : Common.CharacterCodepoints;
+            ? TranslatedCharacterCodepoints
+            : CharacterCodepoints;
 
-        Common.ChangePasswordFontCode(input, characterCodepoints);
+        ChangePasswordFontCode(input, characterCodepoints);
         DecodeMethods.ChangeEightBitsCode(output, input);
-        Common.TranspositionCipher(output, true, 1);
+        TranspositionCipher(output, true, 1);
         DecodeMethods.DecodeBitShuffle(output, true);
         DecodeMethods.DecodeBitCode(output);
         DecodeMethods.DecodeRsaCipher(output);
         DecodeMethods.DecodeBitShuffle(output, false);
-        Common.TranspositionCipher(output, false, 0);
+        TranspositionCipher(output, false, 0);
         DecodeMethods.DecodeSubstitutionCipher(output);
     }
 
