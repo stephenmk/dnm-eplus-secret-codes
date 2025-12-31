@@ -10,7 +10,8 @@
     <DataAnnotationsValidator />
 
     <div class="row">
-        <InputRecipient Recipient="@Model.Recipient" />
+        <InputName Name="@Model.RecipientTownName" LabelText="Recipient's Town Name" />
+        <InputName Name="@Model.RecipientName" LabelText="Recipient's Name" />
     </div>
     <div class="row">
         <InputDecoration Decoration="@Model.Decoration" />

@@ -1,9 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace DnmEplusPassword.Web.Models;
 
-public static class Constants
+public sealed record Name
 {
-    public const string ValidNameCharacters =
+    private const string ValidNameCharacters =
         """
         あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみ !"むめ%&'()~♥,-.♪0123456789:🌢<+>?@ABCDEFGHIJKLMNOPQRSTUVWXYZも💢やゆ_よabcdefghijklmnopqrstuvwxyzらりるれ�□。｢｣、･ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワンヴ☺ろわをんぁぃぅぇぉゃゅょっ⏎ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ
         """;
+
+
+    [StringLength(maximumLength: 6, MinimumLength = 1, ErrorMessage = "Must contain at least 1 character.")]
+    [RegularExpression($@"^[{ValidNameCharacters}]+$", ErrorMessage = "Name contains invalid characters.")]
+    public string Value { get; set; } = string.Empty;
 }

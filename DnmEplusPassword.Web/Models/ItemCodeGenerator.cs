@@ -6,8 +6,9 @@ namespace DnmEplusPassword.Web.Models;
 [ValidatableType]
 public sealed class ItemCodeGenerator
 {
-    public Recipient Recipient { get; set; } = new();
-    public Sender Sender { get; set; } = new();
+    public Name RecipientTownName { get; set; } = new();
+    public Name RecipientName { get; set; } = new();
+    public Name SenderName { get; set; } = new();
     public Item Item { get; set; } = new();
     public Language Language { get; set; } = new();
 
@@ -20,9 +21,9 @@ public sealed class ItemCodeGenerator
         var passwordInput = new PasswordInput
         {
             CodeType = CodeType.User,
-            RecipientTown = Recipient.TownName,
-            Recipient = Recipient.Name,
-            Sender = Sender.Name,
+            RecipientTown = RecipientTownName.Value,
+            Recipient = RecipientName.Value,
+            Sender = SenderName.Value,
             ItemId = itemId,
         };
         try

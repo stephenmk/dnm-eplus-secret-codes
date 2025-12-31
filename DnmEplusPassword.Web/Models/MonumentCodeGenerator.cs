@@ -5,7 +5,8 @@ namespace DnmEplusPassword.Web.Models;
 [ValidatableType]
 public sealed class MonumentCodeGenerator
 {
-    public Recipient Recipient { get; set; } = new();
+    public Name RecipientTownName { get; set; } = new();
+    public Name RecipientName { get; set; } = new();
     public Decoration Decoration { get; set; } = new();
     public Price Price { get; set; } = new();
     public PlacementAcre PlacementAcre { get; set; } = new();
@@ -16,8 +17,8 @@ public sealed class MonumentCodeGenerator
         var passwordInput = new PasswordInput
         {
             CodeType = CodeType.Monument,
-            RecipientTown = Recipient.TownName,
-            Recipient = Recipient.Name,
+            RecipientTown = RecipientTownName.Value,
+            Recipient = RecipientName.Value,
             Sender = Price.Value.ToString(),
             ItemId = (ushort)Decoration.Id,
             RowAcre = PlacementAcre.Row,
