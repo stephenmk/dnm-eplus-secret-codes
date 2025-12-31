@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace DnmEplusPassword.Library;
 
 public class Decoder
@@ -47,8 +49,8 @@ public class Decoder
 
         zeroedData[..bitIdx].CopyTo(data);
         data[bitIdx] = tableIndex;
-        zeroedData.Slice(bitIdx + 1, zeroedDataIdx - bitIdx)
-            .CopyTo(data[(bitIdx + 1)..]);
+        Console.WriteLine($"zeroedDataIdx ({zeroedDataIdx}) - bitIdx ({bitIdx}) is {zeroedDataIdx - bitIdx}");
+        zeroedData[bitIdx..zeroedDataIdx].CopyTo(data[(bitIdx + 1)..]);
     }
 
     public static void DecodeBitCode(Span<byte> data)
@@ -168,13 +170,90 @@ public class Decoder
     }
 
     // Main Code \\
-    public static void Decode(Span<byte> input, Span<byte> output, bool englishPasswords = false)
+    private const int pwLength = 32;
+
+    public static PasswordInput Decode(string password, bool englishPasswords = false)
     {
-        if (input.Length != 32)
+        Span<Rune> runes = stackalloc Rune[pwLength];
+        int runeCount = FillRunes(password, runes);
+        if (runeCount != pwLength)
         {
-            throw new ArgumentException("Input must be 32 bytes long", nameof(input));
+            throw new ArgumentException($"Password must contain {pwLength} characters", nameof(password));
         }
 
+        Span<byte> passwordBytes = stackalloc byte[runes.Length];
+        for (int i = 0; i < pwLength; i++)
+        {
+            if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(runes[i], out var idx))
+            {
+                passwordBytes[i] = idx;
+            }
+            else
+            {
+                throw new Exception($"The password contains an invalid character: '{runes[i]}'");
+            }
+        }
+
+        Span<byte> output = stackalloc byte[pwLength];
+        Decode(passwordBytes, output, englishPasswords);
+
+        ReadOnlySpan<byte> data = output;
+
+        var codeType = (CodeType)((data[0] >> 5) & 7);
+        // var checksum = ((data[0] << 2) & 0x0C) | ((data[1] >> 6) & 3);
+        // var r28 = data[2];
+        // var unknown = (ushort)((data[15] << 8) | data[16]);
+        var presentItemId = (ushort)((data[21] << 8) | data[22]);
+
+        var townName = data.Slice(3, 6).ToPasswordLine().TrimEnd();
+        var playerName = data.Slice(9, 6).ToPasswordLine().TrimEnd();
+        var senderString = data.Slice(15, 6).ToPasswordLine().TrimEnd();
+
+        return codeType switch
+        {
+            CodeType.Monument => new PasswordInput
+            {
+                CodeType = codeType,
+                RecipientTown = townName,
+                Recipient = playerName,
+                Sender = senderString,
+                RowAcre = (byte)((data[1] >> 3) & 7),
+                ColAcre = (byte)(data[1] & 7),
+                ItemId = presentItemId,
+            },
+            _ => new PasswordInput
+            {
+                CodeType = codeType,
+                RecipientTown = townName,
+                Recipient = playerName,
+                Sender = senderString,
+                ItemId = presentItemId,
+            },
+        };
+
+        // var codeTypeValue = 0;
+        // switch (codeType)
+        // {
+        //     case CodeType.Famicom:
+        //     case CodeType.NPC:
+        //     case CodeType.Magazine:
+        //         codeTypeValue = (data[0] >> 2) & 7;
+        //         break;
+        //     case CodeType.Card_E:
+        //     case CodeType.Card_E_Mini:
+        //     case CodeType.User:
+        //     case CodeType.New_NPC:
+        //         codeTypeValue = (data[0] >> 2) & 3;
+        //         break;
+        //     case CodeType.Monument:
+        //         codeTypeValue = (data[0] >> 2) & 7;
+        //         break;
+        // }
+
+    }
+
+    private static void Decode(Span<byte> input, Span<byte> output, bool englishPasswords)
+    {
         var characterCodepoints = englishPasswords
             ? Common.TranslatedCharacterCodepoints
             : Common.CharacterCodepoints;
@@ -190,30 +269,17 @@ public class Decoder
         DecodeSubstitutionCipher(output);
     }
 
-    public static void Decode(string password, Span<byte> output, bool englishPasswords = false)
+    private static int FillRunes(ReadOnlySpan<char> source, Span<Rune> dest)
     {
-        var passwordRunes = password.EnumerateRunes().ToArray();
-
-        if (passwordRunes.Length != 32)
+        int i = 0;
+        foreach (var rune in source.EnumerateRunes())
         {
-            return;
-        }
-
-        Span<byte> passwordBytes = stackalloc byte[32];
-
-        for (int i = 0; i < 32; i++)
-        {
-            var rune = passwordRunes[i];
-            if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
+            if (i == dest.Length)
             {
-                passwordBytes[i] = idx;
+                break;
             }
-            else
-            {
-                throw new Exception($"The password contains an invalid character: '{rune}'");
-            }
+            dest[i++] = rune;
         }
-
-        Decode(passwordBytes, output, englishPasswords);
+        return i;
     }
 }
