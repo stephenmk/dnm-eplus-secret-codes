@@ -30,7 +30,7 @@ public static class Encoder
         return (line1, line2);
     }
 
-    public static (string, string) DebugEncode(in PasswordInput input)
+    public static (string, string) DebugEncode(in PasswordInput input, bool englishPasswords)
     {
         Span<byte> passwordData = stackalloc byte[24];
 
@@ -61,7 +61,7 @@ public static class Encoder
         ChangeSixBitsCode(passwordData, password);
 
         PrintByteBuffer("mMpswd_chg_6bits_code", password);
-        ChangeCommonFontCode(password, false);
+        ChangeCommonFontCode(password, englishPasswords);
         PrintByteBuffer("mMpswd_chg_common_font_code", password);
 
         var line1 = password[..16].DecodeToUnicodeText();
