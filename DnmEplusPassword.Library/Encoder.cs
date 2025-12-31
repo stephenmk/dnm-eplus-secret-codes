@@ -24,8 +24,8 @@ public static class Encoder
         ChangeSixBitsCode(passcode, password);
         ChangeCommonFontCode(password, englishPasswords);
 
-        var line1 = password[..16].ToUnicodeText();
-        var line2 = password[16..].ToUnicodeText();
+        var line1 = password[..16].DecodeToUnicodeText();
+        var line2 = password[16..].DecodeToUnicodeText();
 
         return (line1, line2);
     }
@@ -58,8 +58,8 @@ public static class Encoder
         ChangeCommonFontCode(password, false);
         PrintByteBuffer("mMpswd_chg_common_font_code", password);
 
-        var line1 = password[..16].ToUnicodeText();
-        var line2 = password[16..].ToUnicodeText();
+        var line1 = password[..16].DecodeToUnicodeText();
+        var line2 = password[16..].DecodeToUnicodeText();
 
         return (line1, line2);
     }

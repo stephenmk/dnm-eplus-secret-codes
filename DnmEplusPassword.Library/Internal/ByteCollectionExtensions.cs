@@ -15,10 +15,10 @@ internal static class ByteCollectionExtensions
         return sum;
     }
 
-    public static string ToUnicodeText(this Span<byte> bytes)
-        => ToUnicodeText((ReadOnlySpan<byte>)bytes);
+    public static string DecodeToUnicodeText(this Span<byte> bytes)
+        => DecodeToUnicodeText((ReadOnlySpan<byte>)bytes);
 
-    public static string ToUnicodeText(this ReadOnlySpan<byte> bytes)
+    public static string DecodeToUnicodeText(this ReadOnlySpan<byte> bytes)
     {
         Span<Rune> runes = stackalloc Rune[bytes.Length];
         for (int i = 0; i < bytes.Length; i++)
@@ -26,5 +26,37 @@ internal static class ByteCollectionExtensions
             runes[i] = UnicodeCharacterCodepoints[bytes[i]];
         }
         return runes.FastToString();
+    }
+
+    public static void EncodeTo(this ReadOnlySpan<char> unicodeText, Span<byte> bytes)
+    {
+        int i = 0;
+        foreach (var rune in unicodeText.EnumerateRunes())
+        {
+            if (i == bytes.Length)
+            {
+                return;
+            }
+            if (UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
+            {
+                bytes[i] = idx;
+                i++;
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid character: '{rune}'", nameof(unicodeText));
+            }
+        }
+        // Fill the rest of the output with spaces.
+        var spaceRune = new Rune(' ');
+        if (!UnicodeCharacterCodepointDictionary.TryGetValue(spaceRune, out var spaceIdx))
+        {
+            throw new ArgumentException($"Invalid character: '{spaceRune}'", nameof(unicodeText));
+        }
+        while (i < bytes.Length)
+        {
+            bytes[i] = spaceIdx;
+            i++;
+        }
     }
 }

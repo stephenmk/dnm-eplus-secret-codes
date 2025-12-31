@@ -1,4 +1,3 @@
-using System.Text;
 using DnmEplusPassword.Library.Data;
 using static DnmEplusPassword.Library.Internal.CommonMethods;
 using static DnmEplusPassword.Library.Internal.Constants;
@@ -19,15 +18,15 @@ internal static class EncodeMethods
         int checksum = input.NpcCode + input.ItemId;
         Span<byte> nameBytes = stackalloc byte[6];
 
-        UnicodeTextToBytes(input.RecipientTown, nameBytes);
+        input.RecipientTown.EncodeTo(nameBytes);
         nameBytes.CopyTo(output[3..]);
         checksum += nameBytes.Sum();
 
-        UnicodeTextToBytes(input.Recipient, nameBytes);
+        input.Recipient.EncodeTo(nameBytes);
         nameBytes.CopyTo(output[9..]);
         checksum += nameBytes.Sum();
 
-        UnicodeTextToBytes(input.Sender, nameBytes);
+        input.Sender.EncodeTo(nameBytes);
         nameBytes.CopyTo(output[15..]);
         checksum += nameBytes.Sum();
 
@@ -43,38 +42,6 @@ internal static class EncodeMethods
             Console.WriteLine($"Output[{i}]: {output[i]:X2}");
         }
 #endif
-    }
-
-    public static void UnicodeTextToBytes(ReadOnlySpan<char> input, Span<byte> output)
-    {
-        int i = 0;
-        foreach (var rune in input.EnumerateRunes())
-        {
-            if (i == output.Length)
-            {
-                return;
-            }
-            if (UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
-            {
-                output[i] = idx;
-                i++;
-            }
-            else
-            {
-                throw new ArgumentException($"Invalid character: '{rune}'", nameof(input));
-            }
-        }
-        // Fill the rest of the output with spaces.
-        var spaceRune = new Rune(' ');
-        if (!UnicodeCharacterCodepointDictionary.TryGetValue(spaceRune, out var spaceIdx))
-        {
-            throw new ArgumentException($"Invalid character: '{spaceRune}'", nameof(input));
-        }
-        while (i < output.Length)
-        {
-            output[i] = spaceIdx;
-            i++;
-        }
     }
 
     public static void SubstitutionCipher(Span<byte> data)

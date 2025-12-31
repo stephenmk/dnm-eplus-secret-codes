@@ -44,9 +44,9 @@ public static class Decoder
         // var unknown = (ushort)((data[15] << 8) | data[16]);
         var presentItemId = (ushort)((data[21] << 8) | data[22]);
 
-        var townName = data.Slice(3, 6).ToUnicodeText().TrimEnd();
-        var playerName = data.Slice(9, 6).ToUnicodeText().TrimEnd();
-        var senderString = data.Slice(15, 6).ToUnicodeText().TrimEnd();
+        var townName = data.Slice(3, 6).DecodeToUnicodeText().TrimEnd();
+        var playerName = data.Slice(9, 6).DecodeToUnicodeText().TrimEnd();
+        var senderString = data.Slice(15, 6).DecodeToUnicodeText().TrimEnd();
 
         return codeType switch
         {
