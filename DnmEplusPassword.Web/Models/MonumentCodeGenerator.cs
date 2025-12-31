@@ -5,8 +5,8 @@ namespace DnmEplusPassword.Web.Models;
 [ValidatableType]
 public sealed class MonumentCodeGenerator
 {
-    public Name RecipientTownName { get; set; } = new();
-    public Name RecipientName { get; set; } = new();
+    public Name RecipientTownName { get; set; } = new() { MaxLength = 6 };
+    public Name RecipientName { get; set; } = new() { MaxLength = 6 };
     public Decoration Decoration { get; set; } = new();
     public Price Price { get; set; } = new();
     public PlacementAcre PlacementAcre { get; set; } = new();

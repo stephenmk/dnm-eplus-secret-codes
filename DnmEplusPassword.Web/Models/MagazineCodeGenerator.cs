@@ -6,8 +6,8 @@ namespace DnmEplusPassword.Web.Models;
 [ValidatableType]
 public sealed class MagazineCodeGenerator
 {
-    public Name SenderTownName { get; set; } = new();
-    public Name SenderName { get; set; } = new();
+    public Name SenderTownName { get; set; } = new() { MaxLength = 6 };
+    public Name SenderName { get; set; } = new() { MaxLength = 6 };
     public Item Item { get; set; } = new() { Type = Item.ItemType.Universal };
     public SuccessRate SuccessRate { get; set; } = new();
     public Language Language { get; set; } = new();

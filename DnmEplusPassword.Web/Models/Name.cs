@@ -9,8 +9,19 @@ public sealed record Name
         あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみ !"むめ%&'()~♥,-.♪0123456789:🌢<+>?@ABCDEFGHIJKLMNOPQRSTUVWXYZも💢やゆ_よabcdefghijklmnopqrstuvwxyzらりるれ�□。｢｣、･ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワンヴ☺ろわをんぁぃぅぇぉゃゅょっ⏎ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ
         """;
 
+    public required int MaxLength { get; init; }
 
-    [StringLength(maximumLength: 6, MinimumLength = 1, ErrorMessage = "Must contain at least 1 character.")]
+    [Required(ErrorMessage = "Must contain at least 1 character.")]
     [RegularExpression($@"^[{ValidNameCharacters}]+$", ErrorMessage = "Name contains invalid characters.")]
-    public string Value { get; set; } = string.Empty;
+    public string Value
+    {
+        get => _value;
+        set => _value = _value is null
+            ? string.Empty
+            : value.EnumerateRunes().ToList() is var runes && runes.Count <= MaxLength
+                ? value
+                : string.Join(string.Empty, runes.Take(MaxLength).Select(r => r.ToString()));
+    }
+
+    private string _value = string.Empty;
 }
