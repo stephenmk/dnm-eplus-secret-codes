@@ -1,0 +1,43 @@
+@page "/famicom"
+@using DnmEplusPassword.Web.Components
+@using DnmEplusPassword.Web.Models
+
+<PageTitle>Famicom Codes</PageTitle>
+
+<h1>Famicom Secret Code Generator</h1>
+
+<EditForm Model="@Model" OnValidSubmit="GenerateSecretCode" OnInvalidSubmit="ClearSecretCode" style="max-width: 600px;">
+    <DataAnnotationsValidator />
+
+    <div class="row">
+        <InputName Name="@Model.RecipientTownName" LabelText="Recipient's Town Name" />
+        <InputName Name="@Model.RecipientName" LabelText="Recipient's Name" />
+        <InputName Name="@Model.SenderName" LabelText="Sender's Name" />
+    </div>
+    <div class="row">
+        <InputItem Item="@Model.Item" />
+    </div>
+    <InputLanguage Language="@Model.Language" />
+
+    <button type="submit" class="btn btn-primary">Generate</button>
+</EditForm>
+
+@if (SecretCode is not null)
+{
+    <OutputSecretCode SecretCode="@SecretCode" />
+}
+
+@code {
+    private FamicomCodeGenerator Model = new();
+    private SecretCode? SecretCode = null;
+
+    public void GenerateSecretCode()
+    {
+        SecretCode = Model.GenerateSecretCode();
+    }
+
+    public void ClearSecretCode()
+    {
+        SecretCode = null;
+    }
+}
