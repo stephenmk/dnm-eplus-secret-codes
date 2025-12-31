@@ -84,21 +84,19 @@ internal static class ZuruChecker
     private static int GetStringByteValue(string input)
         => StringToAFByteArray(input).Sum(x => x);
 
-    private static byte[] StringToAFByteArray(string input)
+    private static byte[] StringToAFByteArray(ReadOnlySpan<char> input)
     {
-        var inputRunes = input.EnumerateRunes().ToArray();
-        var output = new byte[inputRunes.Length];
+        var output = new byte[input.Length];
 
         for (int i = 0; i < input.Length; i++)
         {
-            var rune = inputRunes[i];
-            if (UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
+            if (UnicodeCharacterCodepointDictionary.TryGetValue(input[i], out var idx))
             {
                 output[i] = idx;
             }
             else
             {
-                throw new ArgumentException($"Invalid character: {rune}", nameof(input));
+                throw new ArgumentException($"Invalid character: {input[i]}", nameof(input));
             }
         }
 

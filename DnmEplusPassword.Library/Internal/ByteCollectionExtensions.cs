@@ -1,4 +1,3 @@
-using System.Text;
 using static DnmEplusPassword.Library.Internal.Constants;
 
 namespace DnmEplusPassword.Library.Internal;
@@ -20,38 +19,37 @@ internal static class ByteCollectionExtensions
 
     public static string DecodeToUnicodeText(this ReadOnlySpan<byte> bytes)
     {
-        Span<Rune> runes = stackalloc Rune[bytes.Length];
+        Span<char> runes = stackalloc char[bytes.Length];
         for (int i = 0; i < bytes.Length; i++)
         {
             runes[i] = UnicodeCharacterCodepoints[bytes[i]];
         }
-        return runes.FastToString();
+        return new string(runes);
     }
 
     public static void EncodeTo(this ReadOnlySpan<char> unicodeText, Span<byte> bytes)
     {
         int i = 0;
-        foreach (var rune in unicodeText.EnumerateRunes())
+        foreach (var unicodeChar in unicodeText)
         {
             if (i == bytes.Length)
             {
                 return;
             }
-            if (UnicodeCharacterCodepointDictionary.TryGetValue(rune, out var idx))
+            if (UnicodeCharacterCodepointDictionary.TryGetValue(unicodeChar, out var b))
             {
-                bytes[i] = idx;
+                bytes[i] = b;
                 i++;
             }
             else
             {
-                throw new ArgumentException($"Invalid character: '{rune}'", nameof(unicodeText));
+                throw new ArgumentException($"Invalid character: '{unicodeChar}'", nameof(unicodeText));
             }
         }
         // Fill the rest of the output with spaces.
-        var spaceRune = new Rune(' ');
-        if (!UnicodeCharacterCodepointDictionary.TryGetValue(spaceRune, out var spaceIdx))
+        if (!UnicodeCharacterCodepointDictionary.TryGetValue('　', out var spaceIdx))
         {
-            throw new ArgumentException($"Invalid character: '{spaceRune}'", nameof(unicodeText));
+            throw new ArgumentException($"Invalid character: '　'", nameof(unicodeText));
         }
         while (i < bytes.Length)
         {

@@ -1,4 +1,3 @@
-using System.Text;
 using DnmEplusPassword.Library.Data;
 using static DnmEplusPassword.Library.Internal.ByteCollectionExtensions;
 using static DnmEplusPassword.Library.Internal.CommonMethods;
@@ -11,11 +10,9 @@ public static class Decoder
 {
     private const int pwLength = 32;
 
-    public static PasswordInput Decode(string password, bool englishPasswords = false)
+    public static PasswordInput Decode(ReadOnlySpan<char> password, bool englishPasswords = false)
     {
-        Span<Rune> runes = stackalloc Rune[pwLength];
-        int runeCount = password.FillRunes(runes);
-        if (runeCount != pwLength)
+        if (password.Length != pwLength)
         {
             throw new ArgumentException($"Password must contain exactly {pwLength} characters", nameof(password));
         }
@@ -23,13 +20,13 @@ public static class Decoder
         Span<byte> passwordBytes = stackalloc byte[pwLength];
         for (int i = 0; i < pwLength; i++)
         {
-            if (UnicodeCharacterCodepointDictionary.TryGetValue(runes[i], out var idx))
+            if (UnicodeCharacterCodepointDictionary.TryGetValue(password[i], out var idx))
             {
                 passwordBytes[i] = idx;
             }
             else
             {
-                throw new Exception($"The password contains an invalid character: '{runes[i]}'");
+                throw new Exception($"The password contains an invalid character: '{password[i]}'");
             }
         }
 
@@ -106,23 +103,5 @@ public static class Decoder
         DecodeBitShuffle(output, false);
         TranspositionCipher(output, false, 0);
         DecodeSubstitutionCipher(output);
-    }
-
-    /// <summary>
-    /// Writes runes from the source string into the destination buffer.
-    /// </summary>
-    /// <returns>The total number of runes in the source string.</returns>
-    private static int FillRunes(this string source, Span<Rune> dest)
-    {
-        int i = 0;
-        foreach (var rune in source.EnumerateRunes())
-        {
-            if (i < dest.Length)
-            {
-                dest[i] = rune;
-            }
-            i++;
-        }
-        return i;
     }
 }
