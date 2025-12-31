@@ -6,17 +6,17 @@ using static DnmEplusPassword.Library.Internal.Constants;
 
 namespace DnmEplusPassword.Library;
 
-public class Decoder
+public static class Decoder
 {
     private const int pwLength = 32;
 
     public static PasswordInput Decode(string password, bool englishPasswords = false)
     {
         Span<Rune> runes = stackalloc Rune[pwLength];
-        int runeCount = FillRunes(password, runes);
+        int runeCount = password.FillRunes(runes);
         if (runeCount != pwLength)
         {
-            throw new ArgumentException($"Password must contain {pwLength} characters", nameof(password));
+            throw new ArgumentException($"Password must contain exactly {pwLength} characters", nameof(password));
         }
 
         Span<byte> passwordBytes = stackalloc byte[pwLength];
@@ -107,16 +107,20 @@ public class Decoder
         DecodeSubstitutionCipher(output);
     }
 
-    private static int FillRunes(ReadOnlySpan<char> source, Span<Rune> dest)
+    /// <summary>
+    /// Writes runes from the source string into the destination buffer.
+    /// </summary>
+    /// <returns>The total number of runes in the source string.</returns>
+    private static int FillRunes(this string source, Span<Rune> dest)
     {
         int i = 0;
         foreach (var rune in source.EnumerateRunes())
         {
-            if (i == dest.Length)
+            if (i < dest.Length)
             {
-                break;
+                dest[i] = rune;
             }
-            dest[i++] = rune;
+            i++;
         }
         return i;
     }
