@@ -35,13 +35,6 @@ internal static class EncodeMethods
 
         output[0] |= (byte)((checksum >> 2) & 3);
         output[1] |= (byte)((checksum & 3) << 6);
-
-#if DEBUG
-        for (int i = 0; i < output.Length; i++)
-        {
-            Console.WriteLine($"Output[{i}]: {output[i]:X2}");
-        }
-#endif
     }
 
     public static void SubstitutionCipher(Span<byte> data)

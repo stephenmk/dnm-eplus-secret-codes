@@ -35,6 +35,12 @@ public static class Encoder
         Span<byte> passwordData = stackalloc byte[24];
 
         MakePasscode(input, passwordData);
+
+        for (int i = 0; i < passwordData.Length; i++)
+        {
+            Console.WriteLine($"Output[{i}]: {passwordData[i]:X2}");
+        }
+
         PrintByteBuffer("mMpswd_make_passcode", passwordData);
         SubstitutionCipher(passwordData);
         PrintByteBuffer("mMpswd_substitution_cipher", passwordData);
