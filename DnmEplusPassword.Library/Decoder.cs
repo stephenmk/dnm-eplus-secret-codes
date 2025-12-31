@@ -181,7 +181,7 @@ public class Decoder
             throw new ArgumentException($"Password must contain {pwLength} characters", nameof(password));
         }
 
-        Span<byte> passwordBytes = stackalloc byte[runes.Length];
+        Span<byte> passwordBytes = stackalloc byte[pwLength];
         for (int i = 0; i < pwLength; i++)
         {
             if (Common.UnicodeCharacterCodepointDictionary.TryGetValue(runes[i], out var idx))
