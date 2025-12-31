@@ -1,4 +1,4 @@
-namespace DnmEplusPassword.Library.Test;
+namespace DnmEplusPassword.Library.Test.DecoderTests;
 
 [TestClass]
 public sealed class DecoderType7Tests
