@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DnmEplusPassword.Library;
 
 namespace DnmEplusPassword.Web.Models;
 
@@ -20,7 +21,7 @@ public sealed record Name
             ? string.Empty
             : value.EnumerateRunes().ToList() is var runes && runes.Count <= MaxLength
                 ? value
-                : string.Join(string.Empty, runes.Take(MaxLength).Select(r => r.ToString()));
+                : runes.Take(MaxLength).FastToString();
     }
 
     private string _value = string.Empty;
