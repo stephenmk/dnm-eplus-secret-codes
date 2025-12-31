@@ -45,16 +45,6 @@ internal static class EncodeMethods
 #endif
     }
 
-    private static int Sum(this Span<byte> bytes)
-    {
-        int sum = 0;
-        foreach (var b in bytes)
-        {
-            sum += b;
-        }
-        return sum;
-    }
-
     public static void UnicodeTextToBytes(ReadOnlySpan<char> input, Span<byte> output)
     {
         int i = 0;

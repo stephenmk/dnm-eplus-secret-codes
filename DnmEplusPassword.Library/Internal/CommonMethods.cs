@@ -160,18 +160,4 @@ internal static class CommonMethods
             }
         }
     }
-
-    // Custom Functions \\
-    public static string ToUnicodeText(this Span<byte> bytes)
-        => ToUnicodeText((ReadOnlySpan<byte>)bytes);
-
-    public static string ToUnicodeText(this ReadOnlySpan<byte> bytes)
-    {
-        Span<Rune> runes = stackalloc Rune[bytes.Length];
-        for (int i = 0; i < bytes.Length; i++)
-        {
-            runes[i] = UnicodeCharacterCodepoints[bytes[i]];
-        }
-        return runes.FastToString();
-    }
 }
