@@ -19,12 +19,12 @@ internal static class ByteCollectionExtensions
 
     public static string DecodeToUnicodeText(this ReadOnlySpan<byte> bytes)
     {
-        Span<char> runes = stackalloc char[bytes.Length];
+        Span<char> unicodeChars = stackalloc char[bytes.Length];
         for (int i = 0; i < bytes.Length; i++)
         {
-            runes[i] = UnicodeCharacterCodepoints[bytes[i]];
+            unicodeChars[i] = UnicodeCharacterCodepoints[bytes[i]];
         }
-        return new string(runes);
+        return new string(unicodeChars);
     }
 
     public static void EncodeTo(this ReadOnlySpan<char> unicodeText, Span<byte> bytes)
