@@ -18,17 +18,7 @@ public static class Decoder
         }
 
         Span<byte> passwordBytes = stackalloc byte[pwLength];
-        for (int i = 0; i < pwLength; i++)
-        {
-            if (UnicodeCharacterCodepointDictionary.TryGetValue(password[i], out var idx))
-            {
-                passwordBytes[i] = idx;
-            }
-            else
-            {
-                throw new Exception($"The password contains an invalid character: '{password[i]}'");
-            }
-        }
+        password.EncodeTo(passwordBytes);
 
         Span<byte> output = stackalloc byte[pwLength];
         Decode(passwordBytes, output, englishPasswords);

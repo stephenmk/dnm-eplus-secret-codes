@@ -1,4 +1,4 @@
-using static DnmEplusPassword.Library.Internal.Constants;
+using static DnmEplusPassword.Library.Internal.ByteCollectionExtensions;
 
 namespace DnmEplusPassword.Library.Unused;
 
@@ -81,25 +81,10 @@ internal static class ZuruChecker
         return valid;
     }
 
-    private static int GetStringByteValue(string input)
-        => StringToAFByteArray(input).Sum(x => x);
-
-    private static byte[] StringToAFByteArray(ReadOnlySpan<char> input)
+    private static int GetStringByteValue(ReadOnlySpan<char> input)
     {
-        var output = new byte[input.Length];
-
-        for (int i = 0; i < input.Length; i++)
-        {
-            if (UnicodeCharacterCodepointDictionary.TryGetValue(input[i], out var idx))
-            {
-                output[i] = idx;
-            }
-            else
-            {
-                throw new ArgumentException($"Invalid character: {input[i]}", nameof(input));
-            }
-        }
-
-        return output;
+        Span<byte> bytes = stackalloc byte[input.Length];
+        input.EncodeTo(bytes);
+        return bytes.Sum();
     }
 }

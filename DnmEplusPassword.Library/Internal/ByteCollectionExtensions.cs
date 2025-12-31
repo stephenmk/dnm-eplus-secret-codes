@@ -36,9 +36,9 @@ internal static class ByteCollectionExtensions
             {
                 return;
             }
-            if (UnicodeCharacterCodepointDictionary.TryGetValue(unicodeChar, out var b))
+            if (UnicodeCharacterCodepointDictionary.TryGetValue(unicodeChar, out var @byte))
             {
-                bytes[i] = b;
+                bytes[i] = @byte;
                 i++;
             }
             else
@@ -47,13 +47,13 @@ internal static class ByteCollectionExtensions
             }
         }
         // Fill the rest of the output with spaces.
-        if (!UnicodeCharacterCodepointDictionary.TryGetValue('　', out var spaceIdx))
+        if (!UnicodeCharacterCodepointDictionary.TryGetValue('　', out var spaceByte))
         {
             throw new ArgumentException($"Invalid character: '　'", nameof(unicodeText));
         }
         while (i < bytes.Length)
         {
-            bytes[i] = spaceIdx;
+            bytes[i] = spaceByte;
             i++;
         }
     }
