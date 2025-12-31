@@ -34,17 +34,20 @@ internal static class ByteCollectionExtensions
         {
             if (i == bytes.Length)
             {
-                return;
+                throw new ArgumentException($"Length of input text '{unicodeText}' exceeds maximum size = {bytes.Length}", nameof(unicodeText));
             }
             if (UnicodeCharacterCodepointDictionary.TryGetValue(unicodeChar, out var @byte))
             {
-                bytes[i] = @byte;
-                i++;
+                bytes[i++] = @byte;
             }
             else
             {
                 throw new ArgumentException($"Invalid character: '{unicodeChar}'", nameof(unicodeText));
             }
+        }
+        if (i == bytes.Length)
+        {
+            return;
         }
         // Fill the rest of the output with spaces.
         if (!UnicodeCharacterCodepointDictionary.TryGetValue('　', out var spaceByte))
@@ -53,8 +56,7 @@ internal static class ByteCollectionExtensions
         }
         while (i < bytes.Length)
         {
-            bytes[i] = spaceByte;
-            i++;
+            bytes[i++] = spaceByte;
         }
     }
 }
