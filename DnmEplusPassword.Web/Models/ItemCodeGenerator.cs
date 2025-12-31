@@ -1,4 +1,3 @@
-using static System.Globalization.NumberStyles;
 using DnmEplusPassword.Library;
 
 namespace DnmEplusPassword.Web.Models;
@@ -14,7 +13,7 @@ public sealed class ItemCodeGenerator
 
     public SecretCode? GenerateSecretCode()
     {
-        if (!ushort.TryParse(Item.Id, HexNumber, null, out var itemId))
+        if (Item.HexId is not ushort itemId)
         {
             return null;
         }
