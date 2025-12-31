@@ -1,6 +1,6 @@
 namespace DnmEplusPassword.Library.Internal;
 
-public static class ChecksumMethods
+internal static class ChecksumMethods
 {
     public static bool VerifyChecksum(ReadOnlySpan<byte> passwordData)
     {

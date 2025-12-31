@@ -2,7 +2,7 @@ using System.Text;
 
 namespace DnmEplusPassword.Library.Internal;
 
-public static class Constants
+internal static class Constants
 {
     public static readonly IReadOnlyList<Rune> UnicodeCharacterCodepoints =
     [..

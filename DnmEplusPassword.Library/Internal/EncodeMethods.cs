@@ -5,7 +5,7 @@ using static DnmEplusPassword.Library.Internal.Constants;
 
 namespace DnmEplusPassword.Library.Internal;
 
-public static class EncodeMethods
+internal static class EncodeMethods
 {
     public static void MakePasscode(in PasswordInput input, Span<byte> output)
     {

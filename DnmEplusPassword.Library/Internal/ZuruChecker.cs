@@ -2,7 +2,7 @@ using static DnmEplusPassword.Library.Internal.Constants;
 
 namespace DnmEplusPassword.Library.Internal;
 
-public static class ZuruChecker
+internal static class ZuruChecker
 {
     public static bool NewPasswordZuruCheck(
         int checksum,

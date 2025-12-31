@@ -3,7 +3,7 @@ using static DnmEplusPassword.Library.Internal.Constants;
 
 namespace DnmEplusPassword.Library.Internal;
 
-public static class DecodeMethods
+internal static class DecodeMethods
 {
     public static void DecodeBitShuffle(Span<byte> data, bool keyIdx)
     {
