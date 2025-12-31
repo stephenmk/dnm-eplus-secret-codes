@@ -1,5 +1,5 @@
-using DnmEplusPassword.Library;
-using static DnmEplusPassword.Library.Monument;
+using DnmEplusPassword.Library.Data;
+using static DnmEplusPassword.Library.Data.Monument;
 
 namespace DnmEplusPassword.Web.Models;
 

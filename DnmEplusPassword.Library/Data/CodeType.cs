@@ -1,4 +1,4 @@
-namespace DnmEplusPassword.Library;
+namespace DnmEplusPassword.Library.Data;
 
 public enum CodeType
 {

@@ -1,4 +1,4 @@
-namespace DnmEplusPassword.Library;
+namespace DnmEplusPassword.Library.Internal;
 
 internal readonly ref struct RsaKeyCode
 {

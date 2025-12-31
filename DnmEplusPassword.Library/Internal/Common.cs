@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace DnmEplusPassword.Library;
+namespace DnmEplusPassword.Library.Internal;
 
-public static class Common
+internal static class Common
 {
     public static readonly IReadOnlyList<Rune> UnicodeCharacterCodepoints =
     [..

@@ -1,4 +1,4 @@
-namespace DnmEplusPassword.Library;
+namespace DnmEplusPassword.Library.Data;
 
 /// <remarks>
 /// The hit is RNG based and the player "wins" if hit < hitRate.

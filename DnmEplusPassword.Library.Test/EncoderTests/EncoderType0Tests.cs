@@ -1,3 +1,5 @@
+using DnmEplusPassword.Library.Data;
+
 namespace DnmEplusPassword.Library.Test.EncoderTests;
 
 [TestClass]

@@ -1,4 +1,5 @@
 using DnmEplusPassword.Library;
+using DnmEplusPassword.Library.Data;
 
 namespace DnmEplusPassword.Web.Models;
 

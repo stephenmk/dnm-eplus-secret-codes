@@ -1,5 +1,5 @@
-using DnmEplusPassword.Library;
-using static DnmEplusPassword.Library.HitRate;
+using DnmEplusPassword.Library.Data;
+using static DnmEplusPassword.Library.Data.HitRate;
 
 namespace DnmEplusPassword.Web.Models;
 
