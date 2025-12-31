@@ -416,12 +416,7 @@ public static class Common
     }
 
     private static int GetStringByteValue(string input)
-        => StringToAFByteArray(input)
-            .Aggregate
-            (
-                seed: 0,
-                func: static (current, t) => current + t
-            );
+        => StringToAFByteArray(input).Sum(x => x);
 
     public static string ToPasswordLine(this Span<byte> bytes)
         => ToPasswordLine((ReadOnlySpan<byte>)bytes);
