@@ -10,15 +10,11 @@
     <DataAnnotationsValidator />
 
     <div class="row">
-        <InputName Name="@Model.SenderTownName" LabelText="Sender's Town Name" />
-        <InputName Name="@Model.SenderName" LabelText="Sender's Name" />
+        <InputName Name="@Model.MagazineName" LabelText="Magazine Name" />
+        <InputSuccessRate SuccessRate="@Model.SuccessRate" />
     </div>
     <div class="row">
         <InputItem Item="@Model.Item" />
-    </div>
-    <div class="row">
-        <InputSuccessRate SuccessRate="@Model.SuccessRate" />
-        <div class="col" />
     </div>
     <InputLanguage Language="@Model.Language" />
 
