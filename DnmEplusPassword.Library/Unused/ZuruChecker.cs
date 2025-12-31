@@ -1,6 +1,6 @@
 using static DnmEplusPassword.Library.Internal.Constants;
 
-namespace DnmEplusPassword.Library.Internal;
+namespace DnmEplusPassword.Library.Unused;
 
 internal static class ZuruChecker
 {

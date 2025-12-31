@@ -1,4 +1,4 @@
-namespace DnmEplusPassword.Library.Internal;
+namespace DnmEplusPassword.Library.Unused;
 
 internal static class ChecksumMethods
 {
