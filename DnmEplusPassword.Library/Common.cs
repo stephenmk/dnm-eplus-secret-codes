@@ -423,26 +423,16 @@ public static class Common
                 func: static (current, t) => current + t
             );
 
+    public static string ToPasswordLine(this Span<byte> bytes)
+        => ToPasswordLine((ReadOnlySpan<byte>)bytes);
+
     public static string ToPasswordLine(this ReadOnlySpan<byte> bytes)
     {
         Span<Rune> runes = stackalloc Rune[bytes.Length];
-        int length = 0;
         for (int i = 0; i < bytes.Length; i++)
         {
-            var rune = Common.UnicodeCharacterCodepoints[bytes[i]];
-            runes[i] = rune;
-            length += rune.Utf16SequenceLength;
+            runes[i] = UnicodeCharacterCodepoints[bytes[i]];
         }
-        return string.Create(length, state: runes, static (output, state) =>
-        {
-            int charsWritten = 0;
-            foreach (var rune in state)
-            {
-                charsWritten += rune.EncodeToUtf16(output[charsWritten..]);
-            }
-        });
+        return runes.FastToString();
     }
-
-    public static string ToPasswordLine(this Span<byte> bytes)
-        => ToPasswordLine((ReadOnlySpan<byte>)bytes);
 }

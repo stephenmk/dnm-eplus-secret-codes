@@ -18,8 +18,8 @@ public sealed class MagazineCodeGenerator
         }
 
         var nameRunes = MagazineName.Value.EnumerateRunes();
-        var name1 = string.Join(string.Empty, nameRunes.Take(6).Select(static rune => rune.ToString()));
-        var name2 = string.Join(string.Empty, nameRunes.Skip(6).Select(static rune => rune.ToString()));
+        var name1 = nameRunes.Take(6).FastToString();
+        var name2 = nameRunes.Skip(6).FastToString();
 
         var passwordInput = new PasswordInput
         {
