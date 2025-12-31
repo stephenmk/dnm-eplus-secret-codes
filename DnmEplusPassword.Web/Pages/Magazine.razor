@@ -1,0 +1,46 @@
+@page "/magazine"
+@using DnmEplusPassword.Web.Components
+@using DnmEplusPassword.Web.Models
+
+<PageTitle>Magazine Codes</PageTitle>
+
+<h1>Magazine Secret Code Generator</h1>
+
+<EditForm Model="@Model" OnValidSubmit="GenerateSecretCode" OnInvalidSubmit="ClearSecretCode" style="max-width: 600px;">
+    <DataAnnotationsValidator />
+
+    <div class="row">
+        <InputName Name="@Model.SenderTownName" LabelText="Sender's Town Name" />
+        <InputName Name="@Model.SenderName" LabelText="Sender's Name" />
+    </div>
+    <div class="row">
+        <InputItem Item="@Model.Item" />
+    </div>
+    <div class="row">
+        <InputSuccessRate SuccessRate="@Model.SuccessRate" />
+        <div class="col" />
+    </div>
+    <InputLanguage Language="@Model.Language" />
+
+    <button type="submit" class="btn btn-primary">Generate</button>
+</EditForm>
+
+@if (SecretCode is not null)
+{
+    <OutputSecretCode SecretCode="@SecretCode" />
+}
+
+@code {
+    private MagazineCodeGenerator Model = new();
+    private SecretCode? SecretCode = null;
+
+    public void GenerateSecretCode()
+    {
+        SecretCode = Model.GenerateSecretCode();
+    }
+
+    public void ClearSecretCode()
+    {
+        SecretCode = null;
+    }
+}

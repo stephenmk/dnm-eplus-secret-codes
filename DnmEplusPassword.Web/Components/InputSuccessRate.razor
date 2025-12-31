@@ -1,0 +1,16 @@
+@using DnmEplusPassword.Web.Models
+
+<div class="col form-group">
+    <label for="rateInput" class="form-label">Success Rate</label>
+    <InputSelect @bind-Value="SuccessRate.Id" id="rateInput" class="form-select">
+        @foreach (var (key, value) in SuccessRate.ValidRates)
+        {
+            <option value="@key">@value</option>
+        }
+    </InputSelect>
+</div>
+
+@code {
+    [Parameter]
+    public required SuccessRate SuccessRate { get; set; }
+}
