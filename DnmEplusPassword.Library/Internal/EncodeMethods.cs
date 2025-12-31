@@ -19,15 +19,15 @@ public static class EncodeMethods
         int checksum = input.NpcCode + input.ItemId;
         Span<byte> nameBytes = stackalloc byte[6];
 
-        AfNameToBytes(input.RecipientTown, nameBytes);
+        UnicodeTextToBytes(input.RecipientTown, nameBytes);
         nameBytes.CopyTo(output[3..]);
         checksum += nameBytes.Sum();
 
-        AfNameToBytes(input.Recipient, nameBytes);
+        UnicodeTextToBytes(input.Recipient, nameBytes);
         nameBytes.CopyTo(output[9..]);
         checksum += nameBytes.Sum();
 
-        AfNameToBytes(input.Sender, nameBytes);
+        UnicodeTextToBytes(input.Sender, nameBytes);
         nameBytes.CopyTo(output[15..]);
         checksum += nameBytes.Sum();
 
@@ -55,7 +55,7 @@ public static class EncodeMethods
         return sum;
     }
 
-    public static void AfNameToBytes(ReadOnlySpan<char> input, Span<byte> output)
+    public static void UnicodeTextToBytes(ReadOnlySpan<char> input, Span<byte> output)
     {
         int i = 0;
         foreach (var rune in input.EnumerateRunes())

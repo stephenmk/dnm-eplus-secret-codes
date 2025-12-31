@@ -1,7 +1,7 @@
 using System.Text;
 using DnmEplusPassword.Library.Data;
-using DnmEplusPassword.Library.Internal;
 using static DnmEplusPassword.Library.Internal.CommonMethods;
+using static DnmEplusPassword.Library.Internal.DecodeMethods;
 using static DnmEplusPassword.Library.Internal.Constants;
 
 namespace DnmEplusPassword.Library;
@@ -43,9 +43,9 @@ public class Decoder
         // var unknown = (ushort)((data[15] << 8) | data[16]);
         var presentItemId = (ushort)((data[21] << 8) | data[22]);
 
-        var townName = data.Slice(3, 6).ToPasswordLine().TrimEnd();
-        var playerName = data.Slice(9, 6).ToPasswordLine().TrimEnd();
-        var senderString = data.Slice(15, 6).ToPasswordLine().TrimEnd();
+        var townName = data.Slice(3, 6).ToUnicodeText().TrimEnd();
+        var playerName = data.Slice(9, 6).ToUnicodeText().TrimEnd();
+        var senderString = data.Slice(15, 6).ToUnicodeText().TrimEnd();
 
         return codeType switch
         {
@@ -97,14 +97,14 @@ public class Decoder
             : CharacterCodepoints;
 
         ChangePasswordFontCode(input, characterCodepoints);
-        DecodeMethods.ChangeEightBitsCode(output, input);
+        ChangeEightBitsCode(output, input);
         TranspositionCipher(output, true, 1);
-        DecodeMethods.DecodeBitShuffle(output, true);
-        DecodeMethods.DecodeBitCode(output);
-        DecodeMethods.DecodeRsaCipher(output);
-        DecodeMethods.DecodeBitShuffle(output, false);
+        DecodeBitShuffle(output, true);
+        DecodeBitCode(output);
+        DecodeRsaCipher(output);
+        DecodeBitShuffle(output, false);
         TranspositionCipher(output, false, 0);
-        DecodeMethods.DecodeSubstitutionCipher(output);
+        DecodeSubstitutionCipher(output);
     }
 
     private static int FillRunes(ReadOnlySpan<char> source, Span<Rune> dest)

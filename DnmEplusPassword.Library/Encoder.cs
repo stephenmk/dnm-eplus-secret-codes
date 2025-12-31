@@ -1,6 +1,6 @@
 using DnmEplusPassword.Library.Data;
-using DnmEplusPassword.Library.Internal;
 using static DnmEplusPassword.Library.Internal.CommonMethods;
+using static DnmEplusPassword.Library.Internal.EncodeMethods;
 
 namespace DnmEplusPassword.Library;
 
@@ -8,23 +8,23 @@ public static class Encoder
 {
     public static (string, string) Encode(in PasswordInput input, bool englishPasswords)
     {
-        Span<byte> passwordData = stackalloc byte[24];
+        Span<byte> passcode = stackalloc byte[24];
 
-        EncodeMethods.MakePasscode(input, passwordData);
-        EncodeMethods.SubstitutionCipher(passwordData);
-        TranspositionCipher(passwordData, true, 0);
-        EncodeMethods.BitShuffle(passwordData, 0);
-        EncodeMethods.ChangeRsaCipher(passwordData);
-        EncodeMethods.BitMixCode(passwordData);
-        EncodeMethods.BitShuffle(passwordData, 1);
-        TranspositionCipher(passwordData, false, 1);
+        MakePasscode(input, passcode);
+        SubstitutionCipher(passcode);
+        TranspositionCipher(passcode, true, 0);
+        BitShuffle(passcode, 0);
+        ChangeRsaCipher(passcode);
+        BitMixCode(passcode);
+        BitShuffle(passcode, 1);
+        TranspositionCipher(passcode, false, 1);
 
         Span<byte> password = stackalloc byte[32];
-        EncodeMethods.ChangeSixBitsCode(passwordData, password);
-        EncodeMethods.ChangeCommonFontCode(password, englishPasswords);
+        ChangeSixBitsCode(passcode, password);
+        ChangeCommonFontCode(password, englishPasswords);
 
-        var line1 = password[..16].ToPasswordLine();
-        var line2 = password[16..].ToPasswordLine();
+        var line1 = password[..16].ToUnicodeText();
+        var line2 = password[16..].ToUnicodeText();
 
         return (line1, line2);
     }
@@ -33,32 +33,32 @@ public static class Encoder
     {
         Span<byte> passwordData = stackalloc byte[24];
 
-        EncodeMethods.MakePasscode(input, passwordData);
+        MakePasscode(input, passwordData);
         PrintByteBuffer("mMpswd_make_passcode", passwordData);
-        EncodeMethods.SubstitutionCipher(passwordData);
+        SubstitutionCipher(passwordData);
         PrintByteBuffer("mMpswd_substitution_cipher", passwordData);
         TranspositionCipher(passwordData, true, 0);
         PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
-        EncodeMethods.BitShuffle(passwordData, 0); // this doesn't change the last byte. Is that necessary? Doesn't seem to be.
+        BitShuffle(passwordData, 0); // this doesn't change the last byte. Is that necessary? Doesn't seem to be.
         PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
-        EncodeMethods.ChangeRsaCipher(passwordData);
+        ChangeRsaCipher(passwordData);
         PrintByteBuffer("mMpswd_chg_RSA_cipher", passwordData);
-        EncodeMethods.BitMixCode(passwordData); // the problem appears to be in the bit mix function.
+        BitMixCode(passwordData); // the problem appears to be in the bit mix function.
         PrintByteBuffer("mMpswd_bit_mix_code", passwordData);
-        EncodeMethods.BitShuffle(passwordData, 1);
+        BitShuffle(passwordData, 1);
         PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
         TranspositionCipher(passwordData, false, 1);
         PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
 
         Span<byte> password = stackalloc byte[32];
-        EncodeMethods.ChangeSixBitsCode(passwordData, password);
+        ChangeSixBitsCode(passwordData, password);
 
         PrintByteBuffer("mMpswd_chg_6bits_code", password);
-        EncodeMethods.ChangeCommonFontCode(password, false);
+        ChangeCommonFontCode(password, false);
         PrintByteBuffer("mMpswd_chg_common_font_code", password);
 
-        var line1 = password[..16].ToPasswordLine();
-        var line2 = password[16..].ToPasswordLine();
+        var line1 = password[..16].ToUnicodeText();
+        var line2 = password[16..].ToUnicodeText();
 
         return (line1, line2);
     }
