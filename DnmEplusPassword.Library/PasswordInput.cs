@@ -10,14 +10,15 @@ public readonly ref struct PasswordInput
     public readonly byte RowAcre { get; init; }
     public readonly byte ColAcre { get; init; }
 
+    private readonly HitRate _hitRate;
     public readonly HitRate HitRate
     {
         get => CodeType switch
         {
-            CodeType.Magazine => field,
+            CodeType.Magazine => _hitRate,
             _ => HitRate.OneHundredPercent
         };
-        init;
+        init => _hitRate = value;
     }
 
     public readonly int ExtraData => CodeType switch
