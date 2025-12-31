@@ -314,24 +314,4 @@ public static class Encoder
 
         return (line1, line2);
     }
-
-    private static string ToPasswordLine(this Span<byte> bytes)
-    {
-        Span<Rune> runes = stackalloc Rune[bytes.Length];
-        int length = 0;
-        for (int i = 0; i < bytes.Length; i++)
-        {
-            var rune = Common.UnicodeCharacterCodepoints[bytes[i]];
-            runes[i] = rune;
-            length += rune.Utf16SequenceLength;
-        }
-        return string.Create(length, state: runes, static (output, state) =>
-        {
-            int charsWritten = 0;
-            foreach (var rune in state)
-            {
-                charsWritten += rune.EncodeToUtf16(output[charsWritten..]);
-            }
-        });
-    }
 }
