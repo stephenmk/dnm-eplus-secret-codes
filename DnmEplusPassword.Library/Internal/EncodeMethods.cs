@@ -181,19 +181,13 @@ internal static class EncodeMethods
 
     public static void ChangeCommonFontCode(Span<byte> password, bool englishPasswords)
     {
-        if (englishPasswords)
+        var codepointTable = englishPasswords
+            ? TranslatedCharacterCodepoints
+            : CharacterCodepoints;
+
+        for (int i = 0; i < 32; i++)
         {
-            for (int i = 0; i < 32; i++)
-            {
-                password[i] = TranslatedCharacterCodepoints[password[i]];
-            }
-        }
-        else
-        {
-            for (int i = 0; i < 32; i++)
-            {
-                password[i] = CharacterCodepoints[password[i]];
-            }
+            password[i] = codepointTable[password[i]];
         }
     }
 }
