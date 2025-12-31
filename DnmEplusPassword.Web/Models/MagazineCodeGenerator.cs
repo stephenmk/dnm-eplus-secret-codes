@@ -8,7 +8,7 @@ public sealed class MagazineCodeGenerator
 {
     public Name SenderTownName { get; set; } = new();
     public Name SenderName { get; set; } = new();
-    public Item Item { get; set; } = new();
+    public Item Item { get; set; } = new() { Type = Item.ItemType.Universal };
     public SuccessRate SuccessRate { get; set; } = new();
     public Language Language { get; set; } = new();
 

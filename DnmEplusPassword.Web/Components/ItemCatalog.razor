@@ -1,6 +1,7 @@
 @inject HttpClient Http
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using DnmEplusPassword.Web.Models
+@using static DnmEplusPassword.Web.Models.Item.ItemType
 
 @if (FilteredCatalogItems is null)
 {
@@ -26,7 +27,8 @@ else
                 </ColumnOptions>
             </PropertyColumn>
             <TemplateColumn Title="Action">
-                <button type="button" class="btn @context.ButtonClass" @onclick="@(() => SelectItem(context))">Select</button>
+                <button type="button" class="btn @context.ButtonClass"
+                    @onclick="@(() => SelectItem(context))">Select</button>
             </TemplateColumn>
         </QuickGrid>
     </div>
@@ -39,12 +41,6 @@ else
 
     [Parameter]
     public EventCallback<Item> ItemChanged { get; set; }
-
-    private record CatalogItem(string Id, string En, string Ja)
-    {
-        public bool IsSelected { get; set; } = false;
-        public string ButtonClass => IsSelected ? "btn-dark" : "btn-light";
-    };
 
     private PaginationState Pagination = new() { ItemsPerPage = 10 };
     private IQueryable<CatalogItem>? CatalogItems;
@@ -76,7 +72,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         CatalogItems = await Http.GetFromJsonAsync<CatalogItem[]>("data/DnmEplusItemCatalog.json") is CatalogItem[] items
-            ? items.AsQueryable()
+            ? items.Where(catalogItem => Item.Type switch
+            {
+                User => catalogItem.User,
+                Universal => catalogItem.Universal,
+                Famicom => catalogItem.Famicom,
+                _ => false
+            }).AsQueryable()
             : null;
     }
 
@@ -93,4 +95,10 @@ else
         selectedItem.IsSelected = true;
         await ItemChanged.InvokeAsync(Item);
     }
+
+    private record CatalogItem(string Id, string En, string Ja, bool User, bool Universal, bool Famicom)
+    {
+        public bool IsSelected { get; set; } = false;
+        public string ButtonClass => IsSelected ? "btn-dark" : "btn-light";
+    };
 }

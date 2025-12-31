@@ -8,7 +8,7 @@ public sealed class ItemCodeGenerator
     public Name RecipientTownName { get; set; } = new();
     public Name RecipientName { get; set; } = new();
     public Name SenderName { get; set; } = new();
-    public Item Item { get; set; } = new();
+    public Item Item { get; set; } = new() { Type = Item.ItemType.User };
     public Language Language { get; set; } = new();
 
     public SecretCode? GenerateSecretCode()
