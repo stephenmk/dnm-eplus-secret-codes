@@ -8,14 +8,12 @@ internal static class EncodeMethods
 {
     public static void MakePasscode(in PasswordInput input, Span<byte> output)
     {
-        int byte0 = ((int)input.CodeType << 5) & 0xE0;
-        byte0 |= (byte)input.HitRate << 2;
+        // Only the four least significant bits of the checksum will be used.
+        int checksum = 0;
 
-        output[0] = (byte)byte0;
-        output[1] = (byte)input.ExtraData;
         output[2] = input.NpcCode;
+        checksum += input.NpcCode;
 
-        int checksum = input.NpcCode + input.ItemId;
         Span<byte> nameBytes = stackalloc byte[6];
 
         input.RecipientTown.EncodeTo(nameBytes);
@@ -31,10 +29,16 @@ internal static class EncodeMethods
         checksum += nameBytes.Sum();
 
         output[21] = (byte)(input.ItemId >> 8);
-        output[22] = (byte)input.ItemId;
+        output[22] = (byte)(input.ItemId & 0b1111_1111);
+        checksum += input.ItemId;
 
-        output[0] |= (byte)((checksum >> 2) & 3);
-        output[1] |= (byte)((checksum & 3) << 6);
+        // First byte: 3 bits for code type, 3 bits for hit rate, and 2 bits for checksum.
+        var byte0 = ((byte)input.CodeType << 5) | ((byte)input.HitRate << 2) | ((checksum >> 2) & 0b11);
+        output[0] = (byte)byte0;
+
+        // Second byte: 2 bits for checksum and 6 bits for extra data.
+        var byte1 = ((checksum & 0b11) << 6) | (input.ExtraData & 0b0011_1111);
+        output[1] = (byte)byte1;
     }
 
     public static void SubstitutionCipher(Span<byte> data)
