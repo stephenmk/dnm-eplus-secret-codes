@@ -50,7 +50,6 @@ internal static class DecodeMethods
 
         zeroedData[..bitIdx].CopyTo(data);
         data[bitIdx] = tableIndex;
-        Console.WriteLine($"zeroedDataIdx ({zeroedDataIdx}) - bitIdx ({bitIdx}) is {zeroedDataIdx - bitIdx}");
         zeroedData[bitIdx..zeroedDataIdx].CopyTo(data[(bitIdx + 1)..]);
     }
 
