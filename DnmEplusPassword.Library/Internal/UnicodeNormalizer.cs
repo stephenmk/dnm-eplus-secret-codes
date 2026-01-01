@@ -2,13 +2,11 @@ using System.Text;
 
 namespace DnmEplusPassword.Library.Internal;
 
-internal static class UnicodeMapper
+internal static class UnicodeNormalizer
 {
-    public static ReadOnlySpan<char> NormalizeCharacters(ReadOnlySpan<char> input)
+    public static ReadOnlySpan<char> Normalize(this ReadOnlySpan<char> input)
     {
-        // Input should never contain more than 12 chars (e.g. 6 emoji),
-        // but let's guard against large sizes just in case.
-        Span<char> characters = input.Length < 50
+        Span<char> characters = input.Length < 128
             ? stackalloc char[input.Length]
             : new char[input.Length];
 
