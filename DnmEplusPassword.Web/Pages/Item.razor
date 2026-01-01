@@ -1,4 +1,5 @@
 @page "/item"
+@using DnmEplusPassword.Library.Data
 @using DnmEplusPassword.Web.Components
 @using DnmEplusPassword.Web.Models
 
@@ -29,7 +30,7 @@
 
 @code {
     private ItemCodeGenerator Model = new();
-    private SecretCode? SecretCode = null;
+    private PasswordOutput? SecretCode = null;
 
     public void GenerateSecretCode()
     {

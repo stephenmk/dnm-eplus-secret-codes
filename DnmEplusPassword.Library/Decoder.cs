@@ -1,25 +1,15 @@
 using DnmEplusPassword.Library.Data;
-using static DnmEplusPassword.Library.Internal.ByteCollectionExtensions;
 using static DnmEplusPassword.Library.Internal.CommonMethods;
 using static DnmEplusPassword.Library.Internal.Constants;
 using static DnmEplusPassword.Library.Internal.DecodeMethods;
-using static DnmEplusPassword.Library.Internal.UnicodeNormalizer;
 
 namespace DnmEplusPassword.Library;
 
 public static class Decoder
 {
-    public static PasswordInput Decode(ReadOnlySpan<char> password, bool englishPasswords = false)
+    public static PasswordInput Decode(PasswordOutput output, bool englishPasswords = false)
     {
-        var normalizedPassword = password.DnmNormalize();
-        Span<byte> passwordBytes = stackalloc byte[32];
-
-        if (normalizedPassword.Length != passwordBytes.Length)
-        {
-            throw new ArgumentException($"Password must contain exactly {passwordBytes.Length} characters", nameof(password));
-        }
-
-        normalizedPassword.EncodeTo(passwordBytes);
+        Span<byte> passwordBytes = output.RawBytes.ToArray();
         ChangeCharacterSet(passwordBytes, englishPasswords);
 
         Span<byte> data = stackalloc byte[24];

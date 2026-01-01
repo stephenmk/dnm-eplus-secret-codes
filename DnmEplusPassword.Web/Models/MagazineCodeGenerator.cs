@@ -11,7 +11,7 @@ public sealed class MagazineCodeGenerator
     public SuccessRate SuccessRate { get; set; } = new();
     public Language Language { get; set; } = new();
 
-    public SecretCode GenerateSecretCode()
+    public PasswordOutput GenerateSecretCode()
     {
         var nameRunes = MagazineName.Value.EnumerateRunes();
         var name1 = nameRunes.Take(6).FastToString();
@@ -27,12 +27,6 @@ public sealed class MagazineCodeGenerator
             HitRate = SuccessRate.Id,
         };
 
-        var password = Encoder.Encode(passwordInput, Language.IsEnglish);
-
-        return new()
-        {
-            Line1 = password.Item1,
-            Line2 = password.Item2,
-        };
+        return Encoder.Encode(passwordInput, Language.IsEnglish);
     }
 }

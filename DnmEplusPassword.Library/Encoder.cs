@@ -7,7 +7,7 @@ namespace DnmEplusPassword.Library;
 
 public static class Encoder
 {
-    public static (string, string) Encode(in PasswordInput input, bool englishPasswords)
+    public static PasswordOutput Encode(in PasswordInput input, bool englishPasswords)
     {
         Span<byte> passcode = stackalloc byte[24];
 
@@ -20,14 +20,11 @@ public static class Encoder
         BitShuffle(passcode, 1);
         TranspositionCipher(passcode, false, 1);
 
-        Span<byte> password = stackalloc byte[32];
+        Span<byte> password = new byte[32];
         ChangeSixBitsCode(passcode, password);
         ChangeCommonFontCode(password, englishPasswords);
 
-        var line1 = password[..16].DecodeToUnicodeText();
-        var line2 = password[16..].DecodeToUnicodeText();
-
-        return (line1, line2);
+        return new PasswordOutput(password);
     }
 
     private static void MakePasscode(in PasswordInput input, Span<byte> output)

@@ -11,7 +11,7 @@ public sealed class FamicomCodeGenerator
     public Item Item { get; set; } = new() { Type = Item.ItemType.Famicom };
     public Language Language { get; set; } = new();
 
-    public SecretCode GenerateSecretCode()
+    public PasswordOutput GenerateSecretCode()
     {
         var passwordInput = new PasswordInput
         {
@@ -22,12 +22,6 @@ public sealed class FamicomCodeGenerator
             ItemId = Item.HexId,
         };
 
-        var password = Encoder.Encode(passwordInput, Language.IsEnglish);
-
-        return new()
-        {
-            Line1 = password.Item1,
-            Line2 = password.Item2,
-        };
+        return Encoder.Encode(passwordInput, Language.IsEnglish);
     }
 }

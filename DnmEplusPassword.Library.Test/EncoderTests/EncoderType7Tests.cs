@@ -19,8 +19,8 @@ public sealed class EncoderType7Tests
             ColAcre = 4,
         };
         var password = Encoder.Encode(input, englishPasswords: false);
-        Assert.AreEqual("すまぜんふねちそそこずぎやむぐら", password.Item1);
-        Assert.AreEqual("みなまえざほにぎごべぢぜびけもじ", password.Item2);
+        Assert.AreEqual("すまぜんふねちそそこずぎやむぐら", password.Line1);
+        Assert.AreEqual("みなまえざほにぎごべぢぜびけもじ", password.Line2);
     }
 
     [TestMethod]
@@ -37,7 +37,7 @@ public sealed class EncoderType7Tests
             ColAcre = 3,
         };
         var password = Encoder.Encode(input, englishPasswords: false);
-        Assert.AreEqual("ゆれびのほそかぜれくごびしおげあ", password.Item1);
-        Assert.AreEqual("いぎきほしみやほようんほとづぶか", password.Item2);
+        Assert.AreEqual("ゆれびのほそかぜれくごびしおげあ", password.Line1);
+        Assert.AreEqual("いぎきほしみやほようんほとづぶか", password.Line2);
     }
 }

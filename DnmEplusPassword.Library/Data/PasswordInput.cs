@@ -1,6 +1,5 @@
 using System.Text;
 using static DnmEplusPassword.Library.Internal.ByteCollectionExtensions;
-using static DnmEplusPassword.Library.Internal.UnicodeNormalizer;
 
 namespace DnmEplusPassword.Library.Data;
 
@@ -33,19 +32,19 @@ public readonly ref struct PasswordInput()
     public readonly ReadOnlySpan<char> RecipientTown
     {
         get => Name1.DecodeToUnicodeText().TrimEnd();
-        init => Name1 = EncodeToNameBytes(value, 6);
+        init => Name1 = value.EncodeToNameBytes(6);
     }
 
     public readonly ReadOnlySpan<char> Recipient
     {
         get => Name2.DecodeToUnicodeText().TrimEnd();
-        init => Name2 = EncodeToNameBytes(value, 6);
+        init => Name2 = value.EncodeToNameBytes(6);
     }
 
     public readonly ReadOnlySpan<char> Sender
     {
         get => Name3.DecodeToUnicodeText().TrimEnd();
-        init => Name3 = EncodeToNameBytes(value, 6);
+        init => Name3 = value.EncodeToNameBytes(6);
     }
 
     public readonly int Price
@@ -63,12 +62,5 @@ public readonly ref struct PasswordInput()
     }
 
     public byte CalculateChecksum()
-        => (byte)((NpcCode + Name1.Sum() + Name2.Sum() + Name3.Sum() + ItemId) & 0b1111);
-
-    private static ReadOnlySpan<byte> EncodeToNameBytes(ReadOnlySpan<char> value, int size)
-    {
-        Span<byte> nameBytes = new byte[size];
-        value.DnmNormalize().EncodeTo(nameBytes);
-        return nameBytes;
-    }
+        => (byte)((NpcCode + Name1.Sum() + Name2.Sum() + Name3.Sum() + ItemId) & 0xF);
 }

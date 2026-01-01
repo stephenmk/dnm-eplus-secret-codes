@@ -14,9 +14,6 @@ internal static class ByteCollectionExtensions
         return sum;
     }
 
-    public static string DecodeToUnicodeText(this Span<byte> bytes)
-        => DecodeToUnicodeText((ReadOnlySpan<byte>)bytes);
-
     public static string DecodeToUnicodeText(this ReadOnlySpan<byte> bytes)
     {
         Span<char> unicodeChars = stackalloc char[bytes.Length];
@@ -27,7 +24,19 @@ internal static class ByteCollectionExtensions
         return new string(unicodeChars);
     }
 
-    public static void EncodeTo(this ReadOnlySpan<char> unicodeText, Span<byte> bytes)
+    public static Span<byte> EncodeToNameBytes(this ReadOnlySpan<char> unicodeText, int size)
+    {
+        Span<byte> nameBytes = new byte[size];
+        var normalizedText = unicodeText.DnmNormalize();
+        if (normalizedText.Length > size)
+        {
+            throw new ArgumentException($"Normalized text must not contain more than {size} characters", nameof(unicodeText));
+        }
+        normalizedText.EncodeTo(nameBytes);
+        return nameBytes;
+    }
+
+    private static void EncodeTo(this ReadOnlySpan<char> unicodeText, Span<byte> bytes)
     {
         int i = 0;
         foreach (var unicodeChar in unicodeText)

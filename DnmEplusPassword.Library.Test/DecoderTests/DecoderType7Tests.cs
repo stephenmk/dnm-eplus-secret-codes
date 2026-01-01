@@ -8,7 +8,11 @@ public sealed class DecoderType7Tests
     [TestMethod]
     public void TestMonumentEgg()
     {
-        var password = "すまぜんふねちそそこずぎやむぐらみなまえざほにぎごべぢぜびけもじ";
+        var password = new PasswordOutput
+        (
+            "すまぜんふねちそそこずぎやむぐら",
+            "みなまえざほにぎごべぢぜびけもじ"
+        );
         var input = Decoder.Decode(password, englishPasswords: false);
 
         Assert.AreEqual(CodeType.Monument, input.CodeType);

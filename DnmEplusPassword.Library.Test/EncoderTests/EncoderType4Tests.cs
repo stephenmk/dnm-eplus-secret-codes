@@ -17,8 +17,8 @@ public sealed class EncoderType4Tests
             ItemId = 0x32BC, // おまつりのはた
         };
         var password = Encoder.Encode(input, englishPasswords: false);
-        Assert.AreEqual("ゆとやいどだせでねそめにめめつめ", password.Item1);
-        Assert.AreEqual("のつはゆうりむいどずあとれえずか", password.Item2);
+        Assert.AreEqual("ゆとやいどだせでねそめにめめつめ", password.Line1);
+        Assert.AreEqual("のつはゆうりむいどずあとれえずか", password.Line2);
     }
 
     [TestMethod]
@@ -33,7 +33,7 @@ public sealed class EncoderType4Tests
             ItemId = 0x3394, // サンドバッグ
         };
         var password = Encoder.Encode(input, englishPasswords: false);
-        Assert.AreEqual("さふぶゆろじをねぐくよぬがねみみ", password.Item1);
-        Assert.AreEqual("ぐべごすねぬげをなづぞほえこひか", password.Item2);
+        Assert.AreEqual("さふぶゆろじをねぐくよぬがねみみ", password.Line1);
+        Assert.AreEqual("ぐべごすねぬげをなづぞほえこひか", password.Line2);
     }
 }

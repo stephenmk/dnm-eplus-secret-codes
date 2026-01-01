@@ -18,8 +18,8 @@ public sealed class EncoderType3Tests
             HitRate = HitRate.OneHundredPercent,
         };
         var password = Encoder.Encode(input, englishPasswords: false);
-        Assert.AreEqual("すねわとつくずよぞろれはごゆつよ", password.Item1);
-        Assert.AreEqual("へずんすわじぜにのごはせはみへひ", password.Item2);
+        Assert.AreEqual("すねわとつくずよぞろれはごゆつよ", password.Line1);
+        Assert.AreEqual("へずんすわじぜにのごはせはみへひ", password.Line2);
     }
 
     [TestMethod]
@@ -35,7 +35,7 @@ public sealed class EncoderType3Tests
             HitRate = HitRate.OneHundredPercent,
         };
         var password = Encoder.Encode(input, englishPasswords: false);
-        Assert.AreEqual("んじそちべかづぞづせえさかでせる", password.Item1);
-        Assert.AreEqual("やぎさけろひむあぢめこれえぢとお", password.Item2);
+        Assert.AreEqual("んじそちべかづぞづせえさかでせる", password.Line1);
+        Assert.AreEqual("やぎさけろひむあぢめこれえぢとお", password.Line2);
     }
 }

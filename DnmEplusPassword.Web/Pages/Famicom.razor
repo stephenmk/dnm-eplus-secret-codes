@@ -1,4 +1,5 @@
 @page "/famicom"
+@using DnmEplusPassword.Library.Data
 @using DnmEplusPassword.Web.Components
 @using DnmEplusPassword.Web.Models
 
@@ -28,7 +29,7 @@
 
 @code {
     private FamicomCodeGenerator Model = new();
-    private SecretCode? SecretCode = null;
+    private PasswordOutput? SecretCode = null;
 
     public void GenerateSecretCode()
     {

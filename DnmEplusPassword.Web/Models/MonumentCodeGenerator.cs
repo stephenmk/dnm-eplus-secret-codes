@@ -13,7 +13,7 @@ public sealed class MonumentCodeGenerator
     public PlacementAcre PlacementAcre { get; set; } = new();
     public Language Language { get; set; } = new();
 
-    public SecretCode GenerateSecretCode()
+    public PasswordOutput GenerateSecretCode()
     {
         var passwordInput = new PasswordInput
         {
@@ -26,12 +26,6 @@ public sealed class MonumentCodeGenerator
             ColAcre = PlacementAcre.Col,
         };
 
-        var password = Encoder.Encode(passwordInput, Language.IsEnglish);
-
-        return new()
-        {
-            Line1 = password.Item1,
-            Line2 = password.Item2,
-        };
+        return Encoder.Encode(passwordInput, Language.IsEnglish);
     }
 }
