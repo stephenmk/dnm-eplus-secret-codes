@@ -9,18 +9,16 @@ namespace DnmEplusPassword.Library;
 
 public static class Decoder
 {
-    private const int pwLength = 32;
-
     public static PasswordInput Decode(ReadOnlySpan<char> password, bool englishPasswords = false)
     {
         var normalizedPassword = password.Normalize();
+        Span<byte> passwordBytes = stackalloc byte[32];
 
-        if (normalizedPassword.Length != pwLength)
+        if (normalizedPassword.Length != passwordBytes.Length)
         {
-            throw new ArgumentException($"Password must contain exactly {pwLength} characters", nameof(password));
+            throw new ArgumentException($"Password must contain exactly {passwordBytes.Length} characters", nameof(password));
         }
 
-        Span<byte> passwordBytes = stackalloc byte[pwLength];
         normalizedPassword.EncodeTo(passwordBytes);
         ChangeCharacterSet(passwordBytes, englishPasswords);
 
