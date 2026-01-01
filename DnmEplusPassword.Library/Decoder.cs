@@ -25,26 +25,17 @@ public static class Decoder
         Span<byte> data = stackalloc byte[24];
         Decode(passwordBytes, data);
 
-        var codeType = (CodeType)((data[0] >> 5) & 0b111);
-        var hitRate = (HitRate)((data[0] >> 2) & 0b111);
-        // var checksum = (byte)(((data[0] & 0b11) << 2) | ((data[1] >> 6) & 0b11));
-        var extraData = (byte)(data[1] & 0b0011_1111);
-        // var npcCode = data[2];
-
-        var townName = data.Slice(3, 6).DecodeToUnicodeText().TrimEnd();
-        var playerName = data.Slice(9, 6).DecodeToUnicodeText().TrimEnd();
-        var senderString = data.Slice(15, 6).DecodeToUnicodeText().TrimEnd();
-        var itemId = (ushort)((data[21] << 8) | data[22]);
-
         return new PasswordInput
         {
-            CodeType = codeType,
-            HitRate = hitRate,
-            ExtraData = extraData,
-            RecipientTown = townName,
-            Recipient = playerName,
-            Sender = senderString,
-            ItemId = itemId,
+            CodeType = (CodeType)((data[0] >> 5) & 0b111),
+            HitRate = (HitRate)((data[0] >> 2) & 0b111),
+            CheckSum = (byte)(((data[0] & 0b11) << 2) | ((data[1] >> 6) & 0b11)),
+            ExtraData = (byte)(data[1] & 0b0011_1111),
+            NpcCode = data[2],
+            RecipientTown = data.Slice(3, 6).DecodeToUnicodeText().TrimEnd(),
+            Recipient = data.Slice(9, 6).DecodeToUnicodeText().TrimEnd(),
+            Sender = data.Slice(15, 6).DecodeToUnicodeText().TrimEnd(),
+            ItemId = (ushort)((data[21] << 8) | data[22]),
         };
     }
 
@@ -53,6 +44,7 @@ public static class Decoder
         var characterCodepoints = englishPasswords
             ? TranslatedCharacterCodepoints
             : CharacterCodepoints;
+
         ChangePasswordFontCode(input, characterCodepoints);
     }
 
