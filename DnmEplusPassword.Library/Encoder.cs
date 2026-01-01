@@ -30,57 +30,26 @@ public static class Encoder
         return (line1, line2);
     }
 
-    public static (string, string) DebugEncode(in PasswordInput input, bool englishPasswords)
+    private static void MakePasscode(in PasswordInput input, Span<byte> output)
     {
-        Span<byte> passwordData = stackalloc byte[24];
+        int checksum = input.CalculateChecksum();
 
-        MakePasscode(input, passwordData);
+        // First byte: 3 bits for code type, 3 bits for hit rate, and 2 bits for checksum.
+        var byte0 = ((byte)input.CodeType << 5) | ((byte)input.HitRate << 2) | ((checksum >> 2) & 0b11);
+        output[0] = (byte)byte0;
 
-        for (int i = 0; i < passwordData.Length; i++)
-        {
-            Console.WriteLine($"Output[{i}]: {passwordData[i]:X2}");
-        }
+        // Second byte: 2 bits for checksum and 6 bits for extra data.
+        var byte1 = ((checksum & 0b11) << 6) | (input.ExtraData & 0b0011_1111);
+        output[1] = (byte)byte1;
 
-        PrintByteBuffer("mMpswd_make_passcode", passwordData);
-        SubstitutionCipher(passwordData);
-        PrintByteBuffer("mMpswd_substitution_cipher", passwordData);
-        TranspositionCipher(passwordData, true, 0);
-        PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
-        BitShuffle(passwordData, 0); // this doesn't change the last byte. Is that necessary? Doesn't seem to be.
-        PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
-        ChangeRsaCipher(passwordData);
-        PrintByteBuffer("mMpswd_chg_RSA_cipher", passwordData);
-        BitMixCode(passwordData); // the problem appears to be in the bit mix function.
-        PrintByteBuffer("mMpswd_bit_mix_code", passwordData);
-        BitShuffle(passwordData, 1);
-        PrintByteBuffer("mMpswd_bit_shuffle", passwordData);
-        TranspositionCipher(passwordData, false, 1);
-        PrintByteBuffer("mMpswd_transposition_cipher", passwordData);
+        output[2] = input.NpcCode;
+        input.Name1.CopyTo(output[3..]);
+        input.Name2.CopyTo(output[9..]);
+        input.Name3.CopyTo(output[15..]);
+        output[21] = (byte)(input.ItemId >> 8);
+        output[22] = (byte)(input.ItemId & 0b1111_1111);
 
-        Span<byte> password = stackalloc byte[32];
-        ChangeSixBitsCode(passwordData, password);
-
-        PrintByteBuffer("mMpswd_chg_6bits_code", password);
-        ChangeCommonFontCode(password, englishPasswords);
-        PrintByteBuffer("mMpswd_chg_common_font_code", password);
-
-        var line1 = password[..16].DecodeToUnicodeText();
-        var line2 = password[16..].DecodeToUnicodeText();
-
-        return (line1, line2);
-    }
-
-    private static void PrintByteBuffer(string stage, ReadOnlySpan<byte> buffer)
-    {
-        Console.Write((stage + ":").PadRight(32));
-        for (var i = 0; i < buffer.Length; i++)
-        {
-            if (i > 0 && i % 8 == 0)
-            {
-                Console.Write(("\n").PadRight(32) + " ");
-            }
-            Console.Write(buffer[i].ToString("X2"));
-        }
-        Console.Write("\n\n");
+        // Zero the final byte just in case. Stack-allocated arrays aren't initialized to zeroes.
+        output[23] = 0x00;
     }
 }

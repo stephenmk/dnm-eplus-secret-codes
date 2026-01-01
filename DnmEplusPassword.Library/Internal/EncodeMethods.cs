@@ -1,4 +1,3 @@
-using DnmEplusPassword.Library.Data;
 using static DnmEplusPassword.Library.Internal.CommonMethods;
 using static DnmEplusPassword.Library.Internal.Constants;
 
@@ -6,44 +5,6 @@ namespace DnmEplusPassword.Library.Internal;
 
 internal static class EncodeMethods
 {
-    public static void MakePasscode(in PasswordInput input, Span<byte> output)
-    {
-        // The four least significant bits of the checksum will be inserted into the output.
-        int checksum = 0;
-
-        output[2] = input.NpcCode;
-        checksum += input.NpcCode;
-
-        Span<byte> nameBytes = stackalloc byte[6];
-
-        input.RecipientTown.EncodeTo(nameBytes);
-        nameBytes.CopyTo(output[3..]);
-        checksum += nameBytes.Sum();
-
-        input.Recipient.EncodeTo(nameBytes);
-        nameBytes.CopyTo(output[9..]);
-        checksum += nameBytes.Sum();
-
-        input.Sender.EncodeTo(nameBytes);
-        nameBytes.CopyTo(output[15..]);
-        checksum += nameBytes.Sum();
-
-        output[21] = (byte)(input.ItemId >> 8);
-        output[22] = (byte)(input.ItemId & 0b1111_1111);
-        checksum += input.ItemId;
-
-        // Zero the final byte just in case. Stack-allocated arrays aren't initialized to zeroes.
-        output[23] = 0x00;
-
-        // First byte: 3 bits for code type, 3 bits for hit rate, and 2 bits for checksum.
-        var byte0 = ((byte)input.CodeType << 5) | ((byte)input.HitRate << 2) | ((checksum >> 2) & 0b11);
-        output[0] = (byte)byte0;
-
-        // Second byte: 2 bits for checksum and 6 bits for extra data.
-        var byte1 = ((checksum & 0b11) << 6) | (input.ExtraData & 0b0011_1111);
-        output[1] = (byte)byte1;
-    }
-
     public static void SubstitutionCipher(Span<byte> data)
     {
         for (int i = 0; i < 24; i++)

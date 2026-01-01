@@ -1,4 +1,5 @@
 using System.Text;
+using static DnmEplusPassword.Library.Internal.ByteCollectionExtensions;
 using static DnmEplusPassword.Library.Internal.UnicodeNormalizer;
 
 namespace DnmEplusPassword.Library.Data;
@@ -8,7 +9,7 @@ public readonly ref struct PasswordInput()
     // First 2 bytes (16 bits) are composed of the code type, hit rate, checksum, and extra data.
     public required readonly CodeType CodeType { get; init; } // 3 bits
     public readonly HitRate HitRate { get; init; } = HitRate.OneHundredPercent; // 3 bits
-    public readonly byte CheckSum { get; init; } // 4 bits
+    public readonly byte Checksum { get; init; } // 4 bits
     public readonly byte ExtraData { get; init; } // 6 bits
 
     public readonly byte RowAcre
@@ -25,9 +26,27 @@ public readonly ref struct PasswordInput()
 
     public readonly byte NpcCode { get; init; } = 0xFF; // 1 byte
 
-    public required readonly ReadOnlySpan<char> RecipientTown { get; init => field = value.DnmNormalize(); } // 6 bytes
-    public required readonly ReadOnlySpan<char> Recipient { get; init => field = value.DnmNormalize(); } // 6 bytes
-    public readonly ReadOnlySpan<char> Sender { get; init => field = value.DnmNormalize(); } // 6 bytes
+    public readonly ReadOnlySpan<byte> Name1 { get; init; } // 6 bytes
+    public readonly ReadOnlySpan<byte> Name2 { get; init; } // 6 bytes
+    public readonly ReadOnlySpan<byte> Name3 { get; init; } // 6 bytes
+
+    public readonly ReadOnlySpan<char> RecipientTown
+    {
+        get => Name1.DecodeToUnicodeText().TrimEnd();
+        init => Name1 = EncodeToNameBytes(value, 6);
+    }
+
+    public readonly ReadOnlySpan<char> Recipient
+    {
+        get => Name2.DecodeToUnicodeText().TrimEnd();
+        init => Name2 = EncodeToNameBytes(value, 6);
+    }
+
+    public readonly ReadOnlySpan<char> Sender
+    {
+        get => Name3.DecodeToUnicodeText().TrimEnd();
+        init => Name3 = EncodeToNameBytes(value, 6);
+    }
 
     public readonly int Price
     {
@@ -41,5 +60,15 @@ public readonly ref struct PasswordInput()
     {
         get => (Monument)(ItemId & 0xFF);
         init => ItemId = (ushort)value;
+    }
+
+    public byte CalculateChecksum()
+        => (byte)((NpcCode + Name1.Sum() + Name2.Sum() + Name3.Sum() + ItemId) & 0b1111);
+
+    private static ReadOnlySpan<byte> EncodeToNameBytes(ReadOnlySpan<char> value, int size)
+    {
+        Span<byte> nameBytes = new byte[size];
+        value.DnmNormalize().EncodeTo(nameBytes);
+        return nameBytes;
     }
 }

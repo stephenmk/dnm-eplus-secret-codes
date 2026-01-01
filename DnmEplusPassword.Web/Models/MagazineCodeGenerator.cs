@@ -22,6 +22,7 @@ public sealed class MagazineCodeGenerator
             CodeType = CodeType.Magazine,
             RecipientTown = name1,
             Recipient = name2,
+            Sender = string.Empty,
             ItemId = Item.HexId,
             HitRate = SuccessRate.Id,
         };

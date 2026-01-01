@@ -29,12 +29,12 @@ public static class Decoder
         {
             CodeType = (CodeType)((data[0] >> 5) & 0b111),
             HitRate = (HitRate)((data[0] >> 2) & 0b111),
-            CheckSum = (byte)(((data[0] & 0b11) << 2) | ((data[1] >> 6) & 0b11)),
+            Checksum = (byte)(((data[0] & 0b11) << 2) | ((data[1] >> 6) & 0b11)),
             ExtraData = (byte)(data[1] & 0b0011_1111),
             NpcCode = data[2],
-            RecipientTown = data.Slice(3, 6).DecodeToUnicodeText().TrimEnd(),
-            Recipient = data.Slice(9, 6).DecodeToUnicodeText().TrimEnd(),
-            Sender = data.Slice(15, 6).DecodeToUnicodeText().TrimEnd(),
+            Name1 = data.Slice(3, 6).ToArray(),
+            Name2 = data.Slice(9, 6).ToArray(),
+            Name3 = data.Slice(15, 6).ToArray(),
             ItemId = (ushort)((data[21] << 8) | data[22]),
         };
     }

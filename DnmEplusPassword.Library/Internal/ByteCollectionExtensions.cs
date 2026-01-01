@@ -4,7 +4,7 @@ namespace DnmEplusPassword.Library.Internal;
 
 internal static class ByteCollectionExtensions
 {
-    public static int Sum(this Span<byte> bytes)
+    public static int Sum(this ReadOnlySpan<byte> bytes)
     {
         int sum = 0;
         foreach (var b in bytes)

@@ -18,6 +18,7 @@ public sealed class FamicomCodeGenerator
             CodeType = CodeType.Famicom,
             RecipientTown = RecipientTownName.Value,
             Recipient = RecipientName.Value,
+            Sender = string.Empty,
             ItemId = Item.HexId,
         };
 
