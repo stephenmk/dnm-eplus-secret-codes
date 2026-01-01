@@ -10,13 +10,24 @@ public readonly ref struct PasswordInput
     public required readonly ReadOnlySpan<char> Sender { get; init => field = value.Normalize(); }
     public required readonly ushort ItemId { get; init; }
 
-    public readonly byte RowAcre { get; init; }
-    public readonly byte ColAcre { get; init; }
-    public readonly int ExtraData => CodeType switch
+    private readonly byte _extraData;
+    public readonly byte ExtraData
     {
-        CodeType.Monument => (RowAcre << 3) | ColAcre,
-        _ => 0
-    };
+        get => _extraData;
+        init => _extraData = value;
+    }
+
+    public readonly byte RowAcre
+    {
+        get => (byte)((_extraData >> 3) & 0b111);
+        init => _extraData |= (byte)(value << 3);
+    }
+
+    public readonly byte ColAcre
+    {
+        get => (byte)(_extraData & 0b111);
+        init => _extraData |= value;
+    }
 
     public readonly HitRate HitRate
     {

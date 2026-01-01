@@ -1,6 +1,6 @@
 namespace DnmEplusPassword.Library.Data;
 
-public enum CodeType
+public enum CodeType : byte
 {
     Famicom = 0,     // NES
     NPC = 1,         // Original NPC Code
