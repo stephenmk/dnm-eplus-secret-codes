@@ -11,7 +11,7 @@ public sealed record Item
 
     public ItemType Type { get; set; }
 
-    public ushort? HexId => ushort.TryParse(Id, HexNumber, null, out var hexId) ? hexId : null;
+    public ushort HexId => ushort.Parse(Id, HexNumber);
 
     public enum ItemType
     {

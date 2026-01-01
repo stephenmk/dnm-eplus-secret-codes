@@ -36,7 +36,14 @@
 
     public void GenerateSecretCode()
     {
-        SecretCode = Model.GenerateSecretCode();
+        try
+        {
+            SecretCode = Model.GenerateSecretCode();
+        }
+        catch
+        {
+            SecretCode = null;
+        }
     }
 
     public void ClearSecretCode()

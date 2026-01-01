@@ -11,13 +11,8 @@ public sealed class MagazineCodeGenerator
     public SuccessRate SuccessRate { get; set; } = new();
     public Language Language { get; set; } = new();
 
-    public SecretCode? GenerateSecretCode()
+    public SecretCode GenerateSecretCode()
     {
-        if (Item.HexId is not ushort itemId)
-        {
-            return null;
-        }
-
         var nameRunes = MagazineName.Value.EnumerateRunes();
         var name1 = nameRunes.Take(6).FastToString();
         var name2 = nameRunes.Skip(6).FastToString();
@@ -27,22 +22,17 @@ public sealed class MagazineCodeGenerator
             CodeType = CodeType.Magazine,
             RecipientTown = name1,
             Recipient = name2,
-            Sender = "あいうえお",
-            ItemId = itemId,
+            Sender = string.Empty,
+            ItemId = Item.HexId,
             HitRate = SuccessRate.Id,
         };
-        try
+
+        var password = Encoder.Encode(passwordInput, Language.IsEnglish);
+
+        return new()
         {
-            var password = Encoder.Encode(passwordInput, Language.IsEnglish);
-            return new()
-            {
-                Line1 = password.Item1,
-                Line2 = password.Item2,
-            };
-        }
-        catch
-        {
-            return null;
-        }
+            Line1 = password.Item1,
+            Line2 = password.Item2,
+        };
     }
 }
