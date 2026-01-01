@@ -3,11 +3,12 @@ namespace DnmEplusPassword.Library.Internal;
 internal static class Constants
 {
     /// <summary>
-    /// Map of DnM's 16x16 usable character block to corresponding unicode characters.
+    /// DnM's 16x16 usable character block mapped to the corresponding unicode characters.
     /// </summary>
     /// <remarks>
     /// The index represents the byte code of the DnM character.
     /// So for example, 'あ' is 0x00 (first index) and 'ぽ' is 0xFF (last index).
+    /// Characters ①②③④ cannot be entered by the in-game user.
     /// </remarks>
     public static readonly IReadOnlyList<char> UnicodeCharacterCodepoints =
     [
