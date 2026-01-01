@@ -11,7 +11,7 @@ public static class Decoder
 {
     public static PasswordInput Decode(ReadOnlySpan<char> password, bool englishPasswords = false)
     {
-        var normalizedPassword = password.Normalize();
+        var normalizedPassword = password.DnmNormalize();
         Span<byte> passwordBytes = stackalloc byte[32];
 
         if (normalizedPassword.Length != passwordBytes.Length)

@@ -20,8 +20,8 @@ public sealed class MonumentCodeGenerator
             CodeType = CodeType.Monument,
             RecipientTown = RecipientTownName.Value,
             Recipient = RecipientName.Value,
-            Sender = Price.Value.ToString(),
-            ItemId = (ushort)Decoration.Id,
+            Price = Price.Value,
+            Monument = Decoration.Id,
             RowAcre = PlacementAcre.Row,
             ColAcre = PlacementAcre.Col,
         };

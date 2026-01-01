@@ -13,8 +13,8 @@ public sealed class EncoderType7Tests
             CodeType = CodeType.Monument,
             RecipientTown = "コーヒーまめ",
             Recipient = "クーパー",
-            Sender = "1", // Price
-            ItemId = (ushort)Monument.Egg,
+            Price = 1,
+            Monument = Monument.Egg,
             RowAcre = 2,
             ColAcre = 4,
         };
@@ -31,8 +31,8 @@ public sealed class EncoderType7Tests
             CodeType = CodeType.Monument,
             RecipientTown = "コーヒーまめ",
             Recipient = "クーパー",
-            Sender = "1234", // Price
-            ItemId = (ushort)Monument.Stonehenge,
+            Price = 1234,
+            Monument = Monument.Stonehenge,
             RowAcre = 3,
             ColAcre = 3,
         };

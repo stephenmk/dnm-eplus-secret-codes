@@ -29,7 +29,6 @@ public sealed class EncoderType0Tests
             CodeType = CodeType.Famicom,
             RecipientTown = "コーヒーまめ",
             Recipient = "クーパー",
-            Sender = string.Empty,
             ItemId = 0x1E0C, // クルクルランドＤ
         };
         var password = Encoder.Encode(input, englishPasswords: false);

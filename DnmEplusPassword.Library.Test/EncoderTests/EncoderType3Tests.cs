@@ -30,7 +30,6 @@ public sealed class EncoderType3Tests
             CodeType = CodeType.Magazine,
             RecipientTown = "Stephe",
             Recipient = "nKraus",
-            Sender = string.Empty,
             ItemId = 0x10A4, // カエルのチェア
             HitRate = HitRate.OneHundredPercent,
         };

@@ -4,7 +4,7 @@ namespace DnmEplusPassword.Library.Internal;
 
 internal static class UnicodeNormalizer
 {
-    public static ReadOnlySpan<char> Normalize(this ReadOnlySpan<char> input)
+    public static ReadOnlySpan<char> DnmNormalize(this ReadOnlySpan<char> input)
     {
         Span<char> characters = input.Length < 128
             ? stackalloc char[input.Length]

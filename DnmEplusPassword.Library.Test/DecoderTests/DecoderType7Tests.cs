@@ -14,8 +14,8 @@ public sealed class DecoderType7Tests
         Assert.AreEqual(CodeType.Monument, input.CodeType);
         Assert.AreEqual("コーヒーまめ", input.RecipientTown.ToString());
         Assert.AreEqual("クーパー", input.Recipient.ToString());
-        Assert.AreEqual("１", input.Sender.ToString());
-        Assert.AreEqual((ushort)Monument.Egg, input.ItemId);
+        Assert.AreEqual(1, input.Price);
+        Assert.AreEqual(Monument.Egg, input.Monument);
         Assert.AreEqual(2, input.RowAcre);
         Assert.AreEqual(4, input.ColAcre);
     }
