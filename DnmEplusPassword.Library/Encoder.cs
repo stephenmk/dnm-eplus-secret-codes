@@ -1,5 +1,4 @@
 using DnmEplusPassword.Library.Data;
-using static DnmEplusPassword.Library.Internal.ByteCollectionExtensions;
 using static DnmEplusPassword.Library.Internal.CommonMethods;
 using static DnmEplusPassword.Library.Internal.EncodeMethods;
 
