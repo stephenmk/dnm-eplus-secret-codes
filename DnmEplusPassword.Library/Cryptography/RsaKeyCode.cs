@@ -1,6 +1,6 @@
-using static DnmEplusPassword.Library.Internal.Constants;
+using static DnmEplusPassword.Library.Cryptography.Constants;
 
-namespace DnmEplusPassword.Library.Internal;
+namespace DnmEplusPassword.Library.Cryptography;
 
 internal readonly ref struct RsaKeyCode
 {

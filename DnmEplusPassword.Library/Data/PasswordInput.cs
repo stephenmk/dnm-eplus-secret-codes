@@ -4,7 +4,6 @@ namespace DnmEplusPassword.Library.Data;
 
 public readonly ref struct PasswordInput()
 {
-    // First 2 bytes (16 bits) are composed of the code type, hit rate, checksum, and extra data.
     public required readonly CodeType CodeType { get; init; } // 3 bits
     public readonly HitRate HitRate { get; init; } = HitRate.OneHundredPercent; // 3 bits
     public readonly byte Checksum { get; init; } // 4 bits
@@ -62,4 +61,28 @@ public readonly ref struct PasswordInput()
 
     public byte CalculateChecksum()
         => (byte)((NpcCode + Name1.Sum() + Name2.Sum() + Name3.Sum() + ItemId) & 0xF);
+
+    public Span<byte> ToBytes()
+    {
+        Span<byte> output = new byte[24];
+
+        int checksum = CalculateChecksum();
+
+        // First byte: 3 bits for code type, 3 bits for hit rate, and 2 bits for checksum.
+        var byte0 = ((byte)CodeType << 5) | ((byte)HitRate << 2) | ((checksum >> 2) & 0b11);
+        output[0] = (byte)byte0;
+
+        // Second byte: 2 bits for checksum and 6 bits for extra data.
+        var byte1 = ((checksum & 0b11) << 6) | (ExtraData & 0b0011_1111);
+        output[1] = (byte)byte1;
+
+        output[2] = NpcCode;
+        Name1.CopyTo(output[3..]);
+        Name2.CopyTo(output[9..]);
+        Name3.CopyTo(output[15..]);
+        output[21] = (byte)(ItemId >> 8);
+        output[22] = (byte)(ItemId & 0xFF);
+
+        return output;
+    }
 }

@@ -1,7 +1,7 @@
-using static DnmEplusPassword.Library.Internal.CommonMethods;
-using static DnmEplusPassword.Library.Internal.Constants;
+using static DnmEplusPassword.Library.Cryptography.CommonMethods;
+using static DnmEplusPassword.Library.Cryptography.Constants;
 
-namespace DnmEplusPassword.Library.Internal;
+namespace DnmEplusPassword.Library.Cryptography;
 
 internal static class DecodeMethods
 {
@@ -167,5 +167,14 @@ internal static class DecodeMethods
                 }
             }
         }
+    }
+
+    public static void ChangeCharacterSet(Span<byte> input, bool englishPasswords)
+    {
+        var characterCodepoints = englishPasswords
+            ? TranslatedCharacterCodepoints
+            : CharacterCodepoints;
+
+        ChangePasswordFontCode(input, characterCodepoints);
     }
 }

@@ -1,7 +1,6 @@
 using DnmEplusPassword.Library.Data;
-using static DnmEplusPassword.Library.Internal.CommonMethods;
-using static DnmEplusPassword.Library.Internal.Constants;
-using static DnmEplusPassword.Library.Internal.DecodeMethods;
+using static DnmEplusPassword.Library.Cryptography.CommonMethods;
+using static DnmEplusPassword.Library.Cryptography.DecodeMethods;
 
 namespace DnmEplusPassword.Library;
 
@@ -13,7 +12,15 @@ public static class Decoder
         ChangeCharacterSet(passwordBytes, englishPasswords);
 
         Span<byte> data = new byte[24];
-        Decode(passwordBytes, data);
+
+        ChangeEightBitsCode(data, passwordBytes);
+        TranspositionCipher(data, true, 1);
+        DecodeBitShuffle(data, true);
+        DecodeBitCode(data);
+        DecodeRsaCipher(data);
+        DecodeBitShuffle(data, false);
+        TranspositionCipher(data, false, 0);
+        DecodeSubstitutionCipher(data);
 
         return new PasswordInput
         {
@@ -27,26 +34,5 @@ public static class Decoder
             Name3 = data.Slice(15, 6),
             ItemId = (ushort)((data[21] << 8) | data[22]),
         };
-    }
-
-    private static void ChangeCharacterSet(Span<byte> input, bool englishPasswords)
-    {
-        var characterCodepoints = englishPasswords
-            ? TranslatedCharacterCodepoints
-            : CharacterCodepoints;
-
-        ChangePasswordFontCode(input, characterCodepoints);
-    }
-
-    private static void Decode(ReadOnlySpan<byte> input, Span<byte> output)
-    {
-        ChangeEightBitsCode(output, input);
-        TranspositionCipher(output, true, 1);
-        DecodeBitShuffle(output, true);
-        DecodeBitCode(output);
-        DecodeRsaCipher(output);
-        DecodeBitShuffle(output, false);
-        TranspositionCipher(output, false, 0);
-        DecodeSubstitutionCipher(output);
     }
 }

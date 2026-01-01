@@ -1,7 +1,7 @@
-using static DnmEplusPassword.Library.Internal.CommonMethods;
-using static DnmEplusPassword.Library.Internal.Constants;
+using static DnmEplusPassword.Library.Cryptography.CommonMethods;
+using static DnmEplusPassword.Library.Cryptography.Constants;
 
-namespace DnmEplusPassword.Library.Internal;
+namespace DnmEplusPassword.Library.Cryptography;
 
 internal static class EncodeMethods
 {
