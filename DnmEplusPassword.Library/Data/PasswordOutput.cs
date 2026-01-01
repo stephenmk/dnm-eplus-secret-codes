@@ -6,13 +6,6 @@ public sealed class PasswordOutput
     public string Line2 { get; }
     public IReadOnlyList<byte> RawBytes { get; }
 
-    public PasswordOutput(ReadOnlySpan<byte> rawBytes)
-    {
-        Line1 = rawBytes[..16].DecodeToUnicodeText();
-        Line2 = rawBytes[16..].DecodeToUnicodeText();
-        RawBytes = rawBytes.ToArray();
-    }
-
     public PasswordOutput(ReadOnlySpan<char> line1, ReadOnlySpan<char> line2)
     {
         Line1 = line1.ToString();
@@ -22,5 +15,12 @@ public sealed class PasswordOutput
         line1.EncodeToNameBytes(16).CopyTo(bytes);
         line2.EncodeToNameBytes(16).CopyTo(bytes[16..]);
         RawBytes = bytes.ToArray();
+    }
+
+    public PasswordOutput(ReadOnlySpan<byte> rawBytes)
+    {
+        Line1 = rawBytes[..16].DecodeToUnicodeText();
+        Line2 = rawBytes[16..].DecodeToUnicodeText();
+        RawBytes = rawBytes.ToArray();
     }
 }
