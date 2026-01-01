@@ -13,7 +13,7 @@ public sealed class EncoderType7Tests
             CodeType = CodeType.Monument,
             RecipientTown = "コーヒーまめ",
             Recipient = "クーパー",
-            Sender = "１", // Price
+            Sender = "1", // Price
             ItemId = (ushort)Monument.Egg,
             RowAcre = 2,
             ColAcre = 4,
