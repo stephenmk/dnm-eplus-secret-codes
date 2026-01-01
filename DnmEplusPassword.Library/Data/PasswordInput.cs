@@ -66,7 +66,7 @@ public readonly ref struct PasswordInput()
     {
         Span<byte> output = new byte[24];
 
-        int checksum = CalculateChecksum();
+        var checksum = CalculateChecksum(); // 4 bits
 
         // First byte: 3 bits for code type, 3 bits for hit rate, and 2 bits for checksum.
         var byte0 = ((byte)CodeType << 5) | ((byte)HitRate << 2) | ((checksum >> 2) & 0b11);
