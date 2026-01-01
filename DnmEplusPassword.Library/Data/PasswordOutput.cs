@@ -1,8 +1,6 @@
-using static DnmEplusPassword.Library.Internal.ByteCollectionExtensions;
-
 namespace DnmEplusPassword.Library.Data;
 
-public sealed record PasswordOutput
+public sealed class PasswordOutput
 {
     public string Line1 { get; }
     public string Line2 { get; }

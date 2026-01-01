@@ -1,5 +1,4 @@
 using System.Text;
-using static DnmEplusPassword.Library.Internal.ByteCollectionExtensions;
 
 namespace DnmEplusPassword.Library.Data;
 
