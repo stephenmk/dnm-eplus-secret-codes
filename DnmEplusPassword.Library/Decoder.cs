@@ -24,7 +24,7 @@ public static class Decoder
         normalizedPassword.EncodeTo(passwordBytes);
         ChangeCharacterSet(passwordBytes, englishPasswords);
 
-        Span<byte> data = stackalloc byte[pwLength];
+        Span<byte> data = stackalloc byte[24];
         Decode(passwordBytes, data);
 
         var codeType = (CodeType)((data[0] >> 5) & 0b111);
