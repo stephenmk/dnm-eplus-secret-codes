@@ -41,7 +41,7 @@ internal readonly ref struct RsaKeyCode
             }
         }
 
-        int tableIdx = ((data[3] >> 2) & 0x3C) >> 2;
+        var tableIdx = (byte)(data[3] >> 4);
 
         Prime1 = PrimeNumbers[bit10];
         Prime2 = PrimeNumbers[bit32];
