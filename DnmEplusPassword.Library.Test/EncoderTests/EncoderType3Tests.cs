@@ -21,4 +21,21 @@ public sealed class EncoderType3Tests
         Assert.AreEqual("すねわとつくずよぞろれはごゆつよ", password.Item1);
         Assert.AreEqual("へずんすわじぜにのごはせはみへひ", password.Item2);
     }
+
+    [TestMethod]
+    public void TestMagazineFroggyChair()
+    {
+        var input = new PasswordInput
+        {
+            CodeType = CodeType.Magazine,
+            RecipientTown = "Stephe",
+            Recipient = "nKraus",
+            Sender = string.Empty,
+            ItemId = 0x10A4, // カエルのチェア
+            HitRate = HitRate.OneHundredPercent,
+        };
+        var password = Encoder.Encode(input, englishPasswords: false);
+        Assert.AreEqual("んじそちべかづぞづせえさかでせる", password.Item1);
+        Assert.AreEqual("やぎさけろひむあぢめこれえぢとお", password.Item2);
+    }
 }
