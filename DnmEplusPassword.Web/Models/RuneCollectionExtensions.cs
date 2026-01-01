@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace DnmEplusPassword.Library;
+namespace DnmEplusPassword.Web.Models;
 
 public static class RuneCollectionExtensions
 {
