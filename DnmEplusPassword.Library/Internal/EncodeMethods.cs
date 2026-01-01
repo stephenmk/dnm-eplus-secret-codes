@@ -8,7 +8,7 @@ internal static class EncodeMethods
 {
     public static void MakePasscode(in PasswordInput input, Span<byte> output)
     {
-        // Only the four least significant bits of the checksum will be used.
+        // The four least significant bits of the checksum will be inserted into the output.
         int checksum = 0;
 
         output[2] = input.NpcCode;
@@ -31,6 +31,9 @@ internal static class EncodeMethods
         output[21] = (byte)(input.ItemId >> 8);
         output[22] = (byte)(input.ItemId & 0b1111_1111);
         checksum += input.ItemId;
+
+        // Zero the final byte just in case. Stack-allocated arrays aren't initialized to zeroes.
+        output[23] = 0x00;
 
         // First byte: 3 bits for code type, 3 bits for hit rate, and 2 bits for checksum.
         var byte0 = ((byte)input.CodeType << 5) | ((byte)input.HitRate << 2) | ((checksum >> 2) & 0b11);
