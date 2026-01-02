@@ -1,4 +1,4 @@
-namespace DnmEplusPassword.Web.Models;
+namespace DnmEplusPassword.Web.ComponentModels;
 
 public sealed record Language
 {

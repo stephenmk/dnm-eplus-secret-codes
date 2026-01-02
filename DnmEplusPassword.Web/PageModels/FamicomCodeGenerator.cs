@@ -1,7 +1,8 @@
 using DnmEplusPassword.Library;
 using DnmEplusPassword.Library.Data;
+using DnmEplusPassword.Web.ComponentModels;
 
-namespace DnmEplusPassword.Web.Models;
+namespace DnmEplusPassword.Web.PageModels;
 
 [ValidatableType]
 public sealed class FamicomCodeGenerator

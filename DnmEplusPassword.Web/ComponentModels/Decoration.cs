@@ -1,7 +1,7 @@
 using DnmEplusPassword.Library.Data;
 using static DnmEplusPassword.Library.Data.Monument;
 
-namespace DnmEplusPassword.Web.Models;
+namespace DnmEplusPassword.Web.ComponentModels;
 
 public sealed record Decoration
 {

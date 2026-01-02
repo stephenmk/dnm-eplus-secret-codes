@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace DnmEplusPassword.Web.Models;
+namespace DnmEplusPassword.Web.ComponentModels;
 
 public sealed record Price
 {

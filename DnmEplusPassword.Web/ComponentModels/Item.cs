@@ -1,7 +1,7 @@
 using static System.Globalization.NumberStyles;
 using System.ComponentModel.DataAnnotations;
 
-namespace DnmEplusPassword.Web.Models;
+namespace DnmEplusPassword.Web.ComponentModels;
 
 public sealed record Item
 {
