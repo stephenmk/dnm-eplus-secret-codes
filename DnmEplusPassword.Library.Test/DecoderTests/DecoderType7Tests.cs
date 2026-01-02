@@ -13,7 +13,7 @@ public sealed class DecoderType7Tests
             "すまぜんふねちそそこずぎやむぐら",
             "みなまえざほにぎごべぢぜびけもじ"
         );
-        var input = Decoder.Decode(password, englishPasswords: false);
+        var input = Decoder.Decode(password);
 
         Assert.AreEqual(CodeType.Monument, input.CodeType);
         Assert.AreEqual("コーヒーまめ", input.RecipientTown.ToString());
