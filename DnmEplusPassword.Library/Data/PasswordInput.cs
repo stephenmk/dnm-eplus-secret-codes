@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace DnmEplusPassword.Library.Data;
 
 public sealed class PasswordInput
