@@ -7,29 +7,29 @@ namespace DnmEplusPassword.Library.Data;
 /// </summary>
 internal static class PasswordExtensions
 {
-    public static string DecodeToUnicodeText(this ReadOnlySpan<byte> dnmText)
+    public static string DecodeToUnicodeText(this IReadOnlyList<byte> dnmText)
     {
-        Span<char> unicodeText = stackalloc char[dnmText.Length];
-        for (int i = 0; i < dnmText.Length; i++)
+        Span<char> unicodeText = stackalloc char[dnmText.Count];
+        for (int i = 0; i < dnmText.Count; i++)
         {
             unicodeText[i] = DnmCharToUnicodeChar[dnmText[i]];
         }
         return new string(unicodeText);
     }
 
-    public static Span<byte> EncodeToDnmText(this ReadOnlySpan<char> unicodeText, int size)
+    public static Span<byte> EncodeToDnmText(this string unicodeText, int size)
     {
         var normalizedText = Normalize(unicodeText);
         if (normalizedText.Length > size)
         {
             throw new ArgumentException($"Text must not contain more than {size} characters", nameof(unicodeText));
         }
-        Span<byte> dnmText = new byte[size];
-        normalizedText.EncodeToDnmText(dnmText);
+        var dnmText = new byte[size];
+        EncodeToDnmText(normalizedText, dnmText);
         return dnmText;
     }
 
-    private static void EncodeToDnmText(this ReadOnlySpan<char> unicodeText, Span<byte> dnmText)
+    private static void EncodeToDnmText(ReadOnlySpan<char> unicodeText, Span<byte> dnmText)
     {
         int i = 0;
         foreach (var unicodeChar in unicodeText)

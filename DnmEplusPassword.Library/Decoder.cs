@@ -29,9 +29,9 @@ public static class Decoder
             Checksum = (byte)(((plaintext[0] & 0b11) << 2) | ((plaintext[1] >> 6) & 0b11)),
             ExtraData = (byte)(plaintext[1] & 0b0011_1111),
             NpcCode = plaintext[2],
-            Name1 = plaintext.Slice(3, 6),
-            Name2 = plaintext.Slice(9, 6),
-            Name3 = plaintext.Slice(15, 6),
+            Name1 = plaintext.Slice(3, 6).ToArray(),
+            Name2 = plaintext.Slice(9, 6).ToArray(),
+            Name3 = plaintext.Slice(15, 6).ToArray(),
             ItemId = (ushort)((plaintext[21] << 8) | plaintext[22]),
         };
     }

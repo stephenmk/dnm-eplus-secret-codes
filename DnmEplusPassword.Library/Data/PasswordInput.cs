@@ -2,65 +2,65 @@ using System.Text;
 
 namespace DnmEplusPassword.Library.Data;
 
-public readonly ref struct PasswordInput()
+public sealed class PasswordInput
 {
-    public required readonly CodeType CodeType { get; init; } // 3 bits
-    public readonly HitRate HitRate { get; init; } = HitRate.OneHundredPercent; // 3 bits
-    public readonly byte Checksum { get; init; } // 4 bits
-    public readonly byte ExtraData { get; init; } // 6 bits
+    public required CodeType CodeType { get; init; } // 3 bits
+    public HitRate HitRate { get; init; } = HitRate.OneHundredPercent; // 3 bits
+    public byte Checksum { get; init; } // 4 bits
+    public byte ExtraData { get; init; } // 6 bits
 
-    public readonly byte RowAcre
+    public byte RowAcre
     {
         get => (byte)((ExtraData >> 3) & 0b111);
         init => ExtraData |= (byte)(value << 3);
     }
 
-    public readonly byte ColAcre
+    public byte ColAcre
     {
         get => (byte)(ExtraData & 0b111);
         init => ExtraData |= value;
     }
 
-    public readonly byte NpcCode { get; init; } = 0xFF; // 1 byte
+    public byte NpcCode { get; init; } = 0xFF; // 1 byte
 
-    public readonly ReadOnlySpan<byte> Name1 { get; init; } // 6 bytes
-    public readonly ReadOnlySpan<byte> Name2 { get; init; } // 6 bytes
-    public readonly ReadOnlySpan<byte> Name3 { get; init; } // 6 bytes
+    public IReadOnlyList<byte> Name1 { get; init; } = []; // 6 bytes
+    public IReadOnlyList<byte> Name2 { get; init; } = []; // 6 bytes
+    public IReadOnlyList<byte> Name3 { get; init; } = []; // 6 bytes
 
-    public readonly ReadOnlySpan<char> RecipientTown
+    public string RecipientTown
     {
         get => Name1.DecodeToUnicodeText().TrimEnd();
-        init => Name1 = value.EncodeToDnmText(6);
+        init => Name1 = value.EncodeToDnmText(6).ToArray();
     }
 
-    public readonly ReadOnlySpan<char> Recipient
+    public string Recipient
     {
         get => Name2.DecodeToUnicodeText().TrimEnd();
-        init => Name2 = value.EncodeToDnmText(6);
+        init => Name2 = value.EncodeToDnmText(6).ToArray();
     }
 
-    public readonly ReadOnlySpan<char> Sender
+    public string Sender
     {
         get => Name3.DecodeToUnicodeText().TrimEnd();
-        init => Name3 = value.EncodeToDnmText(6);
+        init => Name3 = value.EncodeToDnmText(6).ToArray();
     }
 
-    public readonly int Price
+    public int Price
     {
         get => int.Parse(Sender.ToString().Normalize(NormalizationForm.FormKC));
         init => Sender = value.ToString();
     }
 
-    public readonly ushort ItemId { get; init; } // 2 bytes
+    public ushort ItemId { get; init; } // 2 bytes
 
-    public readonly Monument Monument
+    public Monument Monument
     {
         get => (Monument)(ItemId & 0xFF);
         init => ItemId = (ushort)value;
     }
 
     public byte CalculateChecksum()
-        => (byte)((NpcCode + Name1.Sum() + Name2.Sum() + Name3.Sum() + ItemId) & 0xF);
+        => (byte)((NpcCode + Name1.Sum(x => x) + Name2.Sum(x => x) + Name3.Sum(x => x) + ItemId) & 0xF);
 
     public Span<byte> ToPlaintext()
     {
@@ -77,9 +77,9 @@ public readonly ref struct PasswordInput()
         output[1] = (byte)byte1;
 
         output[2] = NpcCode;
-        Name1.CopyTo(output[3..]);
-        Name2.CopyTo(output[9..]);
-        Name3.CopyTo(output[15..]);
+        ((byte[])Name1).CopyTo(output[3..]);
+        ((byte[])Name2).CopyTo(output[9..]);
+        ((byte[])Name3).CopyTo(output[15..]);
         output[21] = (byte)(ItemId >> 8);
         output[22] = (byte)(ItemId & 0xFF);
 

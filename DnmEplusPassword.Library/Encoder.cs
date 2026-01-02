@@ -18,7 +18,7 @@ public static class Encoder
         BitShuffle(plaintext, 1);
         TranspositionCipher(plaintext, false, 1);
 
-        Span<byte> ciphertext = new byte[32];
+        var ciphertext = new byte[32];
 
         ChangeSixBitsCode(plaintext, ciphertext);
         ChangeCommonFontCode(ciphertext, englishPasswords);

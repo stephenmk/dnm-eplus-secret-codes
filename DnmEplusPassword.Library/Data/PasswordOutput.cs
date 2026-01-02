@@ -6,10 +6,10 @@ public sealed class PasswordOutput
     public string Line2 { get; }
     public IReadOnlyList<byte> Ciphertext { get; }
 
-    public PasswordOutput(ReadOnlySpan<char> line1, ReadOnlySpan<char> line2)
+    public PasswordOutput(string line1, string line2)
     {
-        Line1 = line1.ToString();
-        Line2 = line2.ToString();
+        Line1 = line1;
+        Line2 = line2;
 
         Span<byte> bytes = stackalloc byte[32];
         line1.EncodeToDnmText(16).CopyTo(bytes);
@@ -17,10 +17,10 @@ public sealed class PasswordOutput
         Ciphertext = bytes.ToArray();
     }
 
-    public PasswordOutput(ReadOnlySpan<byte> ciphertext)
+    public PasswordOutput(byte[] ciphertext)
     {
         Line1 = ciphertext[..16].DecodeToUnicodeText();
         Line2 = ciphertext[16..].DecodeToUnicodeText();
-        Ciphertext = ciphertext.ToArray();
+        Ciphertext = ciphertext;
     }
 }
