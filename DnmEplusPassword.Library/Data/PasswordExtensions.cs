@@ -2,70 +2,60 @@ using System.Text;
 
 namespace DnmEplusPassword.Library.Data;
 
+/// <summary>
+/// This class contains methods for converting Unicode text to and from the "Dōbutsu no Mori" character set (range 0x00 to 0xFF inclusive).
+/// </summary>
 internal static class PasswordExtensions
 {
-    public static int Sum(this ReadOnlySpan<byte> bytes)
+    public static string DecodeToUnicodeText(this ReadOnlySpan<byte> dnmText)
     {
-        int sum = 0;
-        foreach (var b in bytes)
+        Span<char> unicodeText = stackalloc char[dnmText.Length];
+        for (int i = 0; i < dnmText.Length; i++)
         {
-            sum += b;
+            unicodeText[i] = DnmCharToUnicodeChar[dnmText[i]];
         }
-        return sum;
+        return new string(unicodeText);
     }
 
-    public static string DecodeToUnicodeText(this ReadOnlySpan<byte> bytes)
+    public static Span<byte> EncodeToDnmText(this ReadOnlySpan<char> unicodeText, int size)
     {
-        Span<char> unicodeChars = stackalloc char[bytes.Length];
-        for (int i = 0; i < bytes.Length; i++)
-        {
-            unicodeChars[i] = UnicodeCharacterCodepoints[bytes[i]];
-        }
-        return new string(unicodeChars);
-    }
-
-    public static Span<byte> EncodeToNameBytes(this ReadOnlySpan<char> unicodeText, int size)
-    {
-        Span<byte> nameBytes = new byte[size];
-        var normalizedText = unicodeText.DnmNormalize();
+        var normalizedText = Normalize(unicodeText);
         if (normalizedText.Length > size)
         {
-            throw new ArgumentException($"Normalized text must not contain more than {size} characters", nameof(unicodeText));
+            throw new ArgumentException($"Text must not contain more than {size} characters", nameof(unicodeText));
         }
-        normalizedText.EncodeTo(nameBytes);
-        return nameBytes;
+        Span<byte> dnmText = new byte[size];
+        normalizedText.EncodeToDnmText(dnmText);
+        return dnmText;
     }
 
-    private static void EncodeTo(this ReadOnlySpan<char> unicodeText, Span<byte> bytes)
+    private static void EncodeToDnmText(this ReadOnlySpan<char> unicodeText, Span<byte> dnmText)
     {
         int i = 0;
         foreach (var unicodeChar in unicodeText)
         {
-            if (i == bytes.Length)
+            if (i == dnmText.Length)
             {
-                throw new ArgumentException($"Length of input text '{unicodeText}' exceeds maximum size = {bytes.Length}", nameof(unicodeText));
+                throw new ArgumentException($"Length of input text '{unicodeText}' exceeds maximum size = {dnmText.Length}", nameof(unicodeText));
             }
-            if (UnicodeCharacterCodepointDictionary.TryGetValue(unicodeChar, out var @byte))
+            if (UnicodeCharToDnmChar.TryGetValue(unicodeChar, out var dnmChar))
             {
-                bytes[i++] = @byte;
+                dnmText[i++] = dnmChar;
             }
             else
             {
                 throw new ArgumentException($"Invalid character: '{unicodeChar}'", nameof(unicodeText));
             }
         }
-        if (i == bytes.Length)
+        if (i == dnmText.Length)
         {
             return;
         }
         // Fill the rest of the output with spaces.
-        if (!UnicodeCharacterCodepointDictionary.TryGetValue('　', out var spaceByte))
+        var dnmSpaceChar = UnicodeCharToDnmChar['　'];
+        while (i < dnmText.Length)
         {
-            throw new ArgumentException($"Invalid character: '　'", nameof(unicodeText));
-        }
-        while (i < bytes.Length)
-        {
-            bytes[i++] = spaceByte;
+            dnmText[i++] = dnmSpaceChar;
         }
     }
 
@@ -77,7 +67,7 @@ internal static class PasswordExtensions
     /// So for example, 'あ' is 0x00 (first index) and 'ぽ' is 0xFF (last index).
     /// Characters ①②③④ cannot be entered by the in-game user.
     /// </remarks>
-    private static readonly IReadOnlyList<char> UnicodeCharacterCodepoints =
+    private static readonly IReadOnlyList<char> DnmCharToUnicodeChar =
     [
         'あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た',
         'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ', 'ほ', 'ま', 'み',
@@ -100,12 +90,12 @@ internal static class PasswordExtensions
     /// <remarks>
     /// IReadOnlyList doesn't have an IndexOf method, so we'll convert the list to a dictionary for that functionality.
     /// </remarks>
-    private static readonly IReadOnlyDictionary<char, byte> UnicodeCharacterCodepointDictionary =
-        UnicodeCharacterCodepoints
+    private static readonly IReadOnlyDictionary<char, byte> UnicodeCharToDnmChar =
+        DnmCharToUnicodeChar
             .Select(static (chr, idx) => new KeyValuePair<char, byte>(chr, (byte)idx))
             .ToDictionary();
 
-    private static ReadOnlySpan<char> DnmNormalize(this ReadOnlySpan<char> input)
+    private static ReadOnlySpan<char> Normalize(ReadOnlySpan<char> input)
     {
         Span<char> characters = input.Length < 128
             ? stackalloc char[input.Length]

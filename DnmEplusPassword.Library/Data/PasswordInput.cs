@@ -30,19 +30,19 @@ public readonly ref struct PasswordInput()
     public readonly ReadOnlySpan<char> RecipientTown
     {
         get => Name1.DecodeToUnicodeText().TrimEnd();
-        init => Name1 = value.EncodeToNameBytes(6);
+        init => Name1 = value.EncodeToDnmText(6);
     }
 
     public readonly ReadOnlySpan<char> Recipient
     {
         get => Name2.DecodeToUnicodeText().TrimEnd();
-        init => Name2 = value.EncodeToNameBytes(6);
+        init => Name2 = value.EncodeToDnmText(6);
     }
 
     public readonly ReadOnlySpan<char> Sender
     {
         get => Name3.DecodeToUnicodeText().TrimEnd();
-        init => Name3 = value.EncodeToNameBytes(6);
+        init => Name3 = value.EncodeToDnmText(6);
     }
 
     public readonly int Price

@@ -12,8 +12,8 @@ public sealed class PasswordOutput
         Line2 = line2.ToString();
 
         Span<byte> bytes = stackalloc byte[32];
-        line1.EncodeToNameBytes(16).CopyTo(bytes);
-        line2.EncodeToNameBytes(16).CopyTo(bytes[16..]);
+        line1.EncodeToDnmText(16).CopyTo(bytes);
+        line2.EncodeToDnmText(16).CopyTo(bytes[16..]);
         Ciphertext = bytes.ToArray();
     }
 
