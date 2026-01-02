@@ -47,7 +47,7 @@ public sealed class PasswordInput
 
     public int Price
     {
-        get => int.Parse(Sender.ToString().Normalize(NormalizationForm.FormKC));
+        get => Name3.DecodeToInteger();
         init => Sender = value.ToString();
     }
 

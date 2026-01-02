@@ -17,6 +17,23 @@ internal static class PasswordExtensions
         return new string(unicodeText);
     }
 
+    public static int DecodeToInteger(this IReadOnlyList<byte> dnmText)
+    {
+        Span<char> unicodeText = stackalloc char[dnmText.Count];
+        for (int i = 0; i < dnmText.Count; i++)
+        {
+            if (DnmCharToUnicodeNumber(dnmText[i]) is char unicodeChar)
+            {
+                unicodeText[i] = unicodeChar;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        return int.TryParse(new string(unicodeText), out var x) ? x : -1;
+    }
+
     public static Span<byte> EncodeToDnmText(this string unicodeText, int size)
     {
         var normalizedText = Normalize(unicodeText);
@@ -86,6 +103,22 @@ internal static class PasswordExtensions
         'ベ', 'ボ', 'パ', 'ピ', 'プ', 'ペ', 'ポ', 'が', 'ぎ', 'ぐ', 'げ', 'ご', 'ざ', 'じ', 'ず', 'ぜ',
         'ぞ', 'だ', 'ぢ', 'づ', 'で', 'ど', 'ば', 'び', 'ぶ', 'べ', 'ぼ', 'ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ',
     ];
+
+    private static char? DnmCharToUnicodeNumber(byte dnmChar) => dnmChar switch
+    {
+        0x20 => ' ',
+        0x30 => '0',
+        0x31 => '1',
+        0x32 => '2',
+        0x33 => '3',
+        0x34 => '4',
+        0x35 => '5',
+        0x36 => '6',
+        0x37 => '7',
+        0x38 => '8',
+        0x39 => '9',
+        _ => null
+    };
 
     /// <remarks>
     /// IReadOnlyList doesn't have an IndexOf method, so we'll convert the list to a dictionary for that functionality.
