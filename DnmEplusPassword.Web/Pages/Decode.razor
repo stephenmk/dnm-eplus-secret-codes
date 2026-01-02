@@ -3,6 +3,7 @@
 @using DnmEplusPassword.Library.Data
 @using DnmEplusPassword.Web.Components
 @using DnmEplusPassword.Web.PageModels
+@using static DnmEplusPassword.Library.Data.Monument
 @using static System.Globalization.NumberStyles
 
 <PageTitle>Decode</PageTitle>
@@ -98,6 +99,21 @@
                 <tr>
                     <th>Decoration</th>
                     <td>@MonumentToString(CodeInput.Monument)</td>
+                </tr>
+            }
+            else if (CatalogItems is null)
+            {
+                <tr>
+                    <th>Item ID</th>
+                    <td>@CodeInput.ItemId.ToString("X")</td>
+                </tr>
+                <tr>
+                    <th>Item English Name</th>
+                    <td>Loading...</td>
+                </tr>
+                <tr>
+                    <th>Item Japanese Name</th>
+                    <td>Loading...</td>
                 </tr>
             }
             else if(CatalogItems.TryGetValue(CodeInput.ItemId, out var item))
@@ -216,23 +232,23 @@
         _ => $"Unknown ({(byte)hitRate})"
     };
 
-    private static string MonumentToString(Monument monument) => monument switch
+    private static string MonumentToString(Library.Data.Monument monument) => monument switch
     {
-        Monument.ParkClock => "Park Clock",
-        Monument.GasLamp => "Gas Lamp",
-        Monument.Windpump => "Wind Pump",
-        Monument.FlowerClock => "Flower Clock",
-        Monument.Heliport => "Heliport",
-        Monument.WindTurbine => "Wind Turbine",
-        Monument.PipeStack => "Pipe Stack",
-        Monument.Stonehenge => "Stonehenge",
-        Monument.Egg => "Egg",
-        Monument.Footprints => "Footprints",
-        Monument.Geoglyph => "Geoglyph",
-        Monument.Mushroom => "Mushroom",
-        Monument.Signpost => "Signpost",
-        Monument.Well => "Well",
-        Monument.Fountain => "Fountain",
+        ParkClock => "Park Clock",
+        GasLamp => "Gas Lamp",
+        Windpump => "Wind Pump",
+        FlowerClock => "Flower Clock",
+        Heliport => "Heliport",
+        WindTurbine => "Wind Turbine",
+        PipeStack => "Pipe Stack",
+        Stonehenge => "Stonehenge",
+        Egg => "Egg",
+        Footprints => "Footprints",
+        Geoglyph => "Geoglyph",
+        Mushroom => "Mushroom",
+        Signpost => "Signpost",
+        Well => "Well",
+        Fountain => "Fountain",
         _ => $"Unknown ({(byte)monument})"
     };
 }
