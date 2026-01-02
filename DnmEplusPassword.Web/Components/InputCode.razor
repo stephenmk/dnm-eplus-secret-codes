@@ -1,0 +1,24 @@
+@using DnmEplusPassword.Web.ComponentModels
+
+<div class="row">
+    <div class="col form-group">
+        <label for="line1Input" class="form-label">Secret Code Line 1</label>
+        <InputText @bind-Value="Code.Line1" id="line1Input" class="form-control" maxlength="16" />
+        <ValidationMessage For="@(() => Code.Line1)" />
+    </div>
+</div>
+<div class="row">
+    <div class="col form-group">
+        <label for="line2Input" class="form-label">Secret Code Line 2</label>
+        <InputText @bind-Value="Code.Line2" id="line2Input" class="form-control" maxlength="16" />
+        <ValidationMessage For="@(() => Code.Line2)" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public required Code Code { get; set; }
+
+    [CascadingParameter]
+    public required EditContext EditContext { get; set; }
+}

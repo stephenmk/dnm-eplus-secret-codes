@@ -1,0 +1,218 @@
+@page "/decode"
+@inject HttpClient Http
+@using DnmEplusPassword.Library.Data
+@using DnmEplusPassword.Web.Components
+@using DnmEplusPassword.Web.PageModels
+@using static System.Globalization.NumberStyles
+
+<PageTitle>Decode</PageTitle>
+
+<h1>Secret Decoder</h1>
+
+<EditForm Model="@Model" OnValidSubmit="GenerateDecode" OnInvalidSubmit="ClearDecoding" style="max-width: 400px;">
+    <DataAnnotationsValidator />
+
+    <InputCode Code="@Model.Code" />
+
+    <button type="submit" class="btn btn-primary">Decode</button>
+</EditForm>
+
+@if (CodeInput is not null)
+{
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th colspan="2">Decoded Information</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Code Type</th>
+                <td>
+                    @CodeTypeToString(CodeInput.CodeType)
+                </td>
+            </tr>
+
+            @if (CodeInput.CodeType == CodeType.Magazine)
+            {
+                <tr>
+                    <th>Success Rate</th>
+                    <td>
+                        @HitRateToString(CodeInput.HitRate)
+                    </td>
+                </tr>
+            }
+            else if (CodeInput.HitRate != HitRate.OneHundredPercent)
+            {
+                <tr>
+                    <th>3-bit Mystery Value</th>
+                    <td>
+                        @((byte)CodeInput.HitRate)
+                    </td>
+                </tr>
+            }
+
+            @if (CodeInput.CodeType == CodeType.Magazine)
+            {
+                <tr>
+                    <th>Magazine Name</th>
+                    <td>@(CodeInput.RecipientTown)@(CodeInput.Recipient)</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <th>Recipient Town</th>
+                    <td>@CodeInput.RecipientTown</td>
+                </tr>
+                <tr>
+                    <th>Recipient</th>
+                    <td>@CodeInput.Recipient</td>
+                </tr>
+            }
+
+            @if (CodeInput.CodeType == CodeType.User)
+            {
+                <tr>
+                    <th>Sender</th>
+                    <td>@CodeInput.Sender</td>
+                </tr>
+            }
+            else if (CodeInput.CodeType == CodeType.Monument)
+            {
+                <tr>
+                    <th>Price</th>
+                    <td>@CodeInput.Price.ToString("n0")</td>
+                </tr>
+            }
+            else if (!string.IsNullOrEmpty(CodeInput.Sender))
+            {
+                <tr>
+                    <th>Mystery Characters</th>
+                    <td>@CodeInput.Sender</td>
+                </tr>
+            }
+
+            @if(CodeInput.CodeType == CodeType.Monument)
+            {
+                <tr>
+                    <th>Decoration</th>
+                    <td>@CodeInput.Monument</td>
+                </tr>
+            }
+            else if(CatalogItems.TryGetValue(CodeInput.ItemId, out var item))
+            {
+                <tr>
+                    <th>Item ID</th>
+                    <td>@CodeInput.ItemId.ToString("X")</td>
+                </tr>
+                <tr>
+                    <th>Item English Name</th>
+                    <td>@item.En</td>
+                </tr>
+                <tr>
+                    <th>Item Japanese Name</th>
+                    <td>@item.Ja</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <th>Item ID</th>
+                    <td>@CodeInput.ItemId.ToString("X") (Unknown)</td>
+                </tr>
+            }
+
+            @if(CodeInput.CodeType == CodeType.Monument)
+            {
+                <tr>
+                    <th>Row Acre</th>
+                    <td>@CodeInput.RowAcre</td>
+                </tr>
+                <tr>
+                    <th>Column Acre</th>
+                    <td>@CodeInput.ColAcre</td>
+                </tr>
+            }
+            else if (CodeInput.ExtraData != 0)
+            {
+                <tr>
+                    <th>6-bit Mystery Value</th>
+                    <td>@CodeInput.ExtraData</td>
+                </tr>
+            }
+
+            @if (CodeInput.NpcCode != 0xFF)
+            {
+                <tr>
+                    <th>8-bit Mystery Value</th>
+                    <td>@CodeInput.ExtraData</td>
+                </tr>
+            }
+
+            <tr>
+                <th>Checksum</th>
+                <td>@CodeInput.Checksum</td>
+            </tr>
+            <tr>
+                <th>Computed Checksum</th>
+                <td>@CodeInput.CalculateChecksum()</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@code {
+    private Decoder Model = new();
+    private PasswordInput? CodeInput = null;
+
+    private record CatalogItem(string Id, string En, string Ja);
+    private IReadOnlyDictionary<ushort, CatalogItem>? CatalogItems;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CatalogItems = await Http.GetFromJsonAsync<CatalogItem[]>("data/DnmEplusItemCatalog.json") is CatalogItem[] items
+            ? items.Select(static x => new KeyValuePair<ushort, CatalogItem>(ushort.Parse(x.Id, HexNumber), x)).ToDictionary()
+            : null;
+    }
+
+    public void GenerateDecode()
+    {
+        try
+        {
+            CodeInput = Model.Decode();
+        }
+        catch
+        {
+            CodeInput = null;
+        }
+    }
+
+    public void ClearDecoding()
+    {
+        CodeInput = null;
+    }
+
+    private static string CodeTypeToString(CodeType codeType) => codeType switch
+    {
+        CodeType.Famicom => "Famicom",
+        CodeType.NPC => "NPC",
+        CodeType.Card_E => "Card E",
+        CodeType.Magazine => "Magazine",
+        CodeType.User => "User",
+        CodeType.Card_E_Mini => "Card E Mini",
+        CodeType.New_NPC => "New NPC",
+        CodeType.Monument => "Monument",
+        _ => $"Unknown ({(byte)codeType})"
+    };
+
+    private static string HitRateToString(HitRate hitRate) => hitRate switch
+    {
+        HitRate.OneHundredPercent => "100%",
+        HitRate.EightyPercent => "80%",
+        HitRate.SixtyPercent => "60%",
+        HitRate.ThirtyPercent => "30%",
+        HitRate.ZeroPercent => "0%",
+        _ => $"Unknown ({(byte)hitRate})"
+    };
+}
