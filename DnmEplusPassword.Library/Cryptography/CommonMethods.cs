@@ -4,26 +4,6 @@ namespace DnmEplusPassword.Library.Cryptography;
 
 internal static class CommonMethods
 {
-    public static byte ChangePasswordFontCodeSub(byte characterCodepoint, IReadOnlyList<byte> characterCodepoints)
-    {
-        for (byte i = 0; i < 0x40; i++)
-        {
-            if (characterCodepoints[i] == characterCodepoint)
-            {
-                return i;
-            }
-        }
-        return 0xFF;
-    }
-
-    public static void ChangePasswordFontCode(Span<byte> password, IReadOnlyList<byte> characterCodepoints)
-    {
-        for (int i = 0; i < 32; i++)
-        {
-            password[i] = ChangePasswordFontCodeSub(password[i], characterCodepoints);
-        }
-    }
-
     public static void TranspositionCipher(Span<byte> data, bool negate, int keyIndex)
     {
         var multiplier = negate ? -1 : 1;

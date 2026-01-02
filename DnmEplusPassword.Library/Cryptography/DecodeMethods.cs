@@ -175,6 +175,21 @@ internal static class DecodeMethods
             ? TranslatedCharacterCodepoints
             : CharacterCodepoints;
 
-        ChangePasswordFontCode(input, characterCodepoints);
+        for (int i = 0; i < input.Length; i++)
+        {
+            input[i] = ChangeCharacterSetSub(input[i], characterCodepoints);
+        }
+    }
+
+    private static byte ChangeCharacterSetSub(byte characterCodepoint, IReadOnlyList<byte> characterCodepoints)
+    {
+        for (int i = 0; i < characterCodepoints.Count; i++)
+        {
+            if (characterCodepoints[i] == characterCodepoint)
+            {
+                return (byte)i;
+            }
+        }
+        return 0xFF;
     }
 }
