@@ -8,21 +8,21 @@ public static class Encoder
 {
     public static PasswordOutput Encode(in PasswordInput input, bool englishPasswords)
     {
-        var passcode = input.ToBytes();
+        var plaintext = input.ToPlaintext();
 
-        SubstitutionCipher(passcode);
-        TranspositionCipher(passcode, true, 0);
-        BitShuffle(passcode, 0);
-        ChangeRsaCipher(passcode);
-        BitMixCode(passcode);
-        BitShuffle(passcode, 1);
-        TranspositionCipher(passcode, false, 1);
+        SubstitutionCipher(plaintext);
+        TranspositionCipher(plaintext, true, 0);
+        BitShuffle(plaintext, 0);
+        ChangeRsaCipher(plaintext);
+        BitMixCode(plaintext);
+        BitShuffle(plaintext, 1);
+        TranspositionCipher(plaintext, false, 1);
 
-        Span<byte> password = new byte[32];
+        Span<byte> ciphertext = new byte[32];
 
-        ChangeSixBitsCode(passcode, password);
-        ChangeCommonFontCode(password, englishPasswords);
+        ChangeSixBitsCode(plaintext, ciphertext);
+        ChangeCommonFontCode(ciphertext, englishPasswords);
 
-        return new PasswordOutput(password);
+        return new PasswordOutput(ciphertext);
     }
 }

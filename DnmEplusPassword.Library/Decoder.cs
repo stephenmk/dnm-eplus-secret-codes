@@ -8,31 +8,31 @@ public static class Decoder
 {
     public static PasswordInput Decode(PasswordOutput output, bool englishPasswords = false)
     {
-        var passwordBytes = output.RawBytes.ToArray();
-        ChangeCharacterSet(passwordBytes, englishPasswords);
+        var ciphertext = output.Ciphertext.ToArray();
+        ChangeCharacterSet(ciphertext, englishPasswords);
 
-        Span<byte> data = new byte[24];
+        Span<byte> plaintext = new byte[24];
 
-        ChangeEightBitsCode(data, passwordBytes);
-        TranspositionCipher(data, true, 1);
-        DecodeBitShuffle(data, true);
-        DecodeBitCode(data);
-        DecodeRsaCipher(data);
-        DecodeBitShuffle(data, false);
-        TranspositionCipher(data, false, 0);
-        DecodeSubstitutionCipher(data);
+        ChangeEightBitsCode(plaintext, ciphertext);
+        TranspositionCipher(plaintext, true, 1);
+        DecodeBitShuffle(plaintext, true);
+        DecodeBitCode(plaintext);
+        DecodeRsaCipher(plaintext);
+        DecodeBitShuffle(plaintext, false);
+        TranspositionCipher(plaintext, false, 0);
+        DecodeSubstitutionCipher(plaintext);
 
         return new PasswordInput
         {
-            CodeType = (CodeType)((data[0] >> 5) & 0b111),
-            HitRate = (HitRate)((data[0] >> 2) & 0b111),
-            Checksum = (byte)(((data[0] & 0b11) << 2) | ((data[1] >> 6) & 0b11)),
-            ExtraData = (byte)(data[1] & 0b0011_1111),
-            NpcCode = data[2],
-            Name1 = data.Slice(3, 6),
-            Name2 = data.Slice(9, 6),
-            Name3 = data.Slice(15, 6),
-            ItemId = (ushort)((data[21] << 8) | data[22]),
+            CodeType = (CodeType)((plaintext[0] >> 5) & 0b111),
+            HitRate = (HitRate)((plaintext[0] >> 2) & 0b111),
+            Checksum = (byte)(((plaintext[0] & 0b11) << 2) | ((plaintext[1] >> 6) & 0b11)),
+            ExtraData = (byte)(plaintext[1] & 0b0011_1111),
+            NpcCode = plaintext[2],
+            Name1 = plaintext.Slice(3, 6),
+            Name2 = plaintext.Slice(9, 6),
+            Name3 = plaintext.Slice(15, 6),
+            ItemId = (ushort)((plaintext[21] << 8) | plaintext[22]),
         };
     }
 }

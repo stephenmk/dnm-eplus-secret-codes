@@ -62,7 +62,7 @@ public readonly ref struct PasswordInput()
     public byte CalculateChecksum()
         => (byte)((NpcCode + Name1.Sum() + Name2.Sum() + Name3.Sum() + ItemId) & 0xF);
 
-    public Span<byte> ToBytes()
+    public Span<byte> ToPlaintext()
     {
         Span<byte> output = new byte[24];
 
