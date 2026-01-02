@@ -97,7 +97,7 @@
             {
                 <tr>
                     <th>Decoration</th>
-                    <td>@CodeInput.Monument</td>
+                    <td>@MonumentToString(CodeInput.Monument)</td>
                 </tr>
             }
             else if(CatalogItems.TryGetValue(CodeInput.ItemId, out var item))
@@ -214,5 +214,25 @@
         HitRate.ThirtyPercent => "30%",
         HitRate.ZeroPercent => "0%",
         _ => $"Unknown ({(byte)hitRate})"
+    };
+
+    private static string MonumentToString(Monument monument) => monument switch
+    {
+        Monument.ParkClock => "Park Clock",
+        Monument.GasLamp => "Gas Lamp",
+        Monument.Windpump => "Wind Pump",
+        Monument.FlowerClock => "Flower Clock",
+        Monument.Heliport => "Heliport",
+        Monument.WindTurbine => "Wind Turbine",
+        Monument.PipeStack => "Pipe Stack",
+        Monument.Stonehenge => "Stonehenge",
+        Monument.Egg => "Egg",
+        Monument.Footprints => "Footprints",
+        Monument.Geoglyph => "Geoglyph",
+        Monument.Mushroom => "Mushroom",
+        Monument.Signpost => "Signpost",
+        Monument.Well => "Well",
+        Monument.Fountain => "Fountain",
+        _ => $"Unknown ({(byte)monument})"
     };
 }
