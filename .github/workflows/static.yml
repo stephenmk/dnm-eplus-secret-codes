@@ -56,7 +56,7 @@ jobs:
         uses: SteveSandersonMS/ghaction-rewrite-base-href@4583ede549773dabe1410c42e703d54cf52859ff
         with:
           html_path: ${{ env.PUBLISH_DIR }}/index.html
-          base_href: /secret-codes/
+          base_href: /DnmEplusPassword/ # Must be the name of the repo
 
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
