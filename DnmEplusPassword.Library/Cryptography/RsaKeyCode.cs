@@ -1,5 +1,3 @@
-using static DnmEplusPassword.Library.Cryptography.Constants;
-
 namespace DnmEplusPassword.Library.Cryptography;
 
 internal readonly ref struct RsaKeyCode
@@ -46,7 +44,7 @@ internal readonly ref struct RsaKeyCode
         Prime1 = PrimeNumbers[bit10];
         Prime2 = PrimeNumbers[bit32];
         Prime3 = PrimeNumbers[data[0xC]];
-        IndexTable = SelectIndexTable[tableIdx];
+        IndexTable = Constants.SelectIndexTable[tableIdx];
     }
 
     private static readonly IReadOnlyList<int> PrimeNumbers =
