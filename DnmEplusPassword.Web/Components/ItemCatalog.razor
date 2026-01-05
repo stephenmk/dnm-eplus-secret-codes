@@ -11,7 +11,11 @@ else
 {
     <div class="grid" tabindex="-1">
         <QuickGrid Items="@FilteredCatalogItems" Pagination="@Pagination" style="max-width: 600px;">
-            <PropertyColumn Title="ID" Property="@(i => i.Id)" Sortable="true" />
+            <TemplateColumn Title="Action">
+                <button type="button" class="btn @context.ButtonClass"
+                    @onclick="@(() => SelectItem(context))">Select</button>
+            </TemplateColumn>
+            @* <PropertyColumn Title="ID" Property="@(i => i.Id)" Sortable="true" /> *@
             <PropertyColumn Title="English Name" Property="@(i => i.En)" Sortable="true">
                 <ColumnOptions>
                     <div class="search-box">
@@ -26,10 +30,6 @@ else
                     </div>
                 </ColumnOptions>
             </PropertyColumn>
-            <TemplateColumn Title="Action">
-                <button type="button" class="btn @context.ButtonClass"
-                    @onclick="@(() => SelectItem(context))">Select</button>
-            </TemplateColumn>
         </QuickGrid>
     </div>
     <Paginator State="@Pagination" />
