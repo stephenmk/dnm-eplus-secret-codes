@@ -1,5 +1,5 @@
-<div class="modal @Class" tabindex="-1" role="dialog" style="display: @Display; overflow-y: auto;">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal @Class" tabindex="-1" role="dialog" style="display: @Display; overflow-y: auto;" @onclick="Close">
+    <div class="modal-dialog modal-lg" role="document" @onclick:stopPropagation="true">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">@Title</h5>
